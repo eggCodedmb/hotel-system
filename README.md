@@ -1,5 +1,30 @@
 # Vue 3 + Vite
+项目结构
+```
+├── public
+├── src
+│   ├── assets          静态资源
+│   ├── components      通用组件
+│   ├── router          路由
+│   ├── store           状态管理
+│   ├── utils           工具函数
+│   ├── views           页面组件    
+│   ├── App.vue         根组件
+│   ├── main.js         入口文件
+├── .gitignore          git忽略文件
+├── index.html          入口html
+├── package.json        
+├── README.md           
+├── tsconfig.json
+├── vite.config.ts
+```
 
-This template should help get you started developing with Vue 3 in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
+## Project setup
+```
+yarn  or yarn install
+```
 
-Learn more about IDE Support for Vue in the [Vue Docs Scaling up Guide](https://vuejs.org/guide/scaling-up/tooling.html#ide-support).
+### Compiles and hot-reloads for development
+```
+yarn dev
+```
