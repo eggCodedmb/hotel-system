@@ -25,6 +25,30 @@ const routes = [
                 component: () => import('@/views/Room.vue'),
                 meta: { title: '客房管理', icon: 'House' }
             },
+            {
+                path: '/finance',
+                name: 'Finance',
+                component: () => import('@/views/Finance.vue'),
+                meta: { title: '财务管理', icon: 'Wallet' }
+            },
+            {
+                path: '/checkin',
+                name: 'Checkin',
+                component: () => import('@/views/Checkin.vue'),
+                meta: { title: '住宿管理', icon: 'Document' }
+            },
+            {
+                path: '/reserve',
+                name: 'Reserve',
+                component: () => import('@/views/Reserve.vue'),
+                meta: { title: '客房预订', icon: 'Document' }
+            }, {
+                path: '/system',
+                name: 'System',
+                component: () => import('@/views/System.vue'),
+                meta: { title: '系统管理', icon: 'Setting' },
+            },
+
         ]
     },
     {

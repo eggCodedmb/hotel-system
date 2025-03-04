@@ -1,6 +1,6 @@
 <template>
   <div style="display: flex">
-    <div style="width: 200px">
+    <div style="max-width: 200px">
       <!-- 部门树 -->
       <dept-tree
         :data="treeData"
