@@ -4,10 +4,8 @@
       :data="tableData"
       border
       stripe
-      style="width: 100%"
       @selection-change="handleSelectionChange"
     >
-      <!-- 动态生成列 -->
       <el-table-column
         v-for="column in columns"
         :key="column.prop"
@@ -16,9 +14,17 @@
         :width="column.width"
         :align="column.align || 'center'"
       >
-        <!-- 自定义列模板 -->
         <template v-if="column.slotName" #default="{ row }">
           <slot :name="column.slotName" :row="row" />
+        </template>
+        <template v-if="column.render" #render="{ row, $index }">
+          <Renderer
+            v-if="column.render"
+            :row="row"
+            :index="$index"
+            :column="column"
+            :render="column.render"
+          />
         </template>
       </el-table-column>
     </el-table>
@@ -37,7 +43,7 @@
 </template>
 
 <script setup>
-import { defineProps, defineEmits, computed } from "vue";
+import { defineProps, defineEmits, computed, defineComponent } from "vue";
 
 const props = defineProps({
   // 列配置
@@ -75,6 +81,19 @@ const props = defineProps({
   },
 });
 
+// 创建用于执行render函数的组件
+const Renderer = defineComponent({
+  props: {
+    row: Object, // 行数据
+    index: Number, // 行索引
+    column: Object, // 列配置
+    render: Function, // 渲染函数
+  },
+  render() {
+    return this.render(this.row, this.index, this.column);
+  },
+});
+
 const emit = defineEmits([
   "update:currentPage",
   "update:pageSize",
@@ -91,7 +110,7 @@ const handleCurrentChange = (val) => {
 // 处理每页数量变化
 const handleSizeChange = (val) => {
   emit("update:pageSize", val);
-  emit("update:currentPage", 1); // 切换每页数量时重置到第一页
+  emit("update:currentPage", 1);
   emitPageChange(1, val);
 };
 

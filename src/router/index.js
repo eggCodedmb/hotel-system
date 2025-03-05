@@ -17,7 +17,23 @@ const routes = [
                 path: '/user',
                 name: 'User',
                 component: () => import('@/views/User.vue'),
-                meta: { title: '员工管理', icon: 'UserFilled' }
+                meta: { title: '员工管理', icon: 'UserFilled' },
+                children: [
+                    // 新增员工
+                    {
+                        path: '/adduser',
+                        name: 'AddUser',
+                        component: () => import('@/views/components/UserForm.vue'),
+                        meta: { title: '新增员工', icon: 'UserFilled', hidden: true }
+                    },
+                    // 编辑员工
+                    {
+                        path: '/edituser',
+                        name: 'EditUser',
+                        component: () => import('@/views/components/UserForm.vue'),
+                        meta: { title: '新增员工', icon: 'UserFilled', hidden: true }
+                    }
+                ]
             },
             {
                 path: '/room',
@@ -35,14 +51,23 @@ const routes = [
                 path: '/checkin',
                 name: 'Checkin',
                 component: () => import('@/views/Checkin.vue'),
-                meta: { title: '住宿管理', icon: 'Document' }
+                meta: { title: '住宿管理', icon: 'Document' },
+                children: [
+                    {
+                        path: '/reserve',
+                        name: 'Reserve',
+                        component: () => import('@/views/Reserve.vue'),
+                        meta: { title: '客房预订', icon: 'Document' }
+                    }
+                ]
             },
             {
-                path: '/reserve',
-                name: 'Reserve',
-                component: () => import('@/views/Reserve.vue'),
-                meta: { title: '客房预订', icon: 'Document' }
-            }, {
+                path: '/dict',
+                name: 'Dict',
+                component: () => import('@/views/Dict.vue'),
+                meta: { title: '字典', icon: 'List' }
+            },
+            {
                 path: '/system',
                 name: 'System',
                 component: () => import('@/views/System.vue'),

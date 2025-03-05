@@ -27,8 +27,8 @@
 </template>
 
 <script setup>
-import { ref, watch, defineExpose } from "vue";
-
+import { ref, watch, defineExpose, getCurrentInstance } from "vue";
+import { ElMessage } from "element-plus";
 const props = defineProps({
   // 是否显示弹窗
   modelValue: {
@@ -43,7 +43,7 @@ const props = defineProps({
   // 弹窗宽度
   width: {
     type: [String, Number],
-    default: "600px",
+    default: "800px",
   },
   // 确认按钮文字
   confirmText: {
@@ -65,6 +65,11 @@ const props = defineProps({
     type: Object,
     default: () => ({}),
   },
+  // 自定义提交方法
+  submit: {
+    type: Function,
+    default: null,
+  },
 });
 
 const emit = defineEmits(["update:modelValue", "confirm", "cancel", "closed"]);
@@ -72,6 +77,8 @@ const emit = defineEmits(["update:modelValue", "confirm", "cancel", "closed"]);
 const dialogVisible = ref(false);
 const loading = ref(false);
 const formRef = ref(null);
+console.log(formRef.value);
+
 
 // 暴露方法给父组件
 defineExpose({
@@ -82,7 +89,22 @@ defineExpose({
 });
 
 // 处理确认操作
-const handleConfirm = async () => {};
+const handleConfirm = () => {
+  if (formRef.value) {
+    formRef.value.validate((valid) => {
+      if (valid) {
+        if (props.submit) {
+          props.submit().then(() => (dialogVisible.value = false));
+        } else {
+          ElMessage.error("请传入submit方法");
+        }
+      }
+    });
+  } else {
+    ElMessage.error("请传入formRef");
+    console.log(formRef.value);
+  }
+};
 
 // 处理取消操作
 const handleCancel = () => {
@@ -97,18 +119,6 @@ const handleClosed = () => {
     formRef.value.resetFields();
   }
 };
-
-// 同步v-model状态
-watch(
-  () => props.modelValue,
-  (val) => {
-    dialogVisible.value = val;
-  }
-);
-
-watch(dialogVisible, (val) => {
-  emit("update:modelValue", val);
-});
 </script>
 
 <style scoped>
