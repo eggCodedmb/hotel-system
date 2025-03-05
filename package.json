@@ -22,5 +22,9 @@
     "@vitejs/plugin-vue": "^5.2.1",
     "sass-embedded": "^1.85.1",
     "vite": "^6.2.0"
+  },
+  "volta": {
+    "node": "20.18.3",
+    "yarn": "1.21.1"
   }
 }
