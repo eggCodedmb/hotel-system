@@ -45,7 +45,7 @@
       </el-col>
     </el-row>
     <el-col :span="21">
-      <el-button type="primary">新增</el-button>
+      <el-button type="primary" @click="addRoom">新增</el-button>
     </el-col>
     <c-table
       :columns="columns"
@@ -56,18 +56,36 @@
       @page-change="handlePageChange"
     >
       <template #action="{ row }">
-        <el-button type="primary" @click="handleEdit(row)">编辑</el-button>
-        <el-button type="danger" @click="handleDelete(row)">删除</el-button>
+        <el-button type="primary" size="small" @click="handleEdit(row)"
+          >详情</el-button
+        >
+        <el-button type="primary" size="small" @click="addRoom(row)"
+          >编辑</el-button
+        >
+        <el-button type="danger" size="small" @click="handleDelete(row)"
+          >删除</el-button
+        >
+      </template>
+      <template #state="{ row }">
+        <el-tag :type="row.state === 0 ? 'success' : 'danger'">{{
+          row.state === "空闲" ? "空闲" : "已预订"
+        }}</el-tag>
+      </template>
+      <template #image="{ row }">
+        <el-image :src="row.image" style="width: 60px; height: 60px" />
       </template>
     </c-table>
   </div>
+  <RoomForm ref="roomForm" />
 </template>
 
 <script>
 import CTable from "@/components/CTable.vue";
+import RoomForm from "./components/RoomForm.vue";
 export default {
   components: {
     CTable,
+    RoomForm,
   },
   data() {
     return {
@@ -107,6 +125,11 @@ export default {
       ],
       columns: [],
       tableData: [],
+      // 获取pubilc图片
+      image: "https://picsum.photos/200/100",
+      total: 0,
+      currentPage: 1,
+      pageSize: 10,
     };
   },
   mounted() {
@@ -118,28 +141,35 @@ export default {
         type: "单人间",
         price: "100",
         state: "空闲",
+        image: this.image,
       },
       {
         roomName: "102",
         type: "双人间",
         price: "200",
         state: "已预订",
+        image: this.image,
       },
       {
         roomName: "103",
         type: "三人间",
         price: "300",
         state: "空闲",
+        image: this.image,
       },
       {
         roomName: "104",
         type: "四人间",
         price: "400",
         state: "已预订",
+        image: this.image,
       },
     ];
   },
   methods: {
+    addRoom() {
+      this.$refs.roomForm.openDialog();
+    },
     handleEdit(row) {
       console.log(row);
     },
@@ -172,8 +202,12 @@ export default {
           prop: "price",
         },
         {
+          label: "房间图片",
+          slotName: "image",
+        },
+        {
           label: "房间状态",
-          prop: "state",
+          slotName: "state",
         },
         {
           label: "操作",

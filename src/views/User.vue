@@ -1,7 +1,6 @@
 <template>
   <div style="display: flex">
-    <div style="max-width: 200px">
-      <!-- 部门树 -->
+    <!-- <div style="max-width: 200px">
       <dept-tree
         :data="treeData"
         :show-count="true"
@@ -10,7 +9,7 @@
         @check="handleCheck"
         @load="loadNode"
       />
-    </div>
+    </div> -->
     <div class="right-main">
       <el-row :gutter="20">
         <el-col :span="6">
@@ -52,8 +51,15 @@
         @page-change="handlePageChange"
       >
         <template #action="{ row }">
-          <el-button type="primary" @click="handleEdit(row)">编辑</el-button>
-          <el-button type="danger" @click="handleDelete(row)">删除</el-button>
+          <el-button type="primary" size="small" @click="addUser(row)"
+            >详情</el-button
+          >
+          <el-button type="primary" size="small" @click="addUser(row)"
+            >编辑</el-button
+          >
+          <el-button type="danger" size="small" @click="handleDelete(row)"
+            >删除</el-button
+          >
         </template>
       </c-table>
     </div>

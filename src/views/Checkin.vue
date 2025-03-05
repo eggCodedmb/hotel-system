@@ -45,7 +45,7 @@
       </el-col>
     </el-row>
     <el-col :span="21">
-      <el-button type="primary">新增</el-button>
+      <el-button type="primary" @click="handleCheckin">预定客房</el-button>
     </el-col>
     <c-table
       :columns="columns"
@@ -56,18 +56,34 @@
       @page-change="handlePageChange"
     >
       <template #action="{ row }">
-        <el-button type="primary" @click="handleEdit(row)">编辑</el-button>
-        <el-button type="danger" @click="handleDelete(row)">删除</el-button>
+        <!-- 查看 -->
+        <el-button type="primary" size="small" @click="handleCheckin(row)"
+          >查看</el-button
+        >
+        <el-button type="primary" size="small" @click="handleCheckin(row)"
+          >编辑</el-button
+        >
+        <!-- 取消 -->
+        <el-button type="warning" size="small" @click="handleCancel(row)"
+          >取消</el-button
+        >
+        <el-button type="danger" size="small" @click="handleDelete(row)"
+          >删除</el-button
+        >
       </template>
     </c-table>
   </div>
+  <CheckinForm ref="checkinForm" />
 </template>
 
 <script>
 import CTable from "@/components/CTable.vue";
+import CheckinForm from "./components/CheckinForm.vue";
+
 export default {
   components: {
     CTable,
+    CheckinForm,
   },
   data() {
     return {
@@ -114,6 +130,11 @@ export default {
     this.getTableData();
   },
   methods: {
+    // 预订客房
+    handleCheckin() {
+      this.$refs.checkinForm.openDialog();
+    },
+
     handleEdit(row) {
       console.log(row);
     },

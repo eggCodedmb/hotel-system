@@ -4,10 +4,7 @@
 
     <el-card class="login-box">
       <div class="logo">
-        <img
-          src="/public/img/logo/2103833.png"
-          alt="Hotel Logo"
-        />
+        <img src="/public/img/logo/2103833.png" alt="Hotel Logo" />
         <h1>酒店管理系统</h1>
       </div>
 
@@ -58,10 +55,12 @@
 <script setup>
 import { ref, reactive } from "vue";
 import { ElMessage } from "element-plus";
+import { useRouter } from "vue-router";
 
 const loginFormRef = ref();
 const rememberMe = ref(false);
 const loading = ref(false);
+const router = useRouter();
 
 const loginForm = reactive({
   username: "",
@@ -77,16 +76,13 @@ const loginRules = reactive({
 });
 
 const handleLogin = () => {
+  loading.value = true;
   loginFormRef.value.validate((valid) => {
     if (!valid) return;
-
-    loading.value = true;
-    // 模拟登录请求
-    setTimeout(() => {
-      loading.value = false;
-      ElMessage.success("登录成功");
-      // 实际项目中跳转到后台
-    }, 1500);
+    // TODO: 登录逻辑
+    ElMessage.success("登录成功");
+    router.push("/home");
+    loading.value = false;
   });
 };
 </script>

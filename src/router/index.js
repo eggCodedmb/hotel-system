@@ -18,22 +18,6 @@ const routes = [
                 name: 'User',
                 component: () => import('@/views/User.vue'),
                 meta: { title: '员工管理', icon: 'UserFilled' },
-                children: [
-                    // 新增员工
-                    {
-                        path: '/adduser',
-                        name: 'AddUser',
-                        component: () => import('@/views/components/UserForm.vue'),
-                        meta: { title: '新增员工', icon: 'UserFilled', hidden: true }
-                    },
-                    // 编辑员工
-                    {
-                        path: '/edituser',
-                        name: 'EditUser',
-                        component: () => import('@/views/components/UserForm.vue'),
-                        meta: { title: '新增员工', icon: 'UserFilled', hidden: true }
-                    }
-                ]
             },
             {
                 path: '/room',
@@ -45,7 +29,7 @@ const routes = [
                 path: '/finance',
                 name: 'Finance',
                 component: () => import('@/views/Finance.vue'),
-                meta: { title: '财务管理', icon: 'Wallet' }
+                meta: { title: '财务管理', icon: 'Wallet', hidden: true },
             },
             {
                 path: '/checkin',
@@ -65,13 +49,21 @@ const routes = [
                 path: '/dict',
                 name: 'Dict',
                 component: () => import('@/views/Dict.vue'),
-                meta: { title: '字典', icon: 'List' }
+                meta: { title: '字典', icon: 'List', hidden: true },
             },
             {
                 path: '/system',
                 name: 'System',
                 component: () => import('@/views/System.vue'),
                 meta: { title: '系统管理', icon: 'Setting' },
+                children: [
+                    {
+                        path: '/department',
+                        name: 'Department',
+                        component: () => import('@/views/Department.vue'),
+                        meta: { title: '部门管理', icon: 'Document', hidden: true }
+                    }
+                ]
             },
 
         ]
