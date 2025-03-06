@@ -4,7 +4,7 @@
 
 <script setup>
 import Layout from "./layout/Layout.vue";
-import { useMenuStore } from "./store/modules/menuStore";
+import { useMenuStore } from "@/store/modules/menuStore";
 import { generateMenu } from "@/utils/menu";
 import router from "@/router";
 

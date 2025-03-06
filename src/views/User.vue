@@ -1,16 +1,6 @@
 <template>
-  <div style="display: flex">
-    <!-- <div style="max-width: 200px">
-      <dept-tree
-        :data="treeData"
-        :show-count="true"
-        :lazy="true"
-        @node-click="handleNodeClick"
-        @check="handleCheck"
-        @load="loadNode"
-      />
-    </div> -->
-    <div class="right-main">
+  <transition name="el-zoom-in-left">
+    <div class="page-container page">
       <el-row :gutter="20">
         <el-col :span="6">
           <el-form-item label="姓名">
@@ -63,7 +53,7 @@
         </template>
       </c-table>
     </div>
-  </div>
+  </transition>
   <UserForm ref="refUserForm" />
 </template>
 

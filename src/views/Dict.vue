@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="page">
     <el-row :gutter="20">
       <el-col :span="6">
         <el-form-item label="字典名称">

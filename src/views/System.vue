@@ -1,15 +1,14 @@
 <template>
-    <div>
-        <h1>System</h1>
-    </div>
+  <div class="page">
+    <h1>系统管理</h1>
+  </div>
 </template>
 
-<script>
-export default {
+<script lang="ts" setup>
+import { ref } from 'vue'
 
-}
+const show = ref(true)
 </script>
 
 <style>
-
 </style>

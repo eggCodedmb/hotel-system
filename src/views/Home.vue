@@ -1,5 +1,5 @@
 <template>
-  <el-container>
+  <el-container class="page">
     <el-main>
       <!-- 顶部数据展示 -->
       <el-row :gutter="10">

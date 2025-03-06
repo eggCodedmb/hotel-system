@@ -6,28 +6,26 @@
         <el-header>
           <Header />
         </el-header>
-        <el-main>
-          <div class="main-content">
-            <router-view></router-view>
-          </div>
+        <el-main class="page-main">
+          <router-view> </router-view>
         </el-main>
       </el-container>
     </el-container>
   </div>
 </template>
+
 <script setup>
 import Header from "./Header.vue";
 import Menu from "./Menu.vue";
+import { ref } from "vue";
 </script>
 
 <style scoped>
+/* 处理Element组件样式穿透 */
 :deep(.el-header) {
   padding: 0;
 }
-.main-content {
-  width: 100%;
-  height: calc(100vh - 100px);
-  background: #fff;
-  padding: 10px;
+:deep(.el-main) {
+  background: #f0f2f5;
 }
 </style>
