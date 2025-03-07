@@ -9,12 +9,7 @@
       <el-col :span="6">
         <el-form-item label="房间类型">
           <el-select v-model="form.type" placeholder="请选择">
-            <el-option
-              v-for="item in roomTypeOptions"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            >
+            <el-option v-for="item in roomTypeOptions" :key="item.value" :label="item.label" :value="item.value">
             </el-option>
           </el-select>
         </el-form-item>
@@ -27,12 +22,7 @@
       <el-col :span="6">
         <el-form-item label="房间状态">
           <el-select v-model="form.state" placeholder="请选择">
-            <el-option
-              v-for="item in stateOptions"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            >
+            <el-option v-for="item in stateOptions" :key="item.value" :label="item.label" :value="item.value">
             </el-option>
           </el-select>
         </el-form-item>
@@ -45,31 +35,18 @@
       </el-col>
     </el-row>
     <el-col :span="21">
-      <el-button type="primary" @click="handleCheckin">预定客房</el-button>
+      <el-button type="primary" @click="handleReserve">预定客房</el-button>
     </el-col>
-    <c-table
-      :columns="columns"
-      :data="tableData"
-      :total="total"
-      v-model:current-page="currentPage"
-      v-model:page-size="pageSize"
-      @page-change="handlePageChange"
-    >
+    <c-table :columns="columns" :data="tableData" :total="total" v-model:current-page="currentPage"
+      v-model:page-size="pageSize" @page-change="handlePageChange">
       <template #action="{ row }">
+        <!-- 入住 -->
+        <el-button type="primary" size="small" @click="handleCheckin(row)">入住</el-button>
         <!-- 查看 -->
-        <el-button type="primary" size="small" @click="handleCheckin(row)"
-          >查看</el-button
-        >
-        <el-button type="primary" size="small" @click="handleCheckin(row)"
-          >编辑</el-button
-        >
+        <el-button type="primary" size="small" @click="handleDetail(row)">查看</el-button>
+        <el-button type="primary" size="small" @click="handleEdit(row)">编辑</el-button>
         <!-- 取消 -->
-        <el-button type="warning" size="small" @click="handleCancel(row)"
-          >取消</el-button
-        >
-        <el-button type="danger" size="small" @click="handleDelete(row)"
-          >删除</el-button
-        >
+        <el-button type="warning" size="small" @click="handleCancel(row)">取消</el-button>
       </template>
     </c-table>
   </div>
@@ -133,16 +110,45 @@ export default {
     this.getTableData();
   },
   methods: {
+    // 入住
+    handleCheckin(row) {
+
+    },
+
+    // 查看
+    handleDetail(row) {
+      this.$refs.checkinForm.title = "详情";
+      this.$refs.checkinForm.openDialog();
+    },
+
+    // 取消
+    handleCancel(row) {
+      this.$confirm("取消预约吗？", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      })
+        .then(() => {
+          this.$message({
+            type: "success",
+            message: "取消成功",
+          });
+        })
+
+    },
     // 预订客房
-    handleCheckin() {
+    handleReserve(row) {
+      this.$refs.checkinForm.title = "预定客房";
       this.$refs.checkinForm.openDialog();
     },
 
     handleEdit(row) {
-      console.log(row);
+      this.$refs.checkinForm.title = "编辑";
+      this.$refs.checkinForm.openDialog();
     },
     handleDelete(row) {
-      console.log(row);
+
+
     },
     handlePageChange() {
       this.getTableData();

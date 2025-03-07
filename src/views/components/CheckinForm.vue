@@ -184,6 +184,7 @@ const submitForm = () => {
 
 defineExpose({
   openDialog,
+  title,
 });
 </script>
 

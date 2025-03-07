@@ -10,72 +10,35 @@
     <!-- 主要内容区 -->
     <el-main>
       <!-- 公告轮播 -->
-      <el-carousel
-        :interval="5000"
-        height="100px"
-        class="announcement-carousel"
-      >
+      <el-carousel :interval="5000" height="100px" class="announcement-carousel">
         <el-carousel-item v-for="(item, index) in announcements" :key="index">
           <div class="announcement-item">
-            <el-alert
-              :title="item.title"
-              :description="item.content"
-              type="info"
-              show-icon
-            />
+            <el-alert :title="item.title" :description="item.content" type="info" show-icon />
           </div>
         </el-carousel-item>
       </el-carousel>
 
       <!-- 房间筛选 -->
       <div class="filter-container">
-        <el-input
-          placeholder="搜索房型"
-          style="width: 300px"
-          clearable
-          v-model="searchKeyword"
-        >
+        <el-input placeholder="搜索房型" style="width: 300px" clearable v-model="searchKeyword">
           <template #append>
             <el-button :icon="Search" />
           </template>
         </el-input>
         <el-select v-model="roomType" placeholder="全部房型" clearable>
-          <el-option
-            v-for="item in roomTypes"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value"
-          />
+          <el-option v-for="item in roomTypes" :key="item.value" :label="item.label" :value="item.value" />
         </el-select>
       </div>
 
       <!-- 房间展示 -->
       <el-row :gutter="20" class="room-list">
-        <el-col
-          v-for="room in filteredRooms"
-          :key="room.id"
-          :xs="24"
-          :sm="12"
-          :md="8"
-          :lg="6"
-          class="room-item"
-        >
+        <el-col v-for="room in filteredRooms" :key="room.id" :xs="24" :sm="12" :md="8" :lg="6" class="room-item">
           <el-card class="room-card" shadow="hover">
-            <el-image
-              :src="room.image"
-              fit="cover"
-              class="room-image"
-              :preview-src-list="[room.image]"
-            />
+            <el-image :src="room.image" fit="cover" class="room-image" :preview-src-list="[room.image]" />
             <div class="room-info">
               <h3 class="room-title">{{ room.name }}</h3>
               <div class="room-tags">
-                <el-tag
-                  v-for="(tag, index) in room.tags"
-                  :key="index"
-                  type="info"
-                  size="small"
-                >
+                <el-tag v-for="(tag, index) in room.tags" :key="index" type="info" size="small">
                   {{ tag }}
                 </el-tag>
               </div>
@@ -83,11 +46,7 @@
                 <span class="price">¥{{ room.price }}</span>
                 <span class="unit">/ 晚</span>
               </div>
-              <el-button
-                type="primary"
-                class="book-btn"
-                @click="handleBook(room)"
-              >
+              <el-button type="primary" class="book-btn" @click="handleBook(room)">
                 立即预订
               </el-button>
             </div>
@@ -96,11 +55,13 @@
       </el-row>
     </el-main>
   </div>
+  <CheckinForm ref="checkinForm" />
 </template>
 
 <script setup>
 import { ref, computed } from "vue";
 import { Search } from "@element-plus/icons-vue";
+import CheckinForm from "./components/CheckinForm.vue";
 
 // 公告数据
 const announcements = ref([
@@ -108,6 +69,8 @@ const announcements = ref([
   { title: "优惠活动", content: "提前7天预订可享8折优惠" },
   { title: "节日问候", content: "中秋节期间赠送每位客人月饼礼盒" },
 ]);
+
+const checkinForm = ref(null);
 
 // 房间数据
 const rooms = ref([
@@ -150,8 +113,8 @@ const filteredRooms = computed(() => {
 
 // 预订处理
 const handleBook = (room) => {
-  console.log("Booking room:", room);
-  // 这里可以跳转到预订页面或打开预订对话框
+  checkinForm.value.title = "预订房间";
+  checkinForm.value.openDialog(room);
 };
 </script>
 
@@ -241,11 +204,13 @@ const handleBook = (room) => {
 
     .room-price {
       margin: 15px 0;
+
       .price {
         color: #e74c3c;
         font-size: 24px;
         font-weight: bold;
       }
+
       .unit {
         color: #999;
         font-size: 12px;
