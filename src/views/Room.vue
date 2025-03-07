@@ -56,7 +56,7 @@
       @page-change="handlePageChange"
     >
       <template #action="{ row }">
-        <el-button type="primary" size="small" @click="handleEdit(row)"
+        <el-button type="primary" size="small" @click="addRoom(row)"
           >详情</el-button
         >
         <el-button type="primary" size="small" @click="addRoom(row)"
@@ -125,7 +125,6 @@ export default {
       ],
       columns: [],
       tableData: [],
-      // 获取pubilc图片
       image: "https://picsum.photos/200/100",
       total: 0,
       currentPage: 1,

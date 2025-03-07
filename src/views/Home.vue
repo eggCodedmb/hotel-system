@@ -39,7 +39,7 @@
           <el-card>
             <div class="chart-title">
               <strong>销售趋势</strong>
-              <el-radio-group v-model="radio">
+              <el-radio-group v-model="radio" @change="lineChartChange">
                 <el-radio-button label="周" value="周" />
                 <el-radio-button label="月" value="月" />
                 <el-radio-button label="年" value="年" />
@@ -70,6 +70,11 @@ export default {
     return {
       radio,
     };
+  },
+  methods: {
+    lineChartChange() {
+      console.log(this.radio);
+    },
   },
 };
 </script>

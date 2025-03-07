@@ -172,7 +172,6 @@ const submitForm = () => {
   refForm.value.validate((valid) => {
     if (valid) {
       closeDialog();
-      
     } else {
       ElMessage.warning("请填写完整信息");
       return false;
