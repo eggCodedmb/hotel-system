@@ -51,10 +51,10 @@
                 <el-icon><user /></el-icon>
                 个人中心
               </el-dropdown-item>
-              <el-dropdown-item command="settings">
+              <!-- <el-dropdown-item command="settings">
                 <el-icon><setting /></el-icon>
                 账户设置
-              </el-dropdown-item>
+              </el-dropdown-item> -->
               <el-dropdown-item divided command="logout">
                 <el-icon><switch-button /></el-icon>
                 退出登录
