@@ -56,11 +56,13 @@
 import { ref, reactive } from "vue";
 import { ElMessage } from "element-plus";
 import { useRouter } from "vue-router";
+import { useUserStore } from "@/store/modules/userStore";
 
 const loginFormRef = ref();
 const rememberMe = ref(false);
 const loading = ref(false);
 const router = useRouter();
+const userStore = useUserStore();
 
 const loginForm = reactive({
   username: "",
@@ -75,14 +77,25 @@ const loginRules = reactive({
   ],
 });
 
-const handleLogin = () => {
+const handleLogin = async () => {
   loading.value = true;
   loginFormRef.value.validate((valid) => {
     if (!valid) return;
     // TODO: 登录逻辑
-    ElMessage.success("登录成功");
-    router.push("/home");
-    loading.value = false;
+    if (loginForm.username === "admin" && loginForm.password === "123456") {
+      ElMessage.success("登录成功");
+      router.push("/home");
+      loading.value = false;
+      userStore.saveUser(loginForm);
+      if (rememberMe.value) {
+        userStore.saveRemember(...loginForm);
+      } else {
+        userStore.removeRemember();
+      }
+    } else {
+      ElMessage.warning("用户名或密码错误");
+      loading.value = false;
+    }
   });
 };
 </script>

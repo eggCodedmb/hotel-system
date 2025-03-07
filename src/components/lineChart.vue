@@ -42,9 +42,6 @@ export default {
     initChart() {
       const lineChart = echarts.init(this.$refs.lineChart);
       lineChart.setOption({
-        title: {
-          text: "折线图",
-        },
         tooltip: {
           trigger: "axis",
         },

@@ -1,14 +1,13 @@
 <template>
-  <div class="page">
+  <div>
     <h1>系统管理</h1>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue'
+import { ref } from "vue";
 
-const show = ref(true)
+const show = ref(true);
 </script>
 
-<style>
-</style>
+<style></style>

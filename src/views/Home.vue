@@ -1,5 +1,5 @@
 <template>
-  <el-container class="page">
+  <el-container>
     <el-main>
       <!-- 顶部数据展示 -->
       <el-row :gutter="10">
@@ -37,6 +37,14 @@
       <el-row :gutter="10" class="charts-container">
         <el-col :span="16">
           <el-card>
+            <div class="chart-title">
+              <strong>销售趋势</strong>
+              <el-radio-group v-model="radio">
+                <el-radio-button label="周" value="周" />
+                <el-radio-button label="月" value="月" />
+                <el-radio-button label="年" value="年" />
+              </el-radio-group>
+            </div>
             <LineChart />
           </el-card>
         </el-col>
@@ -53,11 +61,15 @@
 <script>
 import LineChart from "@/components/lineChart.vue";
 import PieChar from "@/components/pieChar.vue";
+import { ref } from "vue";
 export default {
   name: "Home",
   components: { LineChart, PieChar },
   setup() {
-    return {};
+    const radio = ref("周");
+    return {
+      radio,
+    };
   },
 };
 </script>
@@ -82,5 +94,10 @@ export default {
 }
 .charts-container {
   margin-top: 20px;
+}
+.chart-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 </style>

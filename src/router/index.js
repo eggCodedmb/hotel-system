@@ -65,7 +65,12 @@ const routes = [
                     }
                 ]
             },
-
+            {
+                path: '/profile',
+                name: 'Profile',
+                component: () => import('@/views/Profile.vue'),
+                meta: { title: '个人中心', icon: 'User', hidden: true },
+            }
         ]
     },
     {

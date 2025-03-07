@@ -1,59 +1,57 @@
 <template>
-  <transition name="el-zoom-in-left">
-    <div class="page-container page">
-      <el-row :gutter="20">
-        <el-col :span="6">
-          <el-form-item label="姓名">
-            <el-input v-model="form.name" placeholder="请输入姓名" />
-          </el-form-item>
-        </el-col>
-        <el-col :span="6">
-          <el-form-item label="状态">
-            <el-select v-model="value" placeholder="请选择状态">
-              <el-option
-                v-for="item in stateOptions"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value"
-              />
-            </el-select>
-          </el-form-item>
-        </el-col>
-        <el-col :span="6">
-          <el-form-item label="职位">
-            <el-input v-model="form.position" placeholder="请输入职位" />
-          </el-form-item>
-        </el-col>
-        <el-col :span="6">
-          <el-button type="primary" @click="search">查询</el-button>
-          <el-button @click="resetForm">重置</el-button>
-        </el-col>
-      </el-row>
-      <el-row>
-        <el-button type="primary" @click="addUser">新增</el-button>
-      </el-row>
-      <c-table
-        :columns="columns"
-        :data="tableData"
-        :total="total"
-        v-model:current-page="currentPage"
-        v-model:page-size="pageSize"
-        @page-change="handlePageChange"
-      >
-        <template #action="{ row }">
-          <el-button type="primary" size="small" @click="addUser(row)"
-            >详情</el-button
-          >
-          <el-button type="primary" size="small" @click="addUser(row)"
-            >编辑</el-button
-          >
-          <el-button type="danger" size="small" @click="handleDelete(row)"
-            >删除</el-button
-          >
-        </template>
-      </c-table>
-    </div>
-  </transition>
+  <div>
+    <el-row :gutter="20">
+      <el-col :span="6">
+        <el-form-item label="姓名">
+          <el-input v-model="form.name" placeholder="请输入姓名" />
+        </el-form-item>
+      </el-col>
+      <el-col :span="6">
+        <el-form-item label="状态">
+          <el-select v-model="value" placeholder="请选择状态">
+            <el-option
+              v-for="item in stateOptions"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            />
+          </el-select>
+        </el-form-item>
+      </el-col>
+      <el-col :span="6">
+        <el-form-item label="职位">
+          <el-input v-model="form.position" placeholder="请输入职位" />
+        </el-form-item>
+      </el-col>
+      <el-col :span="6">
+        <el-button type="primary" @click="search">查询</el-button>
+        <el-button @click="resetForm">重置</el-button>
+      </el-col>
+    </el-row>
+    <el-row>
+      <el-button type="primary" @click="addUser">新增</el-button>
+    </el-row>
+    <c-table
+      :columns="columns"
+      :data="tableData"
+      :total="total"
+      v-model:current-page="currentPage"
+      v-model:page-size="pageSize"
+      @page-change="handlePageChange"
+    >
+      <template #action="{ row }">
+        <el-button type="primary" size="small" @click="addUser(row)"
+          >详情</el-button
+        >
+        <el-button type="primary" size="small" @click="addUser(row)"
+          >编辑</el-button
+        >
+        <el-button type="danger" size="small" @click="handleDelete(row)"
+          >删除</el-button
+        >
+      </template>
+    </c-table>
+  </div>
   <UserForm ref="refUserForm" />
 </template>
 
@@ -86,7 +84,7 @@ export default {
       tableData: [],
       currentPage: 1,
       pageSize: 10,
-      total: 100,
+      total: 10,
       treeData: [
         {
           id: 1,
@@ -144,8 +142,9 @@ export default {
     initTableData() {
       const columns = [
         {
-          label: "日期",
-          prop: "date",
+          label: "序号",
+          prop: "index",
+          width: "80",
         },
         {
           label: "姓名",
@@ -160,6 +159,10 @@ export default {
           prop: "phone",
         },
         {
+          label: "入职时间",
+          prop: "date",
+        },
+        {
           label: "操作",
           slotName: "action",
         },
@@ -167,33 +170,38 @@ export default {
 
       const tableData = [
         {
+          index: "1",
           date: "2016-05-02",
           name: "王小虎",
-          status: "正常",
+          status: "在职",
           phone: "13800138000",
         },
         {
+          index: "2",
           date: "2016-05-04",
           name: "王小虎",
-          status: "禁用",
+          status: "离职",
           phone: "13800138000",
         },
         {
+          index: "3",
           date: "2016-05-04",
           name: "王小虎",
-          status: "禁用",
+          status: "离职",
           phone: "13800138000",
         },
         {
+          index: "4",
           date: "2016-05-01",
           name: "王小虎",
-          status: "正常",
+          status: "在职",
           phone: "13800138000",
         },
         {
+          index: "5",
           date: "2016-05-03",
           name: "王小虎",
-          status: "禁用",
+          status: "离职",
           phone: "13800138000",
         },
       ];

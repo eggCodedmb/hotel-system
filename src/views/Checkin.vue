@@ -1,5 +1,5 @@
 <template>
-  <div class="page">
+  <div>
     <el-row :gutter="20">
       <el-col :span="6">
         <el-form-item label="房间号">
@@ -20,7 +20,7 @@
         </el-form-item>
       </el-col>
       <el-col :span="6">
-        <el-form-item label="房间价格">
+        <el-form-item label="姓名">
           <el-input v-model="form.price" placeholder="请输入" />
         </el-form-item>
       </el-col>
@@ -156,9 +156,11 @@ export default {
       const columns = [
         {
           label: "序号",
-          prop: "index",
-          key: "index",
-          render: (row) => {},
+          width: "80",
+          render: (row) => {
+            // return this.pageSize * (this.currentPage - 1) + row.index + 1;
+            return 1;
+          },
         },
         {
           label: "姓名",

@@ -53,19 +53,18 @@
 </template>
 
 <script>
-import { computed } from "vue";
 import { useMenuStore } from "@/store/modules/menuStore";
 
 export default {
   data() {
     return {
       isCollapse: false,
+      menuStore: useMenuStore(),
     };
   },
   computed: {
     menuList() {
-      const menuStore = useMenuStore();
-      return menuStore.getRouter;
+      return this.menuStore.getRouter;
     },
     activeMenu() {
       return this.$route.path;
@@ -74,6 +73,12 @@ export default {
   methods: {
     toggleCollapse() {
       this.isCollapse = !this.isCollapse;
+    },
+    // 添加面包屑
+    addBreadcrumb() {
+      console.log(this.$route);
+      
+      this.menuStore.saveBreadCrumb(this.$route);
     },
   },
 };
