@@ -5,7 +5,7 @@
       <el-row :gutter="10">
         <el-col :span="6">
           <el-card class="data-card">
-            <div class="data-title">今日订单</div>
+            <div class="data-title">今日预定</div>
             <div class="data-value">128</div>
             <div class="data-change">较昨日 +12.5%</div>
           </el-card>
@@ -19,7 +19,7 @@
         </el-col>
         <el-col :span="6">
           <el-card class="data-card">
-            <div class="data-title">新增用户</div>
+            <div class="data-title">新增预定</div>
             <div class="data-value">356</div>
             <div class="data-change">较上月 +15.8%</div>
           </el-card>
@@ -84,22 +84,27 @@ export default {
   text-align: center;
   padding: 20px;
 }
+
 .data-title {
   font-size: 16px;
   color: #666;
 }
+
 .data-value {
   font-size: 28px;
   font-weight: bold;
   margin: 10px 0;
 }
+
 .data-change {
   font-size: 14px;
   color: #67c23a;
 }
+
 .charts-container {
   margin-top: 20px;
 }
+
 .chart-title {
   display: flex;
   justify-content: space-between;
