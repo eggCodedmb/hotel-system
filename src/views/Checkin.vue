@@ -123,6 +123,9 @@ export default {
       ],
       columns: [],
       tableData: [],
+      total: 0,
+      currentPage: 1,
+      pageSize: 10,
     };
   },
   mounted() {
@@ -157,9 +160,8 @@ export default {
         {
           label: "序号",
           width: "80",
-          render: (row) => {
-            // return this.pageSize * (this.currentPage - 1) + row.index + 1;
-            return 1;
+          render: (row, index, column) => {
+            return (this.currentPage - 1) * this.pageSize + index + 1;
           },
         },
         {

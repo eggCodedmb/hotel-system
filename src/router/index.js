@@ -21,9 +21,21 @@ const routes = [
             },
             {
                 path: '/room',
-                name: 'Room',
-                component: () => import('@/views/Room.vue'),
-                meta: { title: '客房管理', icon: 'House' }
+                meta: { title: '客房管理', icon: 'House' },
+                children: [
+                    {
+                        path: '/room',
+                        name: 'Room',
+                        component: () => import('@/views/Room.vue'),
+                        meta: { title: '客房列表', icon: 'OfficeBuilding' },
+                    },
+                    {
+                        path: '/reserve',
+                        name: 'Reserve',
+                        component: () => import('@/views/Reserve.vue'),
+                        meta: { title: '住宿列表', icon: 'Document' }
+                    }
+                ]
             },
             {
                 path: '/finance',
@@ -35,7 +47,7 @@ const routes = [
                 path: '/checkin',
                 name: 'Checkin',
                 component: () => import('@/views/Checkin.vue'),
-                meta: { title: '住宿管理', icon: 'Document' },
+                meta: { title: '住宿管理', icon: 'Document', hidden: true },
                 children: [
                     {
                         path: '/reserve',
@@ -55,13 +67,20 @@ const routes = [
                 path: '/system',
                 name: 'System',
                 component: () => import('@/views/System.vue'),
-                meta: { title: '系统管理', icon: 'Setting', hidden: true},
+                meta: { title: '系统管理', icon: 'Setting', hidden: false },
                 children: [
                     {
                         path: '/department',
                         name: 'Department',
                         component: () => import('@/views/Department.vue'),
                         meta: { title: '部门管理', icon: 'Document', hidden: true }
+                    },
+                    {
+                        // 公告管理
+                        path: '/notice',
+                        name: 'Notice',
+                        component: () => import('@/views/Notice.vue'),
+                        meta: { title: '公告管理', icon: 'Document', hidden: false }
                     }
                 ]
             },
@@ -79,6 +98,13 @@ const routes = [
         component: () => import('@/views/Login.vue'),
         meta: { title: '登录', hidden: true }
     },
+    // 前台页面
+    {
+        path: '/front',
+        name: 'FrontDesk',
+        component: () => import('@/views/FrontDesk.vue'),
+        meta: { title: '前台', icon: 'Home', hidden: false },
+    }
 ]
 
 const router = createRouter({

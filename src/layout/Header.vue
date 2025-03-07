@@ -51,10 +51,10 @@
                 <el-icon><user /></el-icon>
                 个人中心
               </el-dropdown-item>
-              <!-- <el-dropdown-item command="settings">
-                <el-icon><setting /></el-icon>
-                账户设置
-              </el-dropdown-item> -->
+              <el-dropdown-item command="front">
+                <el-icon><OfficeBuilding /></el-icon>
+                前台
+              </el-dropdown-item>
               <el-dropdown-item divided command="logout">
                 <el-icon><switch-button /></el-icon>
                 退出登录
@@ -101,8 +101,8 @@ const handleCommand = (command) => {
     case "profile":
       router.push("/profile");
       break;
-    case "settings":
-      router.push("/settings");
+    case "front":
+      router.push("/front");
       break;
   }
 };
