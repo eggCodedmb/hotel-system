@@ -9,7 +9,6 @@ import setupStore from '@/store'
 import '@/assets/index.css'
 import 'element-plus/theme-chalk/dark/css-vars.css'
 
-
 const app = createApp(App)
 
 app.use(setupStore)

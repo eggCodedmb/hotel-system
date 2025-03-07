@@ -109,21 +109,22 @@
 </template>
 
 <script setup>
-import { ref, defineExpose } from "vue";
+import { ref, defineExpose, defineOptions, defineEmits } from "vue";
 import { Plus } from "@element-plus/icons-vue";
 import { ElMessage } from "element-plus";
 const form = ref({
   username: "",
   password: "",
   phone: "",
-  gender: "1",
-  entryDate: "",
-  role: "common",
+  date: "",
+  role: "",
+  gender: "",
   avatar: "",
 });
+const emit = defineEmits(["refresh"]);
 
+const title = ref("新增用户");
 const refForm = ref(null);
-const title = ref("添加用户");
 const dialogVisible = ref(false);
 
 const rules = ref({
@@ -153,8 +154,10 @@ const rules = ref({
   gender: [{ required: true, message: "请选择性别", trigger: "change" }],
 });
 
-const openDialog = () => {
+const openDialog = (row) => {
   dialogVisible.value = true;
+  if (!row) return;
+  form.value = { ...row };
 };
 
 const closeDialog = () => {
@@ -171,15 +174,16 @@ const beforeAvatarUpload = (file) => {};
 const submitForm = () => {
   refForm.value.validate((valid) => {
     if (valid) {
+      emit("refresh");
       closeDialog();
     } else {
       ElMessage.warning("请填写完整信息");
-      return false;
     }
   });
 };
 defineExpose({
   openDialog,
+  title,
 });
 </script>
 

@@ -56,10 +56,10 @@
       @page-change="handlePageChange"
     >
       <template #action="{ row }">
-        <el-button type="primary" size="small" @click="addRoom(row)"
+        <el-button type="primary" size="small" @click="handleDetail(row)"
           >详情</el-button
         >
-        <el-button type="primary" size="small" @click="addRoom(row)"
+        <el-button type="primary" size="small" @click="handleEdit(row)"
           >编辑</el-button
         >
         <el-button type="danger" size="small" @click="handleDelete(row)"
@@ -82,6 +82,7 @@
 <script>
 import CTable from "@/components/CTable.vue";
 import RoomForm from "./components/RoomForm.vue";
+import { ElMessage, ElMessageBox } from "element-plus";
 export default {
   components: {
     CTable,
@@ -170,10 +171,31 @@ export default {
       this.$refs.roomForm.openDialog();
     },
     handleEdit(row) {
-      console.log(row);
+      this.$refs.roomForm.title = "编辑房间";
+      this.$refs.roomForm.openDialog(row);
+    },
+    handleDetail(row) {
+      this.$refs.roomForm.title = "房间详情";
+      this.$refs.roomForm.openDialog(row);
     },
     handleDelete(row) {
-      console.log(row);
+      this.$confirm("确定删除该房间吗？", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      })
+        .then(() => {
+          this.$message({
+            type: "success",
+            message: "删除成功!",
+          });
+        })
+        .catch(() => {
+          this.$message({
+            type: "info",
+            message: "已取消删除",
+          });
+        });
     },
     handlePageChange() {
       this.getTableData();

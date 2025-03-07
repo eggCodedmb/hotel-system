@@ -8,7 +8,7 @@
       </el-col>
       <el-col :span="6">
         <el-form-item label="状态">
-          <el-select v-model="value" placeholder="请选择状态">
+          <el-select v-model="form.state" placeholder="请选择状态">
             <el-option
               v-for="item in stateOptions"
               :key="item.value"
@@ -28,9 +28,11 @@
         <el-button @click="resetForm">重置</el-button>
       </el-col>
     </el-row>
+
     <el-row>
       <el-button type="primary" @click="addUser">新增</el-button>
     </el-row>
+
     <c-table
       :columns="columns"
       :data="tableData"
@@ -40,10 +42,10 @@
       @page-change="handlePageChange"
     >
       <template #action="{ row }">
-        <el-button type="primary" size="small" @click="addUser(row)"
+        <el-button type="primary" size="small" @click="handleDetail(row)"
           >详情</el-button
         >
-        <el-button type="primary" size="small" @click="addUser(row)"
+        <el-button type="primary" size="small" @click="handleEdit(row)"
           >编辑</el-button
         >
         <el-button type="danger" size="small" @click="handleDelete(row)"
@@ -52,177 +54,157 @@
       </template>
     </c-table>
   </div>
-  <UserForm ref="refUserForm" />
+  <UserForm ref="userForm" @refresh="getTableData" />
 </template>
 
 <script>
+import { ref } from "vue";
+import { ElMessage, ElMessageBox } from "element-plus";
 import CTable from "@/components/CTable.vue";
-import DeptTree from "@/components/DeptTree.vue";
 import UserForm from "./components/UserForm.vue";
-import CDialog from "@/components/CDialog.vue";
+
 export default {
   name: "User",
-  components: { CTable, DeptTree, UserForm, CDialog },
-  data() {
-    return {
-      form: {
-        name: "",
-        state: 1,
-        position: "",
+  components: { CTable, UserForm },
+  setup() {
+    const form = ref({
+      name: "",
+      state: 1,
+      position: "",
+    });
+
+    const stateOptions = ref([
+      { value: 1, label: "正常" },
+      { value: 2, label: "禁用" },
+    ]);
+
+    const columns = ref([
+      { label: "序号", prop: "index", width: "80" },
+      { label: "姓名", prop: "name" },
+      { label: "状态", prop: "status" },
+      { label: "电话", prop: "phone" },
+      { label: "入职时间", prop: "date" },
+      { label: "操作", slotName: "action" },
+    ]);
+
+    const tableData = ref([
+      {
+        index: "1",
+        date: "2016-05-02",
+        name: "王小虎",
+        status: "在职",
+        phone: "13800138000",
       },
-      stateOptions: [
-        {
-          value: 1,
-          label: "正常",
-        },
-        {
-          value: 2,
-          label: "禁用",
-        },
-      ],
-      columns: [],
-      tableData: [],
-      currentPage: 1,
-      pageSize: 10,
-      total: 10,
-      treeData: [
-        {
-          id: 1,
-          name: "总公司",
-          count: 100,
-          children: [
-            {
-              id: 2,
-              name: "技术部",
-              count: 50,
-              isLeaf: false,
-            },
-          ],
-        },
-      ],
+      {
+        index: "2",
+        date: "2016-05-04",
+        name: "王小虎",
+        status: "离职",
+        phone: "13800138000",
+      },
+      {
+        index: "3",
+        date: "2016-05-04",
+        name: "王小虎",
+        status: "离职",
+        phone: "13800138000",
+      },
+      {
+        index: "4",
+        date: "2016-05-01",
+        name: "王小虎",
+        status: "在职",
+        phone: "13800138000",
+      },
+      {
+        index: "5",
+        date: "2016-05-03",
+        name: "王小虎",
+        status: "离职",
+        phone: "13800138000",
+      },
+    ]);
+
+    const currentPage = ref(1);
+    const pageSize = ref(10);
+    const total = ref(10);
+    const userForm = ref(null);
+
+    // 搜索
+    const search = () => {
+      console.log("搜索", form.value);
     };
-  },
-  methods: {
-    search() {
-      console.log(this.form);
-    },
-    resetForm() {
-      this.form = {};
-    },
-    addUser() {
-      this.$refs.refUserForm.openDialog();
-    },
-    // 处理分页变化
-    handlePageChange({ currentPage, pageSize }) {
-      this.currentPage = currentPage;
-      this.pageSize = pageSize;
-    },
 
-    // 懒加载处理
-    loadNode({ node, resolve }) {
-      if (node.level === 0) return resolve(this.treeData);
-      // 模拟异步加载
-      setTimeout(() => {
-        resolve([
-          { id: 3, name: "前端组", count: 20, isLeaf: true },
-          { id: 4, name: "后端组", count: 30, isLeaf: true },
-        ]);
-      }, 500);
-    },
+    // 重置表单
+    const resetForm = () => {
+      form.value = { name: "", state: 1, position: "" };
+    };
 
-    // 节点点击处理
-    handleNodeClick({ data }) {
-      console.log("选中节点:", data);
-    },
+    // 添加用户
+    const addUser = () => {
+      userForm.value.title = "添加用户";
+      userForm.value.openDialog();
+    };
 
-    // 复选框选中处理
-    handleCheck({ checked }) {
-      console.log("选中节点keys:", checked);
-    },
-    initTableData() {
-      const columns = [
-        {
-          label: "序号",
-          prop: "index",
-          width: "80",
-        },
-        {
-          label: "姓名",
-          prop: "name",
-        },
-        {
-          label: "状态",
-          prop: "status",
-        },
-        {
-          label: "电话",
-          prop: "phone",
-        },
-        {
-          label: "入职时间",
-          prop: "date",
-        },
-        {
-          label: "操作",
-          slotName: "action",
-        },
-      ];
+    const handleDetail = (row) => {
+      userForm.value.title = "用户详情";
+      userForm.value.openDialog(row);
+    };
 
-      const tableData = [
-        {
-          index: "1",
-          date: "2016-05-02",
-          name: "王小虎",
-          status: "在职",
-          phone: "13800138000",
-        },
-        {
-          index: "2",
-          date: "2016-05-04",
-          name: "王小虎",
-          status: "离职",
-          phone: "13800138000",
-        },
-        {
-          index: "3",
-          date: "2016-05-04",
-          name: "王小虎",
-          status: "离职",
-          phone: "13800138000",
-        },
-        {
-          index: "4",
-          date: "2016-05-01",
-          name: "王小虎",
-          status: "在职",
-          phone: "13800138000",
-        },
-        {
-          index: "5",
-          date: "2016-05-03",
-          name: "王小虎",
-          status: "离职",
-          phone: "13800138000",
-        },
-      ];
+    const handleEdit = (row) => {
+      userForm.value.title = "编辑用户";
+      userForm.value.openDialog(row);
+    };
 
-      this.columns = columns;
-      this.tableData = tableData;
-    },
-    handleEdit(row) {
-      console.log("编辑", row);
-    },
-    handleDelete(row) {
-      console.log("删除", row);
-    },
-  },
-  mounted() {
-    this.initTableData();
+    // **✅ 修正 ElMessageBox 不弹出问题**
+    const handleDelete = async (row) => {
+      await ElMessageBox.confirm("确定删除该用户吗？", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      })
+        .then(() => {
+          ElMessage({
+            type: "success",
+            message: "删除成功!",
+          });
+        })
+        .catch(() => {
+          ElMessage({
+            type: "info",
+            message: "已取消删除",
+          });
+        });
+    };
+
+    // 处理分页
+    const handlePageChange = ({ currentPage, pageSize }) => {
+      currentPage.value = currentPage;
+      pageSize.value = pageSize;
+    };
+
+    return {
+      form,
+      stateOptions,
+      columns,
+      tableData,
+      currentPage,
+      pageSize,
+      total,
+      search,
+      resetForm,
+      addUser,
+      handleDetail,
+      handleEdit,
+      handleDelete,
+      handlePageChange,
+      userForm,
+    };
   },
 };
 </script>
 
-<style lang="scss" scoped>
+<style scoped>
 .right-main {
   width: 100%;
 }
