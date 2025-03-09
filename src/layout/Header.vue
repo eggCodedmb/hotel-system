@@ -15,16 +15,6 @@
         </el-breadcrumb-item>
       </el-breadcrumb>
 
-      <!-- 主题切换按钮 -->
-      <!-- <el-tooltip :content="isDark ? '切换亮色模式' : '切换暗黑模式'">
-        <el-button
-          circle
-          :icon="isDark ? Sunny : Moon"
-          @click="toggleDark"
-          class="theme-toggle"
-        />
-      </el-tooltip> -->
-
       <!-- 用户操作区 -->
       <div class="user-area">
         <el-dropdown
@@ -78,15 +68,6 @@ const router = useRouter();
 const route = useRoute();
 const userStore = useUserStore();
 const menuStore = useMenuStore();
-// // 暗黑模式逻辑
-// const isDark = useDark({
-//   selector: "html", // 作用于 html 元素
-//   attribute: "class",
-//   valueDark: "dark", // 暗黑模式时添加 class="dark"
-//   valueLight: "", // 白天模式移除 class
-// });
-
-// const toggleDark = useToggle(isDark);
 
 const userInfo = userStore.getUser;
 

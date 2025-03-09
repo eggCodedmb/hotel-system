@@ -25,7 +25,7 @@
       </el-col>
       <el-col :span="6">
         <el-button type="primary" @click="search">查询</el-button>
-        <el-button @click="resetForm">重置</el-button>
+        <el-button type="warning" @click="resetForm">重置</el-button>
       </el-col>
     </el-row>
 

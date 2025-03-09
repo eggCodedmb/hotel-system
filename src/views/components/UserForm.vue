@@ -1,47 +1,23 @@
 <template>
-  <el-dialog
-    :title="title"
-    v-model="dialogVisible"
-    :close-on-click-modal="false"
-  >
-    <el-form
-      ref="refForm"
-      :model="form"
-      :rules="rules"
-      label-width="100px"
-      label-position="right"
-      class="custom-form"
-    >
+  <el-dialog :title="title" v-model="dialogVisible" :close-on-click-modal="false">
+    <el-form ref="refForm" :model="form" :rules="rules" label-width="100px" label-position="right" class="custom-form">
       <el-row :gutter="20">
         <!-- 第一行：用户名 + 密码 -->
         <el-col :xs="24" :md="12">
           <el-form-item label="用户名" prop="username">
-            <el-input
-              v-model="form.username"
-              placeholder="请输入用户名"
-              clearable
-            />
+            <el-input v-model="form.username" placeholder="请输入用户名" clearable />
           </el-form-item>
         </el-col>
         <el-col :xs="24" :md="12">
           <el-form-item label="密码" prop="password">
-            <el-input
-              v-model="form.password"
-              type="password"
-              placeholder="请输入密码"
-              show-password
-            />
+            <el-input v-model="form.password" type="password" placeholder="请输入密码" show-password />
           </el-form-item>
         </el-col>
 
         <!-- 第二行：手机号 + 性别 -->
         <el-col :xs="24" :md="12">
           <el-form-item label="手机号" prop="phone">
-            <el-input
-              v-model="form.phone"
-              placeholder="请输入手机号"
-              maxlength="11"
-            />
+            <el-input v-model="form.phone" placeholder="请输入手机号" maxlength="11" />
           </el-form-item>
         </el-col>
         <el-col :xs="24" :md="12">
@@ -56,22 +32,13 @@
         <!-- 第三行：入职日期 + 角色 -->
         <el-col :xs="24" :md="12">
           <el-form-item label="入职日期" prop="entryDate">
-            <el-date-picker
-              v-model="form.entryDate"
-              type="date"
-              placeholder="选择日期"
-              value-format="YYYY-MM-DD"
-              style="width: 100%"
-            />
+            <el-date-picker v-model="form.entryDate" type="date" placeholder="选择日期" value-format="YYYY-MM-DD"
+              style="width: 100%" />
           </el-form-item>
         </el-col>
         <el-col :xs="24" :md="12">
           <el-form-item label="角色" prop="role">
-            <el-select
-              v-model="form.role"
-              placeholder="请选择角色"
-              style="width: 100%"
-            >
+            <el-select v-model="form.role" placeholder="请选择角色" style="width: 100%">
               <el-option label="管理员" value="admin" />
               <el-option label="普通用户" value="common" />
             </el-select>
@@ -81,13 +48,8 @@
         <!-- 头像上传 -->
         <el-col :span="24">
           <el-form-item label="头像">
-            <el-upload
-              class="avatar-uploader"
-              action="/api/upload"
-              :show-file-list="false"
-              :on-success="handleAvatarSuccess"
-              :before-upload="beforeAvatarUpload"
-            >
+            <el-upload class="avatar-uploader" action="/api/upload" :show-file-list="false"
+              :on-success="handleAvatarSuccess" :before-upload="beforeAvatarUpload">
               <img v-if="form.avatar" :src="form.avatar" class="avatar" />
               <el-icon v-else class="avatar-uploader-icon">
                 <Plus />
@@ -101,7 +63,7 @@
 
     <template #footer>
       <div class="dialog-footer">
-        <el-button @click="closeDialog">关闭</el-button>
+        <el-button type="warning" @click="closeDialog">关闭</el-button>
         <el-button type="primary" @click="submitForm">保存</el-button>
       </div>
     </template>
@@ -169,7 +131,7 @@ const handleAvatarSuccess = (res) => {
   form.value.avatar = res.url;
 };
 
-const beforeAvatarUpload = (file) => {};
+const beforeAvatarUpload = (file) => { };
 
 const submitForm = () => {
   refForm.value.validate((valid) => {

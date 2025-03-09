@@ -3,7 +3,7 @@
     <!-- Logo 区域 -->
     <div class="logo-container" @click="toggleCollapse">
       <img src="/img/logo/2103833.png" class="logo" />
-      <h1 v-show="!isCollapse">酒店管理系统</h1>
+      <h1 v-show="!isCollapse">{{ title }}</h1>
     </div>
 
     <!-- 菜单 -->
@@ -60,6 +60,7 @@ export default {
     return {
       isCollapse: false,
       menuStore: useMenuStore(),
+      title: import.meta.env.VITE_APP_TITLE,
     };
   },
   computed: {
@@ -69,6 +70,7 @@ export default {
     activeMenu() {
       return this.$route.path;
     },
+
   },
   methods: {
     toggleCollapse() {
@@ -76,8 +78,6 @@ export default {
     },
     // 添加面包屑
     addBreadcrumb() {
-      console.log(this.$route);
-      
       this.menuStore.saveBreadCrumb(this.$route);
     },
   },

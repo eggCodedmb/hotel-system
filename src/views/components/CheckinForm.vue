@@ -3,7 +3,7 @@
     :title="title"
     v-model="dialogVisible"
     :close-on-click-modal="false"
-    width="800px"
+    max-Width="800px"
   >
     <el-form
       ref="refForm"
@@ -68,13 +68,15 @@
         <!-- 第三行：入住人数 + 身份证号 -->
         <el-col :xs="24" :md="12">
           <el-form-item label="入住人数" prop="peopleNum">
-            <el-input-number
-              v-model="form.peopleNum"
+            <el-input
+              v-model.number="form.peopleNum"
               :min="1"
               :max="4"
               controls-position="right"
               style="width: 100%"
-            />
+            >
+            <template #append>人</template>
+          </el-input>
           </el-form-item>
         </el-col>
         <el-col :xs="24" :md="12">
@@ -100,12 +102,25 @@
             />
           </el-form-item>
         </el-col>
+        <el-col :span="12">
+          <el-form-item label="入住晚数" prop="days">
+            <el-input
+              v-model.number="form.days"
+              :min="1"
+              :max="30"
+              controls-position="right"
+              style="width: 100%">
+            <template #append>晚/1999￥</template>
+          </el-input>
+          </el-form-item>
+        </el-col>
+
       </el-row>
     </el-form>
 
     <template #footer>
       <div class="dialog-footer">
-        <el-button @click="closeDialog">取消</el-button>
+        <el-button type="warning" @click="closeDialog">取消</el-button>
         <el-button type="primary" @click="submitForm">确认预订</el-button>
       </div>
     </template>
@@ -113,7 +128,7 @@
 </template>
 
 <script setup>
-import { ref, defineExpose } from "vue";
+import { ref, defineExpose,computed } from "vue";
 import { ElMessage } from "element-plus";
 
 const form = ref({
@@ -124,6 +139,7 @@ const form = ref({
   peopleNum: 1,
   idCard: "",
   checkinTime: "",
+  days: 1,
 });
 
 const rules = ref({

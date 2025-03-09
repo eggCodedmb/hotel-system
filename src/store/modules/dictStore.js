@@ -1,34 +1,38 @@
-import { defineStore } from 'pinia';
-import { ref, computed } from 'vue';
+import { defineStore } from "pinia";
+import { ref, computed } from "vue";
 
-export const useDictStore = defineStore('dict', () => {
-    const dicts = ref([]);
+export const useDictStore = defineStore(
+  "dict",
+  () => {
+    const dicts = ref([
+      {
+        key: "SEX",
+        values: [
+          { label: "男", value: "M" },
+          { label: "女", value: "F" },
+        ],
+      },
+    ]);
 
-    const saveDict = (dict) => {
-        dicts.value.push(dict);
-    };
+    const saveDict = (dict) => {};
 
-    const getDict = computed(() => dicts.value);
+    const getDict = computed((key) => {});
 
-    const removeDict = (id) => {
-        dicts.value = dicts.value.filter((dict) => dict.id !== id);
-    }
+    const removeDict = (key) => {};
 
-    const updateDict = (id, dict) => {
-        dicts.value = dicts.value.map((d) => (d.id === id ? dict : d));
-    }
+    const updateDict = (key, dict) => {};
 
     return {
-        saveDict,
-        getDict,
-        removeDict,
-        updateDict
+      saveDict,
+      getDict,
+      removeDict,
+      updateDict,
     };
-}, {
+  },
+  {
     persist: {
-        enabled: true,
-        strategies: [
-            { storage: localStorage, paths: ['dicts'] }
-        ]
-    }
-});
+      enabled: true,
+      strategies: [{ storage: localStorage, paths: ["dicts"] }],
+    },
+  }
+);

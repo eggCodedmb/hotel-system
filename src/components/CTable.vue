@@ -5,6 +5,7 @@
       border
       stripe
       @selection-change="handleSelectionChange"
+      v-bind="useAttrs()"
     >
       <el-table-column
         v-for="column in columns"
@@ -34,6 +35,7 @@
 
     <!-- 分页组件 -->
     <el-pagination
+      v-if="showPagination"
       class="pagination"
       :current-page="currentPage"
       :page-size="pageSize"
@@ -44,12 +46,14 @@
       @update:page-size="handleSizeChange"
       background
       size="small"
+      v-bind="useAttrs()"
     />
   </div>
 </template>
 
 <script setup>
-import { ref, computed, defineProps, defineEmits, defineComponent } from "vue";
+import { ref, computed, defineProps, defineEmits, defineComponent,useAttrs } from "vue";
+
 
 const props = defineProps({
   columns: { type: Array, required: true, default: () => [] },
@@ -58,6 +62,7 @@ const props = defineProps({
   currentPage: { type: Number, default: 1 },
   pageSize: { type: Number, default: 10 },
   pageSizes: { type: Array, default: () => [10, 20, 50, 100] },
+  showPagination: { type: Boolean, default: true },
 });
 
 const emit = defineEmits([

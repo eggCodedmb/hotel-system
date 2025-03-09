@@ -41,7 +41,7 @@
     <el-row>
       <el-col :span="3" :offset="21">
         <el-button type="primary">查询</el-button>
-        <el-button type="primary">重置</el-button>
+        <el-button type="warning">重置</el-button>
       </el-col>
     </el-row>
     <el-col :span="21">

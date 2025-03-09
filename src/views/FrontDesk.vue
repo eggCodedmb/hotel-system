@@ -3,7 +3,7 @@
     <!-- 顶部导航 -->
     <el-header class="main-header">
       <div class="header-content">
-        <h1 class="logo">蓝天酒店</h1>
+        <h1 class="logo">{{ TITLE }}</h1>
       </div>
     </el-header>
 
@@ -62,6 +62,8 @@
 import { ref, computed } from "vue";
 import { Search } from "@element-plus/icons-vue";
 import CheckinForm from "./components/CheckinForm.vue";
+
+const TITLE = import.meta.env.VITE_APP_TITLE;
 
 // 公告数据
 const announcements = ref([

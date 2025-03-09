@@ -3,132 +3,40 @@
     <!-- 操作栏 -->
     <div class="operation-bar">
       <el-button type="primary" @click="handleAdd" :icon="Plus">新增公告</el-button>
-      
+
       <div class="search-area">
-        <el-input
-          v-model="searchKeyword"
-          placeholder="搜索公告标题"
-          clearable
-          style="width: 300px"
-          @change="handleSearch"
-        >
+        <el-input v-model="searchKeyword" placeholder="搜索公告标题" clearable style="width: 300px" @change="handleSearch">
           <template #append>
             <el-button :icon="Search" />
           </template>
         </el-input>
-        
-        <el-date-picker
-          v-model="publishDate"
-          type="daterange"
-          range-separator="-"
-          start-placeholder="开始日期"
-          end-placeholder="结束日期"
-          @change="handleDateChange"
-        />
+
+        <el-date-picker v-model="publishDate" type="daterange" range-separator="-" start-placeholder="开始日期"
+          end-placeholder="结束日期" @change="handleDateChange" />
       </div>
     </div>
 
     <!-- 数据表格 -->
-    <el-table
-      :data="filteredAnnouncements"
-      v-loading="loading"
-      style="width: 100%"
-      :header-cell-style="{ background: '#f5f7fa' }"
-      stripe
-    >
-      <el-table-column prop="title" label="公告标题" min-width="200" />
-      <el-table-column prop="content" label="内容" min-width="300">
-        <template #default="{ row }">
-          <div class="content-preview">{{ row.content }}</div>
-        </template>
-      </el-table-column>
-      <el-table-column prop="publisher" label="发布人" width="120" />
-      <el-table-column prop="status" label="状态" width="100">
-        <template #default="{ row }">
-          <el-tag :type="row.status === 1 ? 'success' : 'info'" size="small">
-            {{ row.status === 1 ? '启用' : '禁用' }}
-          </el-tag>
-        </template>
-      </el-table-column>
-      <el-table-column prop="publishTime" label="发布时间" width="180">
-        <template #default="{ row }">
-          {{ dayjs(row.publishTime).format('YYYY-MM-DD HH:mm') }}
-        </template>
-      </el-table-column>
-      <el-table-column label="操作" width="150" fixed="right">
-        <template #default="{ row }">
-          <el-button type="primary" link @click="handleEdit(row)" :icon="Edit" />
-          <el-button type="danger" link @click="handleDelete(row.id)" :icon="Delete" />
-        </template>
-      </el-table-column>
-    </el-table>
+    <CTable :data="filteredAnnouncements" :loading="loading" :columns="columns" :total="total"
+      v-model:current-page="currentPage" v-model:page-size="pageSize" @page-change="handlePageChange">
 
-    <!-- 分页 -->
-    <div class="pagination">
-      <el-pagination
-        v-model:current-page="currentPage"
-        v-model:page-size="pageSize"
-        :page-sizes="[10, 20, 50]"
-        layout="total, sizes, prev, pager, next, jumper"
-        :total="total"
-        @size-change="handleSizeChange"
-        @current-change="handlePageChange"
-      />
-    </div>
+      <template #action="{ row }">
+        <el-button link type="primary" @click="handleEdit(row)">编辑</el-button>
+        <el-button link type="danger" @click="handleDelete(row.id)">删除</el-button>
+      </template>
+    </CTable>
 
     <!-- 编辑对话框 -->
-    <el-dialog
-      v-model="dialogVisible"
-      :title="isEdit ? '编辑公告' : '新增公告'"
-      width="600px"
-    >
-      <el-form :model="formData" :rules="rules" ref="formRef" label-width="80px">
-        <el-form-item label="公告标题" prop="title">
-          <el-input v-model="formData.title" placeholder="请输入公告标题" />
-        </el-form-item>
-        
-        <el-form-item label="公告内容" prop="content">
-          <el-input
-            v-model="formData.content"
-            type="textarea"
-            :rows="4"
-            placeholder="请输入公告内容"
-            show-word-limit
-            maxlength="500"
-          />
-        </el-form-item>
-        
-        <el-form-item label="状态" prop="status">
-          <el-radio-group v-model="formData.status">
-            <el-radio :label="1">启用</el-radio>
-            <el-radio :label="0">禁用</el-radio>
-          </el-radio-group>
-        </el-form-item>
-        
-        <el-form-item label="发布时间">
-          <el-date-picker
-            v-model="formData.publishTime"
-            type="datetime"
-            placeholder="选择发布时间"
-            value-format="YYYY-MM-DD HH:mm:ss"
-          />
-        </el-form-item>
-      </el-form>
-      
-      <template #footer>
-        <el-button @click="dialogVisible = false">取消</el-button>
-        <el-button type="primary" @click="handleSubmit">确认</el-button>
-      </template>
-    </el-dialog>
+    <NoticeForm ref="refNotice" @submit="handleSubmit" />
   </div>
 </template>
 
 <script setup>
-import { ref, reactive, computed } from 'vue'
+import { ref, computed, render } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { Search, Plus, Edit, Delete } from '@element-plus/icons-vue'
 import dayjs from 'dayjs'
-
+import NoticeForm from './components/NoticeForm.vue'
+import CTable from '@/components/CTable.vue'
 // 模拟数据
 const mockData = Array.from({ length: 50 }).map((_, index) => ({
   id: index + 1,
@@ -139,35 +47,35 @@ const mockData = Array.from({ length: 50 }).map((_, index) => ({
   publishTime: dayjs().subtract(index, 'day').format('YYYY-MM-DD HH:mm:ss')
 }))
 
+const refNotice = ref(null)
+
+const columns = [
+  { label: '标题', prop: 'title' },
+  { label: '发布时间', prop: 'publishTime' },
+  { label: '发布人', prop: 'publisher' },
+  { label: '状态', prop: 'status', render: (row) => (row.status === 0 ? '已发布' : '未发布') },
+  {
+    label: '操作',
+    width: 150,
+    align: 'center',
+    slotName: 'action',
+  }
+]
+
+
 // 状态管理
 const loading = ref(false)
-const dialogVisible = ref(false)
-const isEdit = ref(false)
 const searchKeyword = ref('')
 const publishDate = ref([])
 const currentPage = ref(1)
 const pageSize = ref(10)
 const total = ref(mockData.length)
 
-const formData = reactive({
-  id: null,
-  title: '',
-  content: '',
-  status: 1,
-  publishTime: dayjs().format('YYYY-MM-DD HH:mm:ss')
-})
-
-const rules = {
-  title: [{ required: true, message: '请输入公告标题', trigger: 'blur' }],
-  content: [{ required: true, message: '请输入公告内容', trigger: 'blur' }]
-}
-
-// 计算属性
 const filteredAnnouncements = computed(() => {
   return mockData
     .filter(item => {
       const keywordMatch = item.title.includes(searchKeyword.value)
-      const dateMatch = publishDate.value?.length === 2 
+      const dateMatch = publishDate.value?.length === 2
         ? dayjs(item.publishTime).isBetween(publishDate.value[0], publishDate.value[1])
         : true
       return keywordMatch && dateMatch
@@ -177,27 +85,28 @@ const filteredAnnouncements = computed(() => {
 
 // 方法
 const handleAdd = () => {
-  isEdit.value = false
-  Object.assign(formData, {
-    id: null,
-    title: '',
-    content: '',
-    status: 1,
-    publishTime: dayjs().format('YYYY-MM-DD HH:mm:ss')
-  })
-  dialogVisible.value = true
+  refNotice.value.title = '新增公告'
+  refNotice.value.openDialog()
 }
 
 const handleEdit = (row) => {
-  isEdit.value = true
-  Object.assign(formData, row)
-  dialogVisible.value = true
+  console.log(row);
+  
+  refNotice.value.title = '编辑公告'
+  refNotice.value.openDialog(row)
 }
 
-const handleSubmit = async () => {
-  // 这里添加实际提交逻辑
-  ElMessage.success(isEdit.value ? '修改成功' : '新增成功')
-  dialogVisible.value = false
+const handleSubmit = async (type, data) => {
+  if (type === 'add') {
+
+  } else {
+
+  }
+
+}
+
+const handleDateChange = (val) => {
+  console.log(val);
 }
 
 const handleDelete = (id) => {
@@ -211,14 +120,8 @@ const handleDelete = (id) => {
   })
 }
 
-// 分页处理
-const handleSizeChange = (val) => {
-  pageSize.value = val
-  currentPage.value = 1
-}
 
-const handlePageChange = (val) => {
-  currentPage.value = val
+const handlePageChange = () => {
 }
 </script>
 
