@@ -27,9 +27,21 @@ const routes = [
       },
       {
         path: "/room",
-        name: "Room",
         meta: { title: "客房管理", icon: "House" },
-        component: () => import("@/views/Room.vue"),
+        children: [
+          {
+            path: "/roomList",
+            name: "RoomList",
+            component: () => import("@/views/Room.vue"),
+            meta: { title: "客房列表", icon: "Document"},
+          },
+          {
+            path: "/roomType",
+            name: "RoomType",
+            meta: { title: "房型管理", icon: "Document" },
+            component: () => import("@/views/RoomType.vue"),
+          },
+        ],
       },
       {
         path: "/checkin",

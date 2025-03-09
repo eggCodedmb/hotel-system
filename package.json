@@ -12,6 +12,7 @@
     "@element-plus/icons-vue": "^2.3.1",
     "@tailwindcss/vite": "^4.0.10",
     "@vueuse/core": "^12.8.2",
+    "axios": "^1.8.2",
     "echarts": "^5.6.0",
     "element-plus": "^2.9.5",
     "pinia": "^3.0.1",

@@ -40,6 +40,7 @@
     <c-table :columns="columns" :data="tableData" :total="total" v-model:current-page="currentPage"
       v-model:page-size="pageSize" @page-change="handlePageChange">
       <template #action="{ row }">
+        <el-button type="warning" size="small" @click="handleCheckout(row)">退房</el-button>
         <el-button type="primary" size="small" @click="handleDetail(row)">详情</el-button>
         <el-button type="primary" size="small" @click="handleEdit(row)">编辑</el-button>
         <el-button type="danger" size="small" @click="handleDelete(row)">删除</el-button>
@@ -49,7 +50,7 @@
         <el-tag v-if="row.state === '已入住'" type="danger" effect="dark">已入住</el-tag>
         <el-tag v-if="row.state === '已预订'" type="primary" effect="dark">已预订</el-tag>
         <el-tag v-if="row.state === '空闲'" type="success" effect="dark">空闲</el-tag>
-        <el-tag v-if="row.state === '已退房'" type="warning" effect="dark">退房</el-tag>
+        <el-tag v-if="row.state === '已退房'" type="warning" effect="dark">已退房</el-tag>
       </template>
       <template #image="{ row }">
         <el-image :src="row.image" style="width: 60px; height: 60px" />
@@ -125,13 +126,6 @@ export default {
     this.getTableData();
     this.tableData = [
       {
-        roomName: "101",
-        type: "单人间",
-        price: "100",
-        state: "空闲",
-        image: this.image,
-      },
-      {
         roomName: "102",
         type: "双人间",
         price: "200",
@@ -167,25 +161,12 @@ export default {
         image: this.image,
       },
       {
-        roomName: "107",
-        type: "三人间",
-        price: "300",
-        state: "已入住",
-        image: this.image,
-      },
-      {
         roomName: "108",
         type: "四人间",
         price: "400",
         state: "已退房",
         image: this.image,
       },
-      {
-        roomName: "109",
-        type: "单人间",
-        price: "100",
-        state: "空闲",
-      }
     ];
   },
   methods: {
@@ -195,6 +176,13 @@ export default {
     handleEdit(row) {
       this.$refs.roomForm.title = "编辑房间";
       this.$refs.roomForm.openDialog(row);
+    },
+    handleCheckout(row) {
+      this.$confirm("确定退房吗？", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      })
     },
     handleDetail(row) {
       this.$refs.roomForm.title = "房间详情";
