@@ -10,7 +10,7 @@
                 </el-col>
                 <el-col :span="6">
                     <el-form-item label="请假类型">
-                        <el-select v-model="searchForm.type" clearable>
+                        <el-select v-model="searchForm.type" clearable placeholder="请选择请假类型">
                             <el-option v-for="item in leaveTypes" :key="item.value" :label="item.label"
                                 :value="item.value" />
                         </el-select>
@@ -19,7 +19,7 @@
                 </el-col>
                 <el-col :span="6">
                     <el-form-item label="状态">
-                        <el-select v-model="searchForm.status" clearable>
+                        <el-select v-model="searchForm.status" clearable placeholder="请选择状态">
                             <el-option v-for="item in statusOptions" :key="item.value" :label="item.label"
                                 :value="item.value" />
                         </el-select>
@@ -99,10 +99,10 @@ const columns = [
     { label: '申请人', prop: 'applicant' },
     { label: '请假类型', prop: 'type', tag: true, tagType: 'type' },
     { label: '请假时间', prop: 'startTime', formatter: (row) => `${row.startTime} 至 ${row.endTime}` },
-    { label: '请假时长', prop: 'duration', formatter: (row) => `${row.duration}天` },
     { label: '申请时间', prop: 'createTime' },
+    { label: '请假时长', prop: 'duration', formatter: (row) => `${row.duration}天` },
     { label: '状态', prop: 'status', slotName: 'status' },
-    { label: '操作', prop: 'action', slotName: 'action' }
+    { label: '操作', prop: 'action', slotName: 'action',width: 300}
 ]
 
 // 状态配置
