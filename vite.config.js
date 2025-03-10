@@ -30,6 +30,16 @@ export default defineConfig({
         drop_debugger: true,
       },
     },
+  },
+  // 代理 http://192.168.1.166:8080
+  server: {
+    proxy: {
+      '/api': {
+        target: 'http://192.168.1.166:8080',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api/, '')
+      },
+    },
   }
 })
 

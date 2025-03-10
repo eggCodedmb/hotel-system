@@ -2,6 +2,17 @@
   <el-dialog :title="title" v-model="dialogVisible" :close-on-click-modal="false">
     <el-form ref="refForm" :model="form" :rules="rules" label-width="100px" label-position="right" class="custom-form">
       <el-row :gutter="20">
+        <!-- 姓名、年龄 -->
+        <el-col :xs="24" :md="12">
+          <el-form-item label="姓名" prop="name">
+            <el-input v-model="form.name" placeholder="请输入姓名" clearable />
+          </el-form-item>
+        </el-col>
+        <el-col :xs="24" :md="12">
+          <el-form-item label="年龄" prop="age">
+            <el-input v-model="form.age" placeholder="请输入年龄" clearable />
+          </el-form-item>
+        </el-col>
         <!-- 第一行：用户名 + 密码 -->
         <el-col :xs="24" :md="12">
           <el-form-item label="用户名" prop="username">

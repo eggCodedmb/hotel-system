@@ -77,18 +77,24 @@ const loginRules = reactive({
   ],
 });
 
-const handleLogin = async () => {
+const handleLogin = () => {
   loading.value = true;
-  loginFormRef.value.validate((valid) => {
+  loginFormRef.value.validate(async (valid) => {
     if (!valid) return;
-    // TODO: 登录逻辑
-    if (loginForm.username === "admin" && loginForm.password === "123456") {
+    const parmas = {
+      loginName: loginForm.username,
+      password: loginForm.password,
+    };
+
+    const res = await login(parmas);
+
+    if (res.success) {
       ElMessage.success("登录成功");
       router.push("/home");
       loading.value = false;
       userStore.saveUser(loginForm);
       if (rememberMe.value) {
-        userStore.saveRemember(...loginForm);
+        userStore.saveRemember(loginForm.username, loginForm.password);
       } else {
         userStore.removeRemember();
       }
@@ -103,7 +109,7 @@ const handleLogin = async () => {
 <style scoped lang="scss">
 .login-container {
   height: 100vh;
-  display: flex;
+  display: flex !important;
   justify-content: center;
   align-items: center;
   position: relative;
