@@ -62,6 +62,12 @@ import { ref } from "vue";
 import { ElMessage, ElMessageBox } from "element-plus";
 import CTable from "@/components/CTable.vue";
 import UserForm from "./components/UserForm.vue";
+import {
+  addEmployee,
+  updateEmployee,
+  getEmployeeList,
+  deleteEmployee,
+} from "@/api/user";
 
 export default {
   name: "User",
@@ -69,7 +75,7 @@ export default {
   setup() {
     const form = ref({
       name: "",
-      state: 1,
+      state: "",
       position: "",
     });
 
@@ -87,43 +93,7 @@ export default {
       { label: "操作", slotName: "action" },
     ]);
 
-    const tableData = ref([
-      {
-        index: "1",
-        date: "2016-05-02",
-        name: "王小虎",
-        status: "在职",
-        phone: "13800138000",
-      },
-      {
-        index: "2",
-        date: "2016-05-04",
-        name: "王小虎",
-        status: "离职",
-        phone: "13800138000",
-      },
-      {
-        index: "3",
-        date: "2016-05-04",
-        name: "王小虎",
-        status: "离职",
-        phone: "13800138000",
-      },
-      {
-        index: "4",
-        date: "2016-05-01",
-        name: "王小虎",
-        status: "在职",
-        phone: "13800138000",
-      },
-      {
-        index: "5",
-        date: "2016-05-03",
-        name: "王小虎",
-        status: "离职",
-        phone: "13800138000",
-      },
-    ]);
+    const tableData = ref([]);
 
     const currentPage = ref(1);
     const pageSize = ref(10);
@@ -132,12 +102,17 @@ export default {
 
     // 搜索
     const search = () => {
-      console.log("搜索", form.value);
+      getTableData();
     };
 
     // 重置表单
     const resetForm = () => {
-      form.value = { name: "", state: 1, position: "" };
+      form.value = {
+        name: "",
+        state: "",
+        position: "",
+      };
+      getTableData();
     };
 
     // 添加用户
@@ -156,18 +131,21 @@ export default {
       userForm.value.openDialog(row);
     };
 
-    // **✅ 修正 ElMessageBox 不弹出问题**
     const handleDelete = async (row) => {
       await ElMessageBox.confirm("确定删除该用户吗？", "提示", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
         type: "warning",
       })
-        .then(() => {
-          ElMessage({
-            type: "success",
-            message: "删除成功!",
-          });
+        .then(async () => {
+          const res = await deleteEmployee(row.id);
+          if (res.success) {
+            ElMessage({
+              type: "success",
+              message: "删除成功!",
+            });
+            getTableData();
+          }
         })
         .catch(() => {
           ElMessage({
@@ -181,6 +159,26 @@ export default {
     const handlePageChange = ({ currentPage, pageSize }) => {
       currentPage.value = currentPage;
       pageSize.value = pageSize;
+      getTableData();
+    };
+
+    const getTableData = async () => {
+      const params = {
+        currentPage: currentPage.value,
+        pageSize: pageSize.value,
+        ...form.value,
+      };
+      // 删除空值
+      Object.keys(params).forEach((key) => {
+        if (!params[key]) {
+          delete params[key];
+        }
+      });
+      const res = await getEmployeeList(params);
+      if (res.success) {
+      } else {
+        ElMessage.error(res.message);
+      }
     };
 
     return {
@@ -199,6 +197,7 @@ export default {
       handleDelete,
       handlePageChange,
       userForm,
+      getTableData,
     };
   },
 };
