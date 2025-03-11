@@ -22,9 +22,7 @@ class HttpClient {
   // 请求成功处理
   handleRequestSuccess = (config) => {
     // 自动携带Token
-    console.log("token", getToken());
     if (getToken()) {
-      
       config.headers["token"] = `${getToken()}`;
     }
 
