@@ -111,10 +111,10 @@ export default {
   data() {
     return {
       form: {
-        roomName: "",
+        roomId: "",
         type: "",
         price: "",
-        state: null,
+        status: "",
       },
       stateOptions: [
         {
@@ -219,9 +219,23 @@ export default {
         pageNumber: this.currentPage,
         pageSize: this.pageSize,
       };
+      // params 删除空值
+      for (const key in params) {
+        if (params[key] === "") {
+          delete params[key];
+        }
+      }
       getRoomList(params).then((res) => {
         if (res.success) {
-          console.log(res);
+          this.tableData = res.result.records;
+          this.total = res.result.total;
+          this.currentPage = res.result.current;
+          this.pageSize = res.result.size;
+        } else {
+          this.$message({
+            type: "error",
+            message: res.message,
+          });
         }
       });
     },
