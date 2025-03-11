@@ -3,18 +3,13 @@
     <el-row :gutter="20">
       <el-col :span="6">
         <el-form-item label="房间号">
-          <el-input v-model="form.roomName" placeholder="请输入" />
+          <el-input v-model="form.roomId" placeholder="请输入" />
         </el-form-item>
       </el-col>
       <el-col :span="6">
         <el-form-item label="房间类型">
           <el-select v-model="form.type" placeholder="请选择">
-            <el-option
-              v-for="item in roomTypeOptions"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            >
+            <el-option v-for="item in roomTypeOptions" :key="item.value" :label="item.label" :value="item.value">
             </el-option>
           </el-select>
         </el-form-item>
@@ -26,13 +21,8 @@
       </el-col>
       <el-col :span="6">
         <el-form-item label="房间状态">
-          <el-select v-model="form.state" placeholder="请选择">
-            <el-option
-              v-for="item in stateOptions"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            >
+          <el-select v-model="form.status" placeholder="请选择">
+            <el-option v-for="item in stateOptions" :key="item.value" :label="item.label" :value="item.value">
             </el-option>
           </el-select>
         </el-form-item>
@@ -40,49 +30,27 @@
     </el-row>
     <el-row>
       <el-col :span="3" :offset="21">
-        <el-button type="primary">查询</el-button>
-        <el-button type="warning">重置</el-button>
+        <el-button type="primary" @click="search">查询</el-button>
+        <el-button type="warning" @click="reset">重置</el-button>
       </el-col>
     </el-row>
     <el-col :span="21">
       <el-button type="primary" @click="addRoom">新增</el-button>
     </el-col>
-    <c-table
-      :columns="columns"
-      :data="tableData"
-      :total="total"
-      v-model:current-page="currentPage"
-      v-model:page-size="pageSize"
-      @page-change="handlePageChange"
-    >
+    <c-table :columns="columns" :data="tableData" :total="total" v-model:current-page="currentPage"
+      v-model:page-size="pageSize" @page-change="handlePageChange">
       <template #action="{ row }">
-        <el-button type="warning" size="small" @click="handleCheckout(row)"
-          >退房</el-button
-        >
-        <el-button type="primary" size="small" @click="handleDetail(row)"
-          >详情</el-button
-        >
-        <el-button type="primary" size="small" @click="handleEdit(row)"
-          >编辑</el-button
-        >
-        <el-button type="danger" size="small" @click="handleDelete(row)"
-          >删除</el-button
-        >
+        <el-button type="warning" size="small" @click="handleCheckout(row)">退房</el-button>
+        <el-button type="primary" size="small" @click="handleDetail(row)">详情</el-button>
+        <el-button type="primary" size="small" @click="handleEdit(row)">编辑</el-button>
+        <el-button type="danger" size="small" @click="handleDelete(row)">删除</el-button>
       </template>
       <template #state="{ row }">
         <!-- 已入住：红色、已预定：蓝色、空闲：绿色、退房：黄色 -->
-        <el-tag v-if="row.state === '已入住'" type="danger" effect="dark"
-          >已入住</el-tag
-        >
-        <el-tag v-if="row.state === '已预订'" type="primary" effect="dark"
-          >已预订</el-tag
-        >
-        <el-tag v-if="row.state === '空闲'" type="success" effect="dark"
-          >空闲</el-tag
-        >
-        <el-tag v-if="row.state === '已退房'" type="warning" effect="dark"
-          >已退房</el-tag
-        >
+        <el-tag v-if="row.status === '已入住'" type="danger" effect="dark">已入住</el-tag>
+        <el-tag v-if="row.status === '已预订'" type="primary" effect="dark">已预订</el-tag>
+        <el-tag v-if="row.status === '空闲'" type="success" effect="dark">空闲</el-tag>
+        <el-tag v-if="row.status === '已退房'" type="warning" effect="dark">已退房</el-tag>
       </template>
       <template #image="{ row }">
         <el-image :src="row.image" style="width: 60px; height: 60px" />
@@ -165,6 +133,18 @@ export default {
     this.getTableData();
   },
   methods: {
+    reset() {
+      this.form = {
+        roomId: "",
+        type: "",
+        price: "",
+        status: "",
+      };
+    },
+    search() {
+      this.currentPage = 1;
+      this.getTableData();
+    },
     addRoom() {
       this.$refs.roomForm.openDialog();
     },
@@ -242,9 +222,17 @@ export default {
     initTable() {
       const columns = [
         {
+          label: "序号",
+          prop: "id",
+          width: 80,
+          render: (row, index, column) => {
+            return (this.currentPage - 1) * this.pageSize + index + 1;
+          },
+        },
+        {
           label: "房间号",
           prop: "roomId",
-          width: 100,
+          width: 140,
         },
         {
           label: "房间类型",
