@@ -9,7 +9,12 @@
       <el-col :span="6">
         <el-form-item label="房间类型">
           <el-select v-model="form.type" placeholder="请选择">
-            <el-option v-for="item in roomTypeOptions" :key="item.value" :label="item.label" :value="item.value">
+            <el-option
+              v-for="item in roomTypeOptions"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            >
             </el-option>
           </el-select>
         </el-form-item>
@@ -22,7 +27,12 @@
       <el-col :span="6">
         <el-form-item label="房间状态">
           <el-select v-model="form.state" placeholder="请选择">
-            <el-option v-for="item in stateOptions" :key="item.value" :label="item.label" :value="item.value">
+            <el-option
+              v-for="item in stateOptions"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            >
             </el-option>
           </el-select>
         </el-form-item>
@@ -37,20 +47,42 @@
     <el-col :span="21">
       <el-button type="primary" @click="addRoom">新增</el-button>
     </el-col>
-    <c-table :columns="columns" :data="tableData" :total="total" v-model:current-page="currentPage"
-      v-model:page-size="pageSize" @page-change="handlePageChange">
+    <c-table
+      :columns="columns"
+      :data="tableData"
+      :total="total"
+      v-model:current-page="currentPage"
+      v-model:page-size="pageSize"
+      @page-change="handlePageChange"
+    >
       <template #action="{ row }">
-        <el-button type="warning" size="small" @click="handleCheckout(row)">退房</el-button>
-        <el-button type="primary" size="small" @click="handleDetail(row)">详情</el-button>
-        <el-button type="primary" size="small" @click="handleEdit(row)">编辑</el-button>
-        <el-button type="danger" size="small" @click="handleDelete(row)">删除</el-button>
+        <el-button type="warning" size="small" @click="handleCheckout(row)"
+          >退房</el-button
+        >
+        <el-button type="primary" size="small" @click="handleDetail(row)"
+          >详情</el-button
+        >
+        <el-button type="primary" size="small" @click="handleEdit(row)"
+          >编辑</el-button
+        >
+        <el-button type="danger" size="small" @click="handleDelete(row)"
+          >删除</el-button
+        >
       </template>
       <template #state="{ row }">
         <!-- 已入住：红色、已预定：蓝色、空闲：绿色、退房：黄色 -->
-        <el-tag v-if="row.state === '已入住'" type="danger" effect="dark">已入住</el-tag>
-        <el-tag v-if="row.state === '已预订'" type="primary" effect="dark">已预订</el-tag>
-        <el-tag v-if="row.state === '空闲'" type="success" effect="dark">空闲</el-tag>
-        <el-tag v-if="row.state === '已退房'" type="warning" effect="dark">已退房</el-tag>
+        <el-tag v-if="row.state === '已入住'" type="danger" effect="dark"
+          >已入住</el-tag
+        >
+        <el-tag v-if="row.state === '已预订'" type="primary" effect="dark"
+          >已预订</el-tag
+        >
+        <el-tag v-if="row.state === '空闲'" type="success" effect="dark"
+          >空闲</el-tag
+        >
+        <el-tag v-if="row.state === '已退房'" type="warning" effect="dark"
+          >已退房</el-tag
+        >
       </template>
       <template #image="{ row }">
         <el-image :src="row.image" style="width: 60px; height: 60px" />
@@ -64,6 +96,13 @@
 import CTable from "@/components/CTable.vue";
 import RoomForm from "./components/RoomForm.vue";
 import { ElMessage, ElMessageBox } from "element-plus";
+import {
+  addRoom,
+  getRoomList,
+  updateRoom,
+  deleteRoom,
+  getRoomDetail,
+} from "@/api/room.js";
 export default {
   components: {
     CTable,
@@ -93,7 +132,7 @@ export default {
         {
           value: 3,
           label: "已退房",
-        }
+        },
       ],
       roomTypeOptions: [
         {
@@ -182,23 +221,31 @@ export default {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
         type: "warning",
-      })
+      });
     },
     handleDetail(row) {
       this.$refs.roomForm.title = "房间详情";
       this.$refs.roomForm.openDialog(row);
     },
-    handleDelete(row) {
+    async handleDelete(row) {
       this.$confirm("确定删除该房间吗？", "提示", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
         type: "warning",
       })
-        .then(() => {
-          this.$message({
-            type: "success",
-            message: "删除成功!",
-          });
+        .then(async () => {
+          const res = await deleteRoom(row.id);
+          if (res.success) {
+            this.$message({
+              type: "success",
+              message: "删除成功!",
+            });
+          } else {
+            this.$message({
+              type: "error",
+              message: "删除失败!",
+            });
+          }
         })
         .catch(() => {
           this.$message({
@@ -213,10 +260,12 @@ export default {
     getTableData() {
       const params = {
         ...this.form,
-        currentPage: this.currentPage,
+        pageNumber: this.currentPage,
         pageSize: this.pageSize,
       };
-      console.log(params);
+      getRoomList(params).then((res) => {
+        console.log(res);
+      });
     },
     initTable() {
       const columns = [

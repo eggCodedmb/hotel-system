@@ -58,6 +58,7 @@ import { ElMessage } from "element-plus";
 import { useRouter } from "vue-router";
 import { useUserStore } from "@/store/modules/userStore";
 import { login } from "@/api/login";
+import { setToken } from "@/utils/auth";
 const loginFormRef = ref();
 const rememberMe = ref(false);
 const loading = ref(false);
@@ -93,6 +94,10 @@ const handleLogin = () => {
       router.push("/home");
       loading.value = false;
       userStore.saveUser(loginForm);
+      const rawToken = res.message;
+
+      setToken(rawToken);
+
       if (rememberMe.value) {
         userStore.saveRemember(loginForm.username, loginForm.password);
       } else {
