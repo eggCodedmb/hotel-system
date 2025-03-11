@@ -34,6 +34,7 @@
 <script setup>
 import { ref, computed, render } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
+import { Plus, Search } from '@element-plus/icons-vue'
 import dayjs from 'dayjs'
 import NoticeForm from './components/NoticeForm.vue'
 import CTable from '@/components/CTable.vue'
@@ -103,6 +104,9 @@ const handleSubmit = async (type, data) => {
 
   }
 
+}
+const handleSearch = () => {
+  
 }
 
 const handleDateChange = (val) => {

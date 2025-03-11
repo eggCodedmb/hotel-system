@@ -3,11 +3,11 @@
     <el-row :gutter="20">
       <el-col :span="12">
         <el-form ref="refForm" :model="formData" :rules="rules" label-width="80px">
-          <el-form-item label="字典名称" prop="label">
-            <el-input v-model="formData.label" placeholder="请输入字典名称"></el-input>
+          <el-form-item label="字典名称" prop="itemText">
+            <el-input v-model="formData.itemText" placeholder="请输入字典名称"></el-input>
           </el-form-item>
-          <el-form-item label="字典值" prop="value">
-            <el-input v-model="formData.value" placeholder="请输入字典值"></el-input>
+          <el-form-item label="字典值" prop="itemValue">
+            <el-input v-model="formData.itemValue" placeholder="请输入字典值"></el-input>
           </el-form-item>
           <el-form-item label="状态" prop="status">
             <el-select v-model="formData.status" placeholder="请选择字典状态">
@@ -20,7 +20,7 @@
       <el-col :span="12">
         <c-table :data="dictList" :columns="columns" :show-pagination="false" height="250">
           <template #status="{ row }">
-            <el-switch v-model="row.status" @change="switchStatus(row)" />
+            <el-switch v-model="row.status" active-value="1" inactive-value="0" @change="switchStatus(row)" />
           </template>
           <template #action="{ row }">
             <el-button type="danger" link @click="deleteDict(row)">删除</el-button>
@@ -40,12 +40,15 @@
 
 <script setup>
 import { ref, defineExpose, defineEmits, reactive, defineProps } from "vue";
-import { ElMessage } from "element-plus";
+import { ElMessage, ElMessageBox } from "element-plus";
 import CTable from "@/components/CTable.vue";
-import { getDictList, getDictDetail, addDict, addDictItem, updateDict, updateDictItem, deleteDict, deleteDictItem } from "@/api/dict.js";
+import { addDict, addDictItem, updateDictItem, deleteDictItem, getDictList, getDictDetail } from "@/api/dict.js";
 const formData = reactive({
-  label: "",
-  value: "",
+  dictId: "",
+  itemText: "",
+  itemValue: "",
+  description: "",
+  status: "1"
 })
 const emit = defineEmits(["submit", "switchStatus"]);
 const props = defineProps({
@@ -56,60 +59,100 @@ const props = defineProps({
   },
 })
 // 字典列表
-const dictList = ref([
-]);
+const dictList = ref([]);
 
 const title = ref("新增字典");
 const refForm = ref(null);
 const dialogVisible = ref(false);
 
 const rules = ref({
-  label: [{ required: true, message: "请输入字典名称", trigger: "blur" }],
-  value: [{ required: true, message: "请输入字典值", trigger: "blur" }],
-  status: [{ required: true, message: "请选择字典状态", trigger: "change" }],
+  itemText: [
+    { required: true, message: "请输入字典项名称", trigger: "blur" },
+  ],
+  itemValue: [
+    { required: true, message: "请输入字典值", trigger: "blur" },
+  ],
+  status: [
+    { required: true, message: "请选择字典状态", trigger: "change" },
+  ],
 });
 
-const openDialog = (row) => {
+const openDialog = (id) => {
   dialogVisible.value = true;
-  if (!row) return;
-  Object.assign(formData, row);
+  if (!id) return;
+  formData.dictId = id;
+  getDictData(id);
 };
 
 const closeDialog = () => {
   dialogVisible.value = false;
   refForm.value.resetFields();
+  dictList.value = [];
 };
 
 const submitForm = () => {
-  refForm.value.validate((valid) => {
+  refForm.value.validate(async (valid) => {
     if (valid) {
-      if (props.customAdd && typeof props.customAdd === "function") {
-        props.customAdd(formData);
+      const res = await addDictItem(formData);
+      if (res.success) {
+        ElMessage.success(res.message || "操作成功");
+      } else {
+        ElMessage.error(res.message || "操作失败");
       }
-      emit("submit", title.value === "新增字典" ? "add" : "update", formData);
+      refForm.value.resetFields();
+      getDictData(formData.dictId);
     } else {
       ElMessage.warning("请填写完整信息");
     }
   });
 };
 
-const switchStatus = (row) => {
-  console.log(row);
 
-  emit("switchStatus", row);
-}
+const switchStatus = (row) => {
+  updateDictItem({ id: row.id, status: row.status }).then(res => {
+    if (res.success) {
+      ElMessage.success(res.message || "操作成功");
+    } else {
+      ElMessage.error(res.message || "操作失败");
+    }
+    emit("switchStatus", row);
+  });
+};
 
 const columns = [
-  { label: "字典名称", prop: "label" },
-  { label: "字典值", prop: "value" },
+  { label: "字典名称", prop: "itemText" },
+  { label: "字典值", prop: "itemValue" },
   { label: "状态", prop: "status", slotName: "status" },
   { label: "操作", prop: "action", slotName: "action", },
 ];
 
 const deleteDict = (row) => {
-  ElMessage.success("删除成功");
-  dictList.value = dictList.value.filter((item) => item !== row);
+  ElMessageBox.confirm("确定删除该字典项吗？", "提示", {
+    confirmButtonText: "确定",
+    cancelButtonText: "取消",
+    type: "warning",
+  })
+    .then(async () => {
+      const res = await deleteDictItem({ id: row.id });
+      if (res.success) {
+        ElMessage.success(res.message || "删除成功");
+        getDictData(formData.dictId);
+      } else {
+        ElMessage.error(res.message || "删除失败");
+      }
+    })
+    .catch(() => { });
 };
+
+const getDictData = async (dictId) => {
+  const res = await getDictDetail({ id: dictId });
+  if (res.success) {
+    dictList.value = res.result.records;
+  } else {
+    ElMessage.error(res.message || "获取字典数据失败");
+  }
+}
+
 defineExpose({
   openDialog,
   title,

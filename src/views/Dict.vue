@@ -23,7 +23,8 @@
         <el-button type="danger" size="small" @click="handleDelete(row)">删除</el-button>
       </template>
     </c-table>
-    <dict-form ref="dictForm" @submit="getTableData" />
+    <dict-form ref="dictForm" />
+    <add-dict-form ref="addForm" @submit="getTableData" />
   </div>
 </template>
 
@@ -31,11 +32,13 @@
 import CTable from "@/components/CTable.vue";
 import { useDictStore } from "@/store/modules/dictStore";
 import DictForm from "./components/DictForm.vue";
-import { getDictList, getDictDetail, addDict, addDictItem, updateDict, updateDictItem, deleteDict, deleteDictItem } from "@/api/dict.js";
+import addDictForm from "./components/addDictForm.vue";
+import { getDictList, getDictDetail, addDict, updateDict, deleteDict } from "@/api/dict.js";
 export default {
   components: {
     CTable,
     DictForm,
+    addDictForm,
   },
   data() {
     return {
@@ -50,16 +53,15 @@ export default {
   mounted() {
     this.initTable();
     this.getTableData();
-    console.log(useDictStore);
   },
   methods: {
     addDict() {
-      this.$refs.dictForm.title = "新增字典";
-      this.$refs.dictForm.openDialog();
+      this.$refs.addForm.title = "新增字典";
+      this.$refs.addForm.openDialog();
     },
     handleEdit(row) {
       this.$refs.dictForm.title = "编辑字典";
-      this.$refs.dictForm.openDialog(row);
+      this.$refs.dictForm.openDialog(row.id);
     },
     handleDelete(row) {
       this.$confirm("确定删除该字典吗？", "提示", {
@@ -78,13 +80,21 @@ export default {
     handlePageChange() {
       this.getTableData();
     },
-    getTableData() {
+    async getTableData() {
       const params = {
         ...this.form,
         currentPage: this.currentPage,
         pageSize: this.pageSize,
       };
+      const res = await getDictList(params);
+      if (res.success) {
+        this.tableData = res.result.records;
+        this.total = res.result.total;
+        this.currentPage = res.result.current;
+        this.pageSize = res.result.size;
+      }
     },
+
     refreshCache() {
 
     },
@@ -92,38 +102,29 @@ export default {
       const columns = [
         {
           label: "序号",
-          prop: "index",
+          prop: "id",
           render: (row, index, column) => {
-            return index + 1;
+            return (this.currentPage - 1) * this.pageSize + index + 1;
           },
         },
         {
           label: "字典名称",
-          prop: "name",
+          prop: "dictName",
         },
         {
           label: "字典标识(唯一)",
-          prop: "code",
+          prop: "dictCode",
+        },
+        {
+          label: "字典描述",
+          prop: "dictDescription",
         },
         {
           label: "操作",
           slotName: "action",
         },
       ];
-      //  字典数据
-      const tableData = [
-        {
-          name: "性别",
-          code: "sex",
-        },
-        {
-          name: "状态",
-          code: "status",
-        },
-      ];
       this.columns = columns;
-      this.tableData = tableData;
-      this.total = tableData.length;
     },
   },
 };

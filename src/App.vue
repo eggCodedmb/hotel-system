@@ -14,9 +14,6 @@ const menuItems = generateMenu(routes)[0].children; // 递归生成菜单
 
 const isAdmin = true; // 是否是管理员
 
-console.log(menu);
-console.log(routes);
-
 if (isAdmin) {
   menuStore.saveRouter(menu); // 管理员菜单
 } else {
