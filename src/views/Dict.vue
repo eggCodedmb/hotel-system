@@ -31,6 +31,7 @@
 import CTable from "@/components/CTable.vue";
 import { useDictStore } from "@/store/modules/dictStore";
 import DictForm from "./components/DictForm.vue";
+import { getDictList, getDictDetail, addDict, addDictItem, updateDict, updateDictItem, deleteDict, deleteDictItem } from "@/api/dict.js";
 export default {
   components: {
     CTable,

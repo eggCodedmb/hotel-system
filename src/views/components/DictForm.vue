@@ -42,7 +42,7 @@
 import { ref, defineExpose, defineEmits, reactive, defineProps } from "vue";
 import { ElMessage } from "element-plus";
 import CTable from "@/components/CTable.vue";
-
+import { getDictList, getDictDetail, addDict, addDictItem, updateDict, updateDictItem, deleteDict, deleteDictItem } from "@/api/dict.js";
 const formData = reactive({
   label: "",
   value: "",
@@ -57,16 +57,6 @@ const props = defineProps({
 })
 // 字典列表
 const dictList = ref([
-  { label: "字典名称1", value: "字典值1", status: "启用" },
-  { label: "字典名称2", value: "字典值2", status: "禁用" },
-  { label: "字典名称3", value: "字典值3", status: "启用" },
-  { label: "字典名称4", value: "字典值4", status: "禁用" },
-  { label: "字典名称5", value: "字典值5", status: "启用" },
-  { label: "字典名称6", value: "字典值6", status: "禁用" },
-  { label: "字典名称7", value: "字典值7", status: "启用" },
-  { label: "字典名称8", value: "字典值8", status: "禁用" },
-  { label: "字典名称9", value: "字典值9", status: "启用" },
-  { label: "字典名称10", value: "字典值10", status: "禁用" },
 ]);
 
 const title = ref("新增字典");

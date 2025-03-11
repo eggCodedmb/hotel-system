@@ -1,9 +1,9 @@
-import { defineConfig } from 'vite'
-import vue from '@vitejs/plugin-vue'
-import AutoImport from 'unplugin-auto-import/vite'
-import Components from 'unplugin-vue-components/vite'
-import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
-import tailwindcss from '@tailwindcss/vite'
+import { defineConfig } from "vite";
+import vue from "@vitejs/plugin-vue";
+import AutoImport from "unplugin-auto-import/vite";
+import Components from "unplugin-vue-components/vite";
+import { ElementPlusResolver } from "unplugin-vue-components/resolvers";
+import tailwindcss from "@tailwindcss/vite";
 
 export default defineConfig({
   plugins: [
@@ -18,7 +18,7 @@ export default defineConfig({
   ],
   resolve: {
     alias: {
-      '@': '/src'
+      "@": "/src",
     },
   },
   build: {
@@ -34,14 +34,12 @@ export default defineConfig({
   // 代理 http://192.168.1.166:8080
   server: {
     proxy: {
-      '/api': {
-        target: 'http://192.168.1.166:8080',
+      "/api": {
+        // target: 'http://192.168.1.166:8080',
+        target: "https://51212e4e.r22.cpolar.top",
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api/, '')
+        rewrite: (path) => path.replace(/^\/api/, ""),
       },
     },
-  }
-})
-
-
-
+  },
+});

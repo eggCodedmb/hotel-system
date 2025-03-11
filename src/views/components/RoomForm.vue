@@ -154,8 +154,11 @@ const rules = ref({
 
 const emit = defineEmits(["refresh"]);
 
-const openDialog = () => {
+const openDialog = (data) => {
   dialogVisible.value = true;
+  if (data) {
+    form.value = { ...data };
+  }
 };
 
 const closeDialog = () => {
