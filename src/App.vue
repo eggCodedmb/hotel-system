@@ -12,7 +12,7 @@ const menuStore = useMenuStore();
 const routes = filterNonAdminRoutes(router.options.routes); // 过滤掉非管理员路由
 const menuItems = generateMenu(routes)[0].children; // 递归生成菜单
 
-const isAdmin = false; // 是否是管理员
+const isAdmin = true; // 是否是管理员
 
 console.log(menu);
 console.log(routes);
