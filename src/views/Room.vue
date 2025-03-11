@@ -264,7 +264,7 @@ export default {
         pageSize: this.pageSize,
       };
       getRoomList(params).then((res) => {
-        console.log(res);
+        
       });
     },
     initTable() {

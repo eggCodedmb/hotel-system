@@ -43,7 +43,7 @@ class HttpClient {
 
   // 请求错误处理
   handleRequestError = (error) => {
-    console.error("Request Error:", error);
+    console.error("请求错误:", error);
     return Promise.reject(error);
   };
 
@@ -62,7 +62,7 @@ class HttpClient {
 
     // 根据业务状态码处理
     const { code, data, message } = response.data;
-    
+
     if (code === 200) {
       return response.data;
     } else {
@@ -176,7 +176,7 @@ const BASE_API = '/api'
 const service = new HttpClient({
   baseURL: BASE_API,
   timeout: 15000,
-  withCredentials: true,
+  withCredentials: true, // 跨域请求时是否需要使用凭证
   transformRequest: [
     (data, headers) => {
       // 自动转换请求数据
