@@ -42,7 +42,7 @@
 import { ref, defineExpose, defineEmits, reactive, defineProps } from "vue";
 import { ElMessage, ElMessageBox } from "element-plus";
 import CTable from "@/components/CTable.vue";
-import { addDict, addDictItem, updateDictItem, deleteDictItem, getDictList, getDictDetail } from "@/api/dict.js";
+import { addDictItem, updateDictItem, deleteDictItem, getDictDetail } from "@/api/dict.js";
 const formData = reactive({
   dictId: "",
   itemText: "",
@@ -133,7 +133,7 @@ const deleteDict = (row) => {
     type: "warning",
   })
     .then(async () => {
-      const res = await deleteDictItem({ id: row.id });
+      const res = await deleteDictItem(row.id);
       if (res.success) {
         ElMessage.success(res.message || "删除成功");
         getDictData(formData.dictId);

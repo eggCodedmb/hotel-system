@@ -47,13 +47,13 @@
       </template>
       <template #state="{ row }">
         <!-- 已入住：红色、已预定：蓝色、空闲：绿色、退房：黄色 -->
-        <el-tag v-if="row.status === '已入住'" type="danger" effect="dark">已入住</el-tag>
-        <el-tag v-if="row.status === '已预订'" type="primary" effect="dark">已预订</el-tag>
-        <el-tag v-if="row.status === '空闲'" type="success" effect="dark">空闲</el-tag>
-        <el-tag v-if="row.status === '已退房'" type="warning" effect="dark">已退房</el-tag>
+        <el-tag v-if="row.status === '0'" type="success" effect="dark">空闲</el-tag>
+        <el-tag v-if="row.status === '1'" type="danger" effect="dark">已入住</el-tag>
+        <el-tag v-if="row.status === '2'" type="primary" effect="dark">已预订</el-tag>
+        <el-tag v-if="row.status === '3'" type="warning" effect="dark">已退房</el-tag>
       </template>
       <template #image="{ row }">
-        <el-image :src="row.image" style="width: 60px; height: 60px" />
+        <el-image :src="row.img" style="width: 60px; height: 60px" />
       </template>
     </c-table>
   </div>
