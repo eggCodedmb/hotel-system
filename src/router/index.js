@@ -17,13 +17,13 @@ const routes = [
         path: "/user",
         name: "User",
         component: () => import("@/views/User.vue"),
-        meta: { title: "员工管理", icon: "UserFilled" },
+        meta: { title: "员工管理", icon: "UserFilled", isAdmin: true },
       },
       {
         path: "/leave",
         name: "Leave",
         component: () => import("@/views/Leave.vue"),
-        meta: { title: "请假审批", icon: "Document" },
+        meta: { title: "请假审批", icon: "Document", isAdmin: true },
       },
       {
         path: "/room",
@@ -33,7 +33,7 @@ const routes = [
             path: "/roomList",
             name: "RoomList",
             component: () => import("@/views/Room.vue"),
-            meta: { title: "客房列表", icon: "Document"},
+            meta: { title: "客房列表", icon: "Document" },
           },
           {
             path: "/roomType",
@@ -77,7 +77,7 @@ const routes = [
         path: "/dict",
         name: "Dict",
         component: () => import("@/views/Dict.vue"),
-        meta: { title: "数据字典", icon: "Key", hidden: false },
+        meta: { title: "数据字典", icon: "Key", hidden: false,isAdmin: true },
       },
     ],
   },

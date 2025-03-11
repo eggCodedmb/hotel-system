@@ -16,6 +16,16 @@ export const useMenuStore = defineStore('menu', () => {
         menus.value = menu;
     };
 
+    // 添加路由黑名单
+    const addBlackList = (role) => {
+        if (role ==! 'admin') {
+            menus.value = menus.value.filter((item) => {
+                return item.meta.blackList !== true;
+            })
+        } else {
+            
+        }
+    }
     const getRouter = computed(() => menus.value);
 
 
