@@ -89,7 +89,7 @@
       </template>
     </c-table>
   </div>
-  <RoomForm ref="roomForm" />
+  <RoomForm ref="roomForm" @refresh="getTableData" />
 </template>
 
 <script>
@@ -102,7 +102,7 @@ import {
   updateRoom,
   deleteRoom,
   getRoomDetail,
-} from "@/api/room.js";
+} from "@/api/room";
 export default {
   components: {
     CTable,
@@ -163,50 +163,6 @@ export default {
   mounted() {
     this.initTable();
     this.getTableData();
-    this.tableData = [
-      {
-        roomName: "102",
-        type: "双人间",
-        price: "200",
-        state: "已预订",
-        image: this.image,
-      },
-      {
-        roomName: "103",
-        type: "三人间",
-        price: "300",
-        state: "空闲",
-        image: this.image,
-      },
-      {
-        roomName: "104",
-        type: "四人间",
-        price: "400",
-        state: "已预订",
-        image: this.image,
-      },
-      {
-        roomName: "105",
-        type: "单人间",
-        price: "100",
-        state: "已入住",
-        image: this.image,
-      },
-      {
-        roomName: "106",
-        type: "双人间",
-        price: "200",
-        state: "已退房",
-        image: this.image,
-      },
-      {
-        roomName: "108",
-        type: "四人间",
-        price: "400",
-        state: "已退房",
-        image: this.image,
-      },
-    ];
   },
   methods: {
     addRoom() {
@@ -264,14 +220,16 @@ export default {
         pageSize: this.pageSize,
       };
       getRoomList(params).then((res) => {
-        
+        if (res.success) {
+          console.log(res);
+        }
       });
     },
     initTable() {
       const columns = [
         {
           label: "房间号",
-          prop: "roomName",
+          prop: "roomId",
           width: 100,
         },
         {
@@ -284,11 +242,11 @@ export default {
         },
         {
           label: "房间图片",
-          slotName: "image",
+          slotName: "img",
         },
         {
           label: "房间状态",
-          slotName: "state",
+          slotName: "status",
           width: 90,
         },
         {

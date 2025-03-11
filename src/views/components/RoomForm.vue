@@ -15,10 +15,10 @@
       <el-row :gutter="20">
         <!-- 第一行：房间名称 + 房型 -->
         <el-col :xs="24" :md="12">
-          <el-form-item label="房间名称" prop="roomName">
+          <el-form-item label="房间号" prop="roomId">
             <el-input
-              v-model="form.roomName"
-              placeholder="请输入房间名称"
+              v-model="form.roomId"
+              placeholder="请输入房间号"
               clearable
               :disabled="isView"
             />
@@ -43,7 +43,7 @@
         <el-col :xs="24" :md="12">
           <el-form-item label="价格" prop="price">
             <el-input
-              v-model.number="form.price"
+              v-model="form.price"
               type="number"
               placeholder="请输入价格"
               :min="0"
@@ -54,9 +54,9 @@
           </el-form-item>
         </el-col>
         <el-col :xs="24" :md="12">
-          <el-form-item label="状态" prop="state">
+          <el-form-item label="状态" prop="status">
             <el-select
-              v-model="form.state"
+              v-model="form.status"
               placeholder="请选择状态"
               style="width: 100%"
               :disabled="isView"
@@ -79,7 +79,7 @@
               :before-upload="beforeImageUpload"
               :disabled="isView"
             >
-              <img v-if="form.image" :src="form.image" class="avatar" />
+              <img v-if="form.img" :src="form.image" class="avatar" />
               <el-icon v-else class="avatar-uploader-icon">
                 <Plus />
               </el-icon>
@@ -90,9 +90,9 @@
       </el-row>
       <el-row>
         <el-col :span="24">
-          <el-form-item label="房间简介" prop="description">
+          <el-form-item label="房间简介" prop="intro">
             <el-input
-              v-model="form.description"
+              v-model="form.intro"
               type="textarea"
               placeholder="请输入房间简介"
               clearable
@@ -113,17 +113,24 @@
 </template>
 
 <script setup>
-import { ref, defineExpose } from "vue";
+import { ref, defineExpose,defineEmits } from "vue";
 import { Plus } from "@element-plus/icons-vue";
 import { ElMessage } from "element-plus";
-
+import {
+  addRoom,
+  getRoomList,
+  updateRoom,
+  deleteRoom,
+  getRoomDetail,
+} from "@/api/room";
 const form = ref({
-  roomName: "",
+  id: "",
+  roomId: "",
   type: "",
-  price: null,
-  state: "空闲",
-  image: "",
-  description: "",
+  price: "",
+  intro: "",
+  img: "",
+  status: "",
 });
 
 const refForm = ref(null);
@@ -132,23 +139,20 @@ const dialogVisible = ref(false);
 const isView = ref(false);
 
 const rules = ref({
-  roomName: [{ required: true, message: "房间名称不能为空", trigger: "blur" }],
-  type: [{ required: true, message: "请选择房型", trigger: "change" }],
-  price: [
-    { required: true, message: "价格不能为空", trigger: "blur" },
-    { type: "number", message: "必须为数字值", trigger: "blur" },
+  roomId: [
+    { required: true, message: "请输入房间号", trigger: "blur" },
     {
-      validator: (_, value, callback) => {
-        if (value < 0) callback(new Error("价格不能为负数"));
-        else callback();
-      },
+      min: 3,
+      max: 10,
+      message: "房间号长度在 3 到 10 个字符",
       trigger: "blur",
     },
   ],
-  state: [{ required: true, message: "请选择状态", trigger: "change" }],
-  image: [{ required: true, message: "请上传图片", trigger: "change" }],
-  description: [{ required: true, message: "请输入房间简介", trigger: "blur" }],
+  type: [{ required: true, message: "请选择房型", trigger: "change" }],
+  price: [{ required: true, message: "请输入价格", trigger: "blur" }],
 });
+
+const emit = defineEmits(["refresh"]);
 
 const openDialog = () => {
   dialogVisible.value = true;
@@ -160,7 +164,7 @@ const closeDialog = () => {
 };
 
 const handleImageSuccess = (res) => {
-  form.value.image = res.url;
+  form.value.img = res.url;
 };
 
 const beforeImageUpload = (file) => {
@@ -181,15 +185,57 @@ const beforeImageUpload = (file) => {
 const submitForm = () => {
   refForm.value.validate((valid) => {
     if (valid) {
-      // 这里添加实际提交逻辑
-      console.log("表单数据:", form.value);
-      ElMessage.success("客房信息保存成功");
+      if (title.value === "新增客房") {
+        saveRoom();
+      } else if (title.value === "修改客房") {
+        updateRoomById();
+      }
       closeDialog();
+      emit("refresh");
     } else {
       ElMessage.warning("请填写完整且正确的信息");
       return false;
     }
   });
+};
+
+const saveRoom = async () => {
+  const params = {
+    roomId: form.value.roomId,
+    type: form.value.type,
+    price: form.value.price,
+    intro: form.value.intro,
+    img: form.value.img,
+    status: form.value.status,
+  };
+
+  const res = await addRoom(params);
+  if (res.success) {
+    ElMessage.success("添加成功");
+    closeDialog();
+  } else {
+    ElMessage.error("添加失败");
+  }
+};
+
+const updateRoomById = async () => {
+  const params = {
+    id: form.value.id,
+    roomId: form.value.roomId,
+    type: form.value.type,
+    price: form.value.price,
+    intro: form.value.intro,
+    img: form.value.img,
+    status: form.value.status,
+  };
+
+  const res = await updateRoom(params);
+  if (res.success) {
+    ElMessage.success("修改成功");
+    closeDialog();
+  } else {
+    ElMessage.error("修改失败");
+  }
 };
 
 defineExpose({
