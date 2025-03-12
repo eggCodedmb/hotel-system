@@ -105,7 +105,7 @@ const handleLogin = () => {
         userStore.removeRemember();
       }
     } else {
-      ElMessage.warning('用户名或密码错误');
+      ElMessage.warning(res.message);
       loading.value = false;
     }
   });

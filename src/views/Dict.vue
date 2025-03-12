@@ -99,7 +99,7 @@ export default {
     async getTableData() {
       const params = {
         ...this.form,
-        currentPage: this.currentPage,
+        pageNumber: this.currentPage,
         pageSize: this.pageSize
       };
       const res = await getDictList(params);

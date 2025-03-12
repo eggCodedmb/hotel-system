@@ -19,7 +19,7 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': '/src',
-      '@assets': '/src/assets'
+      // '@assets': '/src/assets'
     }
   },
   build: {

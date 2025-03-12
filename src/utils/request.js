@@ -1,6 +1,9 @@
 import axios from 'axios';
 import { ElMessage } from 'element-plus';
 import { getToken, removeToken } from '@/utils/auth';
+import BeautifyConsole from "beautify-console-log";
+
+const log = BeautifyConsole.getInstance();
 
 class HttpClient {
   constructor(config) {
@@ -43,7 +46,6 @@ class HttpClient {
 
   // 请求错误处理
   handleRequestError = (error) => {
-    console.error('请求错误:', error);
     return Promise.reject(error);
   };
 
@@ -53,7 +55,9 @@ class HttpClient {
     const endTime = new Date();
     const duration = endTime - response.config.metadata.startTime;
 
-    console.log(`请求 ${response.config.url} 耗时 ${duration}ms`);
+    log.config({
+      title: `请求 ${response.config.url} 耗时 ${duration}ms`,
+    })
 
     // 处理二进制数据
     if (response.config.responseType === 'blob') {
@@ -79,7 +83,10 @@ class HttpClient {
       ? endTime - error.config.metadata.startTime
       : 0;
 
-    console.error(`请求错误 ${error.config?.url} 耗时 ${duration}ms`, error);
+    log.error({
+      title: `请求 ${error.config?.url} 耗时 ${duration}ms`,
+      content: error
+    })
 
     // 处理HTTP错误状态码
     const status = error.response?.status;
@@ -91,7 +98,7 @@ class HttpClient {
         break;
       case 401:
         errorMessage = '登录已过期，请重新登录';
-        // 清除token并跳转登录
+
         // removeToken();
         // window.location.href = "/login";
         break;
