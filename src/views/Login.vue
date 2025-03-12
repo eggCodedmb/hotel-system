@@ -35,7 +35,9 @@
         </el-form-item>
 
         <el-form-item>
-          <el-checkbox v-model="rememberMe">记住密码</el-checkbox>
+          <el-checkbox v-model="userStore.isRemember" @change="isRememberChange"
+            >记住密码</el-checkbox
+          >
         </el-form-item>
 
         <el-button
@@ -59,11 +61,13 @@ import { useRouter } from 'vue-router';
 import { useUserStore } from '@/store/modules/userStore';
 import { login, getLoginInfo } from '@/api/login';
 import { setToken } from '@/utils/auth';
+
+const router = useRouter();
+const userStore = useUserStore();
+
 const loginFormRef = ref();
 const rememberMe = ref(false);
 const loading = ref(false);
-const router = useRouter();
-const userStore = useUserStore();
 
 const loginForm = reactive({
   username: userStore.getRemember.username || '',
@@ -78,34 +82,47 @@ const loginRules = reactive({
   ]
 });
 
+const isRememberChange = (e) => {
+  // 保存记住密码
+  if (userStore.isRemember) {
+    userStore.saveRemember(loginForm);
+  } else {
+    userStore.removeRemember();
+  }
+  userStore.updateIsRemember(e);
+};
+
+const getUserInfo = async () => {
+  const res = await getLoginInfo();
+  if (res.success) {
+    userStore.saveUser(res.result);
+  }
+};
+// 登录
 const handleLogin = () => {
   loading.value = true;
   loginFormRef.value.validate(async (valid) => {
     if (!valid) return;
-    const parmas = {
-      loginName: loginForm.username,
-      password: loginForm.password
-    };
-
-    const res = await login(parmas);
-
-    if (res.success) {
-      const { result } = await getLoginInfo();
-      console.log('result', result);
-
-      ElMessage.success('登录成功');
-      router.push('/home');
-      loading.value = false;
-      userStore.saveUser(result);
-      const rawToken = res.result;
-      setToken(rawToken);
-      if (rememberMe.value) {
-        userStore.saveRemember(loginForm);
+    try {
+      const parmas = {
+        loginName: loginForm.username,
+        password: loginForm.password
+      };
+      const res = await login(parmas);
+      if (res.success) {
+        ElMessage.success('登录成功');
+        router.push('/home');
+        loading.value = false;
+        const rawToken = res.result;
+        setToken(rawToken);
+        getUserInfo();
       } else {
-        userStore.removeRemember();
+        ElMessage.warning(res.message);
+        loading.value = false;
       }
-    } else {
-      ElMessage.warning(res.message);
+    } catch (error) {
+      loading.value = false;
+    } finally {
       loading.value = false;
     }
   });
@@ -148,7 +165,9 @@ const handleLogin = () => {
     background: rgba(255, 255, 255, 0.95);
 
     .logo {
-      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
       margin-bottom: 40px;
 
       img {

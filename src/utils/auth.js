@@ -20,6 +20,8 @@ export function setToken(rawToken) {
 }
 
 // 移除token
-export function removeToken() {
-  localStorage.removeItem('token');
+export function removeToken(token = 'token') {
+  localStorage.removeItem(token);
 }
+
+
