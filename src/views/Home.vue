@@ -59,23 +59,23 @@
 </template>
 
 <script>
-import LineChart from "@/components/lineChart.vue";
-import PieChar from "@/components/pieChar.vue";
-import { ref } from "vue";
+import LineChart from '@/components/lineChart.vue';
+import PieChar from '@/components/pieChar.vue';
+import { ref } from 'vue';
 export default {
-  name: "Home",
+  name: 'Home',
   components: { LineChart, PieChar },
   setup() {
-    const radio = ref("周");
+    const radio = ref('周');
     return {
-      radio,
+      radio
     };
   },
   methods: {
     lineChartChange() {
       console.log(this.radio);
-    },
-  },
+    }
+  }
 };
 </script>
 

@@ -52,8 +52,14 @@
 </template>
 
 <script setup>
-import { ref, computed, defineProps, defineEmits, defineComponent,useAttrs } from "vue";
-
+import {
+  ref,
+  computed,
+  defineProps,
+  defineEmits,
+  defineComponent,
+  useAttrs
+} from 'vue';
 
 const props = defineProps({
   columns: { type: Array, required: true, default: () => [] },
@@ -62,14 +68,14 @@ const props = defineProps({
   currentPage: { type: Number, default: 1 },
   pageSize: { type: Number, default: 10 },
   pageSizes: { type: Array, default: () => [10, 20, 50, 100] },
-  showPagination: { type: Boolean, default: true },
+  showPagination: { type: Boolean, default: true }
 });
 
 const emit = defineEmits([
-  "update:currentPage",
-  "update:pageSize",
-  "page-change",
-  "selection-change",
+  'update:currentPage',
+  'update:pageSize',
+  'page-change',
+  'selection-change'
 ]);
 
 // ⚡️ 使用 ref 变量存储当前页码和每页大小，并同步更新
@@ -79,26 +85,26 @@ const pageSize = ref(props.pageSize);
 // 监听页码变化
 const handleCurrentChange = (val) => {
   currentPage.value = val;
-  emit("update:currentPage", val);
+  emit('update:currentPage', val);
   emitPageChange(val, pageSize.value);
 };
 
 // 监听每页大小变化
 const handleSizeChange = (val) => {
   pageSize.value = val;
-  emit("update:pageSize", val);
-  emit("update:currentPage", 1); // 切换每页大小后回到第一页
+  emit('update:pageSize', val);
+  emit('update:currentPage', 1); // 切换每页大小后回到第一页
   emitPageChange(1, val);
 };
 
 // 触发分页事件
 const emitPageChange = (page, size) => {
-  emit("page-change", { currentPage: page, pageSize: size });
+  emit('page-change', { currentPage: page, pageSize: size });
 };
 
 // 处理多选
 const handleSelectionChange = (selection) => {
-  emit("selection-change", selection);
+  emit('selection-change', selection);
 };
 
 // 计算表格数据
@@ -110,13 +116,13 @@ const Renderer = defineComponent({
     row: Object,
     index: Number,
     column: Object,
-    render: Function,
+    render: Function
   },
   render() {
-    return typeof this.render === "function"
+    return typeof this.render === 'function'
       ? this.render(this.row, this.index, this.column)
       : null;
-  },
+  }
 });
 </script>
 

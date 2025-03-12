@@ -1,6 +1,6 @@
-import axios from "axios";
-import { ElMessage } from "element-plus";
-import { getToken, removeToken } from "@/utils/auth";
+import axios from 'axios';
+import { ElMessage } from 'element-plus';
+import { getToken, removeToken } from '@/utils/auth';
 
 class HttpClient {
   constructor(config) {
@@ -23,17 +23,17 @@ class HttpClient {
   handleRequestSuccess = (config) => {
     // 自动携带Token
     if (getToken()) {
-      config.headers["token"] = `${getToken()}`;
+      config.headers['token'] = `${getToken()}`;
     }
 
     // 自动处理不同Content-Type
-    if (config.contentType === "form") {
-      config.headers["Content-Type"] = "application/x-www-form-urlencoded";
+    if (config.contentType === 'form') {
+      config.headers['Content-Type'] = 'application/x-www-form-urlencoded';
       config.transformRequest = [(data) => this.stringifyFormData(data)];
-    } else if (config.contentType === "form-data") {
-      config.headers["Content-Type"] = "multipart/form-data";
+    } else if (config.contentType === 'form-data') {
+      config.headers['Content-Type'] = 'multipart/form-data';
     } else {
-      config.headers["Content-Type"] = "application/json";
+      config.headers['Content-Type'] = 'application/json';
     }
 
     // 请求计时开始
@@ -43,7 +43,7 @@ class HttpClient {
 
   // 请求错误处理
   handleRequestError = (error) => {
-    console.error("请求错误:", error);
+    console.error('请求错误:', error);
     return Promise.reject(error);
   };
 
@@ -56,7 +56,7 @@ class HttpClient {
     console.log(`请求 ${response.config.url} 耗时 ${duration}ms`);
 
     // 处理二进制数据
-    if (response.config.responseType === "blob") {
+    if (response.config.responseType === 'blob') {
       return response.data;
     }
 
@@ -67,7 +67,7 @@ class HttpClient {
       return response.data;
     } else {
       this.handleBusinessError(code, message);
-      return Promise.reject(new Error(message || "Error"));
+      return Promise.reject(new Error(message || 'Error'));
     }
   };
 
@@ -83,29 +83,29 @@ class HttpClient {
 
     // 处理HTTP错误状态码
     const status = error.response?.status;
-    let errorMessage = "请求错误";
+    let errorMessage = '请求错误';
 
     switch (status) {
       case 400:
-        errorMessage = "请求参数错误";
+        errorMessage = '请求参数错误';
         break;
       case 401:
-        errorMessage = "登录已过期，请重新登录";
+        errorMessage = '登录已过期，请重新登录';
         // 清除token并跳转登录
         // removeToken();
         // window.location.href = "/login";
         break;
       case 403:
-        errorMessage = "没有操作权限";
+        errorMessage = '没有操作权限';
         break;
       case 404:
-        errorMessage = "资源不存在";
+        errorMessage = '资源不存在';
         break;
       case 500:
-        errorMessage = "服务器错误";
+        errorMessage = '服务器错误';
         break;
       default:
-        errorMessage = error.message || "未知错误";
+        errorMessage = error.message || '未知错误';
     }
 
     ElMessage.error(errorMessage);
@@ -115,7 +115,7 @@ class HttpClient {
   // 处理业务错误
   handleBusinessError(code, message) {
     console.error(`业务错误 ${code}: ${message}`);
-    ElMessage.error(message || "操作失败");
+    ElMessage.error(message || '操作失败');
 
     // // 特殊状态码处理
     // if (code === 401) {
@@ -155,7 +155,7 @@ class HttpClient {
       .map(
         (key) => `${encodeURIComponent(key)}=${encodeURIComponent(data[key])}`
       )
-      .join("&");
+      .join('&');
   }
 
   // 文件上传方法
@@ -165,12 +165,12 @@ class HttpClient {
       formData.append(key, data[key]);
     });
     return this.post(url, formData, {
-      contentType: "form-data",
-      ...config,
+      contentType: 'form-data',
+      ...config
     });
   }
 }
-const BASE_API = '/api'
+const BASE_API = '/api';
 
 // 创建实例
 const service = new HttpClient({
@@ -180,11 +180,11 @@ const service = new HttpClient({
   transformRequest: [
     (data, headers) => {
       // 自动转换请求数据
-      if (headers["Content-Type"] === "application/json") {
+      if (headers['Content-Type'] === 'application/json') {
         return JSON.stringify(data);
       }
       return data;
-    },
+    }
   ],
   transformResponse: [
     (data) => {
@@ -193,8 +193,8 @@ const service = new HttpClient({
       } catch (e) {
         return data;
       }
-    },
-  ],
+    }
+  ]
 });
 
 export default service;

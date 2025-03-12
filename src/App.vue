@@ -3,9 +3,9 @@
 </template>
 
 <script setup>
-import { useMenuStore } from "@/store/modules/menuStore";
-import { generateMenu, filterNonAdminRoutes } from "@/utils/menu";
-import router from "@/router";
+import { useMenuStore } from '@/store/modules/menuStore';
+import { generateMenu, filterNonAdminRoutes } from '@/utils/menu';
+import router from '@/router';
 
 const menu = generateMenu(router.options.routes)[0].children; // 生成菜单
 const menuStore = useMenuStore();
@@ -19,5 +19,4 @@ if (isAdmin) {
 } else {
   menuStore.saveRouter(menuItems); // 非管理员菜单
 }
-
 </script>

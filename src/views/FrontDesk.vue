@@ -10,35 +10,72 @@
     <!-- 主要内容区 -->
     <el-main>
       <!-- 公告轮播 -->
-      <el-carousel :interval="5000" height="100px" class="announcement-carousel">
+      <el-carousel
+        :interval="5000"
+        height="100px"
+        class="announcement-carousel"
+      >
         <el-carousel-item v-for="(item, index) in announcements" :key="index">
           <div class="announcement-item">
-            <el-alert :title="item.title" :description="item.content" type="info" show-icon />
+            <el-alert
+              :title="item.title"
+              :description="item.content"
+              type="info"
+              show-icon
+            />
           </div>
         </el-carousel-item>
       </el-carousel>
 
       <!-- 房间筛选 -->
       <div class="filter-container">
-        <el-input placeholder="搜索房型" style="width: 300px" clearable v-model="searchKeyword">
+        <el-input
+          placeholder="搜索房型"
+          style="width: 300px"
+          clearable
+          v-model="searchKeyword"
+        >
           <template #append>
             <el-button :icon="Search" />
           </template>
         </el-input>
         <el-select v-model="roomType" placeholder="全部房型" clearable>
-          <el-option v-for="item in roomTypes" :key="item.value" :label="item.label" :value="item.value" />
+          <el-option
+            v-for="item in roomTypes"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value"
+          />
         </el-select>
       </div>
 
       <!-- 房间展示 -->
       <el-row :gutter="20" class="room-list">
-        <el-col v-for="room in filteredRooms" :key="room.id" :xs="24" :sm="12" :md="8" :lg="6" class="room-item">
+        <el-col
+          v-for="room in filteredRooms"
+          :key="room.id"
+          :xs="24"
+          :sm="12"
+          :md="8"
+          :lg="6"
+          class="room-item"
+        >
           <el-card class="room-card" shadow="hover">
-            <el-image :src="room.image" fit="cover" class="room-image" :preview-src-list="[room.image]" />
+            <el-image
+              :src="room.image"
+              fit="cover"
+              class="room-image"
+              :preview-src-list="[room.image]"
+            />
             <div class="room-info">
               <h3 class="room-title">{{ room.name }}</h3>
               <div class="room-tags">
-                <el-tag v-for="(tag, index) in room.tags" :key="index" type="info" size="small">
+                <el-tag
+                  v-for="(tag, index) in room.tags"
+                  :key="index"
+                  type="info"
+                  size="small"
+                >
                   {{ tag }}
                 </el-tag>
               </div>
@@ -46,7 +83,11 @@
                 <span class="price">¥{{ room.price }}</span>
                 <span class="unit">/ 晚</span>
               </div>
-              <el-button type="primary" class="book-btn" @click="handleBook(room)">
+              <el-button
+                type="primary"
+                class="book-btn"
+                @click="handleBook(room)"
+              >
                 立即预订
               </el-button>
             </div>
@@ -59,17 +100,17 @@
 </template>
 
 <script setup>
-import { ref, computed } from "vue";
-import { Search } from "@element-plus/icons-vue";
-import CheckinForm from "./components/CheckinForm.vue";
+import { ref, computed } from 'vue';
+import { Search } from '@element-plus/icons-vue';
+import CheckinForm from './components/CheckinForm.vue';
 
 const TITLE = import.meta.env.VITE_APP_TITLE;
 
 // 公告数据
 const announcements = ref([
-  { title: "系统维护通知", content: "8月1日0:00-6:00进行系统升级维护" },
-  { title: "优惠活动", content: "提前7天预订可享8折优惠" },
-  { title: "节日问候", content: "中秋节期间赠送每位客人月饼礼盒" },
+  { title: '系统维护通知', content: '8月1日0:00-6:00进行系统升级维护' },
+  { title: '优惠活动', content: '提前7天预订可享8折优惠' },
+  { title: '节日问候', content: '中秋节期间赠送每位客人月饼礼盒' }
 ]);
 
 const checkinForm = ref(null);
@@ -78,28 +119,28 @@ const checkinForm = ref(null);
 const rooms = ref([
   {
     id: 1,
-    name: "豪华海景套房",
+    name: '豪华海景套房',
     price: 1588,
-    type: "suite",
-    image: "https://via.placeholder.com/400x250",
-    tags: ["65㎡", "海景阳台", "双人床"],
+    type: 'suite',
+    image: 'https://via.placeholder.com/400x250',
+    tags: ['65㎡', '海景阳台', '双人床']
   },
   {
     id: 2,
-    name: "行政商务房",
+    name: '行政商务房',
     price: 988,
-    type: "business",
-    image: "https://via.placeholder.com/400x250",
-    tags: ["45㎡", "办公区", "高速WiFi"],
-  },
+    type: 'business',
+    image: 'https://via.placeholder.com/400x250',
+    tags: ['45㎡', '办公区', '高速WiFi']
+  }
 ]);
 
 // 搜索条件
-const searchKeyword = ref("");
-const roomType = ref("");
+const searchKeyword = ref('');
+const roomType = ref('');
 const roomTypes = ref([
-  { value: "suite", label: "套房" },
-  { value: "business", label: "商务房" },
+  { value: 'suite', label: '套房' },
+  { value: 'business', label: '商务房' }
 ]);
 
 // 过滤后的房间列表
@@ -115,7 +156,7 @@ const filteredRooms = computed(() => {
 
 // 预订处理
 const handleBook = (room) => {
-  checkinForm.value.title = "预订房间";
+  checkinForm.value.title = '预订房间';
   checkinForm.value.openDialog(room);
 };
 </script>

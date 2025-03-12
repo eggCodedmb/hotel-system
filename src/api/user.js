@@ -1,6 +1,6 @@
-import request from "@/utils/request";
+import request from '@/utils/request';
 
-const service = 'employeeManagerment'
+const service = 'employeeManagerment';
 
 // 增加员工 /employeeManagerment/addEmployee
 export function addEmployee(params) {
@@ -17,7 +17,7 @@ export function updateEmployee(params) {
   return request.post(`/${service}/updateEmployee`, params);
 }
 
-// 删除员工 /employeeManagerment/deleteEmployee 
+// 删除员工 /employeeManagerment/deleteEmployee
 export function deleteEmployee(id) {
   return request.delete(`/${service}/deleteEmployee/${id}`);
 }

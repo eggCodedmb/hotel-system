@@ -9,9 +9,9 @@ function getMenus(routes) {
     .map((route) => {
       const menu = {
         path: route.path,
-        title: route.meta?.title || "未命名",
-        icon: route.meta?.icon || "el-icon-menu",
-        children: route.children ? getMenus(route.children) : [], // 递归处理子菜单
+        title: route.meta?.title || '未命名',
+        icon: route.meta?.icon || 'el-icon-menu',
+        children: route.children ? getMenus(route.children) : [] // 递归处理子菜单
       };
       return menu;
     });

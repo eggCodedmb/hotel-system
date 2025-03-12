@@ -44,75 +44,75 @@
 </template>
 
 <script setup>
-import { ref, watch, defineProps, defineEmits, defineExpose } from "vue";
-import { Search, OfficeBuilding } from "@element-plus/icons-vue";
+import { ref, watch, defineProps, defineEmits, defineExpose } from 'vue';
+import { Search, OfficeBuilding } from '@element-plus/icons-vue';
 
 const props = defineProps({
   // 树形数据
   data: {
     type: Array,
-    default: () => [],
+    default: () => []
   },
   // 树形配置项
   treeProps: {
     type: Object,
     default: () => ({
-      label: "name",
-      children: "children",
-      isLeaf: "isLeaf",
-    }),
+      label: 'name',
+      children: 'children',
+      isLeaf: 'isLeaf'
+    })
   },
   // 是否显示图标
   showIcon: {
     type: Boolean,
-    default: true,
+    default: true
   },
   // 是否显示人数统计
   showCount: {
     type: Boolean,
-    default: false,
+    default: false
   },
   // 是否高亮当前选中节点
   highlightCurrent: {
     type: Boolean,
-    default: true,
+    default: true
   },
   // 是否点击节点自动展开
   expandOnClickNode: {
     type: Boolean,
-    default: false,
+    default: false
   },
   // 是否默认展开所有节点
   defaultExpandAll: {
     type: Boolean,
-    default: false,
+    default: false
   },
   // 节点唯一标识字段
   nodeKey: {
     type: String,
-    default: "id",
+    default: 'id'
   },
   // 是否显示复选框
   showCheckbox: {
     type: Boolean,
-    default: false,
+    default: false
   },
   // 是否严格模式（父子不关联）
   checkStrictly: {
     type: Boolean,
-    default: false,
+    default: false
   },
   // 是否开启懒加载
   lazy: {
     type: Boolean,
-    default: false,
-  },
+    default: false
+  }
 });
 
-const emit = defineEmits(["node-click", "check", "load"]);
+const emit = defineEmits(['node-click', 'check', 'load']);
 
 const treeRef = ref(null);
-const filterText = ref("");
+const filterText = ref('');
 const treeData = ref([...props.data]);
 
 // 暴露给父组件的方法
@@ -122,7 +122,7 @@ defineExpose({
   setCheckedKeys: (keys) => treeRef.value?.setCheckedKeys(keys),
   updateTreeData: (data) => {
     treeData.value = data;
-  },
+  }
 });
 
 // 搜索过滤
@@ -138,22 +138,22 @@ const filterNode = (value, data) => {
 
 // 节点点击事件
 const handleNodeClick = (data, node) => {
-  emit("node-click", { data, node });
+  emit('node-click', { data, node });
 };
 
 // 复选框选中事件
 const handleCheck = (data, checked) => {
-  emit("check", { data, checked: checked.checkedKeys });
+  emit('check', { data, checked: checked.checkedKeys });
 };
 
 // 懒加载节点
 const loadNode = (node, resolve) => {
-  emit("load", { node, resolve });
+  emit('load', { node, resolve });
 };
 
 // 处理搜索框清空
 const handleSearchClear = () => {
-  treeRef.value?.filter("");
+  treeRef.value?.filter('');
 };
 
 // 监听外部数据变化

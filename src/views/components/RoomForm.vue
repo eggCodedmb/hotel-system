@@ -113,46 +113,46 @@
 </template>
 
 <script setup>
-import { ref, defineExpose,defineEmits } from "vue";
-import { Plus } from "@element-plus/icons-vue";
-import { ElMessage } from "element-plus";
+import { ref, defineExpose, defineEmits } from 'vue';
+import { Plus } from '@element-plus/icons-vue';
+import { ElMessage } from 'element-plus';
 import {
   addRoom,
   getRoomList,
   updateRoom,
   deleteRoom,
-  getRoomDetail,
-} from "@/api/room";
+  getRoomDetail
+} from '@/api/room';
 const form = ref({
-  id: "",
-  roomId: "",
-  type: "",
-  price: "",
-  intro: "",
-  img: "",
-  status: "",
+  id: '',
+  roomId: '',
+  type: '',
+  price: '',
+  intro: '',
+  img: '',
+  status: ''
 });
 
 const refForm = ref(null);
-const title = ref("新增客房");
+const title = ref('新增客房');
 const dialogVisible = ref(false);
 const isView = ref(false);
 
 const rules = ref({
   roomId: [
-    { required: true, message: "请输入房间号", trigger: "blur" },
+    { required: true, message: '请输入房间号', trigger: 'blur' },
     {
       min: 3,
       max: 10,
-      message: "房间号长度在 3 到 10 个字符",
-      trigger: "blur",
-    },
+      message: '房间号长度在 3 到 10 个字符',
+      trigger: 'blur'
+    }
   ],
-  type: [{ required: true, message: "请选择房型", trigger: "change" }],
-  price: [{ required: true, message: "请输入价格", trigger: "blur" }],
+  type: [{ required: true, message: '请选择房型', trigger: 'change' }],
+  price: [{ required: true, message: '请输入价格', trigger: 'blur' }]
 });
 
-const emit = defineEmits(["refresh"]);
+const emit = defineEmits(['refresh']);
 
 const openDialog = (data) => {
   dialogVisible.value = true;
@@ -171,15 +171,15 @@ const handleImageSuccess = (res) => {
 };
 
 const beforeImageUpload = (file) => {
-  const isImage = file.type.startsWith("image/");
+  const isImage = file.type.startsWith('image/');
   const isLt5M = file.size / 1024 / 1024 < 5;
 
   if (!isImage) {
-    ElMessage.error("只能上传图片文件!");
+    ElMessage.error('只能上传图片文件!');
     return false;
   }
   if (!isLt5M) {
-    ElMessage.error("图片大小不能超过5MB!");
+    ElMessage.error('图片大小不能超过5MB!');
     return false;
   }
   return true;
@@ -188,15 +188,15 @@ const beforeImageUpload = (file) => {
 const submitForm = () => {
   refForm.value.validate((valid) => {
     if (valid) {
-      if (title.value === "新增客房") {
+      if (title.value === '新增客房') {
         saveRoom();
-      } else if (title.value === "修改客房") {
+      } else if (title.value === '修改客房') {
         updateRoomById();
       }
       closeDialog();
-      emit("refresh");
+      emit('refresh');
     } else {
-      ElMessage.warning("请填写完整且正确的信息");
+      ElMessage.warning('请填写完整且正确的信息');
       return false;
     }
   });
@@ -209,15 +209,15 @@ const saveRoom = async () => {
     price: form.value.price,
     intro: form.value.intro,
     img: form.value.img,
-    status: form.value.status,
+    status: form.value.status
   };
 
   const res = await addRoom(params);
   if (res.success) {
-    ElMessage.success("添加成功");
+    ElMessage.success('添加成功');
     closeDialog();
   } else {
-    ElMessage.error("添加失败");
+    ElMessage.error('添加失败');
   }
 };
 
@@ -229,21 +229,21 @@ const updateRoomById = async () => {
     price: form.value.price,
     intro: form.value.intro,
     img: form.value.img,
-    status: form.value.status,
+    status: form.value.status
   };
 
   const res = await updateRoom(params);
   if (res.success) {
-    ElMessage.success("修改成功");
+    ElMessage.success('修改成功');
     closeDialog();
   } else {
-    ElMessage.error("修改失败");
+    ElMessage.error('修改失败');
   }
 };
 
 defineExpose({
   openDialog,
-  title,
+  title
 });
 </script>
 

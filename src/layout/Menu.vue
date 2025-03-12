@@ -53,14 +53,14 @@
 </template>
 
 <script>
-import { useMenuStore } from "@/store/modules/menuStore";
+import { useMenuStore } from '@/store/modules/menuStore';
 
 export default {
   data() {
     return {
       isCollapse: false,
       menuStore: useMenuStore(),
-      title: import.meta.env.VITE_APP_TITLE,
+      title: import.meta.env.VITE_APP_TITLE
     };
   },
   computed: {
@@ -69,8 +69,7 @@ export default {
     },
     activeMenu() {
       return this.$route.path;
-    },
-
+    }
   },
   methods: {
     toggleCollapse() {
@@ -79,8 +78,8 @@ export default {
     // 添加面包屑
     addBreadcrumb() {
       this.menuStore.saveBreadCrumb(this.$route);
-    },
-  },
+    }
+  }
 };
 </script>
 

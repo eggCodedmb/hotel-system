@@ -17,9 +17,9 @@
 </template>
 
 <script setup>
-import Header from "./Header.vue";
-import Menu from "./Menu.vue";
-import { ref } from "vue";
+import Header from './Header.vue';
+import Menu from './Menu.vue';
+import { ref } from 'vue';
 </script>
 
 <style lang="scss" scoped>

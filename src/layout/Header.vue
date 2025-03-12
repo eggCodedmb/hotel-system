@@ -31,7 +31,7 @@
               "
               class="user-avatar"
             />
-            <span class="user-name">{{ userInfo.username || "管理员" }}</span>
+            <span class="user-name">{{ userInfo.username || '管理员' }}</span>
             <el-icon class="arrow-icon"><arrow-down /></el-icon>
           </div>
 
@@ -58,11 +58,11 @@
 </template>
 
 <script setup>
-import { ref, watch } from "vue";
-import { useRouter, useRoute } from "vue-router";
-import { useUserStore } from "@/store/modules/userStore";
-import { useMenuStore } from "@/store/modules/menuStore";
-import { useDark, useToggle } from "@vueuse/core";
+import { ref, watch } from 'vue';
+import { useRouter, useRoute } from 'vue-router';
+import { useUserStore } from '@/store/modules/userStore';
+import { useMenuStore } from '@/store/modules/menuStore';
+import { useDark, useToggle } from '@vueuse/core';
 
 const router = useRouter();
 const route = useRoute();
@@ -76,14 +76,14 @@ const breadcrumbList = ref([]);
 
 const handleCommand = (command) => {
   switch (command) {
-    case "logout":
+    case 'logout':
       handleLogout();
       break;
-    case "profile":
-      router.push("/profile");
+    case 'profile':
+      router.push('/profile');
       break;
-    case "front":
-      router.push("/front");
+    case 'front':
+      router.push('/front');
       break;
   }
 };
@@ -91,7 +91,7 @@ const handleCommand = (command) => {
 // 退出登录
 const handleLogout = () => {
   userStore.logout();
-  router.push("/login");
+  router.push('/login');
 };
 </script>
 

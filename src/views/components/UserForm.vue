@@ -120,56 +120,56 @@
 </template>
 
 <script setup>
-import { ref, defineExpose, defineOptions, defineEmits } from "vue";
-import { Plus } from "@element-plus/icons-vue";
-import { ElMessage } from "element-plus";
+import { ref, defineExpose, defineOptions, defineEmits } from 'vue';
+import { Plus } from '@element-plus/icons-vue';
+import { ElMessage } from 'element-plus';
 import {
   addEmployee,
   updateEmployee,
   getEmployeeList,
-  deleteEmployee,
-} from "@/api/user";
+  deleteEmployee
+} from '@/api/user';
 
 const form = ref({
-  username: "",
-  password: "",
-  phone: "",
-  date: "",
-  role: "",
-  gender: "",
-  avatar: "",
+  username: '',
+  password: '',
+  phone: '',
+  date: '',
+  role: '',
+  gender: '',
+  avatar: ''
 });
-const emit = defineEmits(["refresh"]);
+const emit = defineEmits(['refresh']);
 
-const title = ref("新增用户");
+const title = ref('新增用户');
 const refForm = ref(null);
 const dialogVisible = ref(false);
 
 const rules = ref({
   username: [
-    { required: true, message: "请输入用户名", trigger: "blur" },
+    { required: true, message: '请输入用户名', trigger: 'blur' },
     {
       min: 3,
       max: 15,
-      message: "用户名长度在 3 到 15 个字符",
-      trigger: "blur",
-    },
+      message: '用户名长度在 3 到 15 个字符',
+      trigger: 'blur'
+    }
   ],
   password: [
-    { required: true, message: "请输入密码", trigger: "blur" },
-    { min: 6, max: 20, message: "密码长度在 6 到 20 个字符", trigger: "blur" },
+    { required: true, message: '请输入密码', trigger: 'blur' },
+    { min: 6, max: 20, message: '密码长度在 6 到 20 个字符', trigger: 'blur' }
   ],
   phone: [
-    { required: true, message: "请输入手机号", trigger: "blur" },
+    { required: true, message: '请输入手机号', trigger: 'blur' },
     {
       pattern: /^1[3456789]\d{9}$/,
-      message: "请输入正确的手机号",
-      trigger: "blur",
-    },
+      message: '请输入正确的手机号',
+      trigger: 'blur'
+    }
   ],
-  entryDate: [{ required: true, message: "请选择入职日期", trigger: "change" }],
-  role: [{ required: true, message: "请选择角色", trigger: "change" }],
-  gender: [{ required: true, message: "请选择性别", trigger: "change" }],
+  entryDate: [{ required: true, message: '请选择入职日期', trigger: 'change' }],
+  role: [{ required: true, message: '请选择角色', trigger: 'change' }],
+  gender: [{ required: true, message: '请选择性别', trigger: 'change' }]
 });
 
 const openDialog = (row) => {
@@ -192,15 +192,15 @@ const beforeAvatarUpload = (file) => {};
 const submitForm = () => {
   refForm.value.validate((valid) => {
     if (valid) {
-      if (title.value === "新增用户") {
+      if (title.value === '新增用户') {
         saveUser();
-      } else if (title.value === "编辑用户") {
+      } else if (title.value === '编辑用户') {
         handleEdit();
       }
-      emit("refresh");
+      emit('refresh');
       closeDialog();
     } else {
-      ElMessage.warning("请填写完整信息");
+      ElMessage.warning('请填写完整信息');
     }
   });
 };
@@ -208,25 +208,25 @@ const submitForm = () => {
 const handleEdit = () => {
   updateEmployee(form.value).then((res) => {
     if (res.success) {
-      ElMessage.success("修改成功");
+      ElMessage.success('修改成功');
     } else {
-      ElMessage.error("修改失败");
+      ElMessage.error('修改失败');
     }
   });
 };
 const saveUser = () => {
   addEmployee(form.value).then((res) => {
     if (res.success) {
-      ElMessage.success("添加成功");
+      ElMessage.success('添加成功');
     } else {
-      ElMessage.error("添加失败");
+      ElMessage.error('添加失败');
     }
   });
 };
 
 defineExpose({
   openDialog,
-  title,
+  title
 });
 </script>
 

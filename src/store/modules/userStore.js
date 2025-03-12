@@ -1,14 +1,14 @@
-import { defineStore } from "pinia";
-import { ref, computed } from "vue";
+import { defineStore } from 'pinia';
+import { ref, computed } from 'vue';
 
 export const useUserStore = defineStore(
-  "user",
+  'user',
   () => {
     const user = ref({});
     // 记住密码
     const remember = ref({
-      username: "",
-      password: "",
+      username: '',
+      password: ''
     });
 
     const saveUser = (user) => {
@@ -38,13 +38,13 @@ export const useUserStore = defineStore(
       saveRemember,
       getRemember,
       removeRemember,
-      logout,
+      logout
     };
   },
   {
     persist: {
       enabled: true,
-      strategies: [{ storage: localStorage, paths: ["user", "remember"] }],
-    },
+      strategies: [{ storage: localStorage, paths: ['user', 'remember'] }]
+    }
   }
 );

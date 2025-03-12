@@ -72,103 +72,103 @@
 </template>
 
 <script setup>
-import { ref, computed, defineProps, defineEmits, defineExpose } from "vue";
-import { Plus, Upload, Document, Close } from "@element-plus/icons-vue";
+import { ref, computed, defineProps, defineEmits, defineExpose } from 'vue';
+import { Plus, Upload, Document, Close } from '@element-plus/icons-vue';
 
 const props = defineProps({
   // 上传地址
   action: {
     type: String,
-    required: true,
+    required: true
   },
   // 请求头
   headers: {
     type: Object,
-    default: () => ({}),
+    default: () => ({})
   },
   // 已上传文件列表
   modelValue: {
     type: Array,
-    default: () => [],
+    default: () => []
   },
   // 是否多选
   multiple: {
     type: Boolean,
-    default: false,
+    default: false
   },
   // 最大允许上传数量
   limit: {
     type: Number,
-    default: 5,
+    default: 5
   },
   // 接受的文件类型
   accept: {
     type: String,
-    default: "image/*",
+    default: 'image/*'
   },
   // 显示模式
   listType: {
     type: String,
-    default: "picture-card", // text/picture/picture-card
-    validator: (val) => ["text", "picture", "picture-card"].includes(val),
+    default: 'picture-card', // text/picture/picture-card
+    validator: (val) => ['text', 'picture', 'picture-card'].includes(val)
   },
   // 上传额外参数
   extraData: {
     type: Object,
-    default: () => ({}),
+    default: () => ({})
   },
   // 文件大小限制(MB)
   maxSize: {
     type: Number,
-    default: 5,
+    default: 5
   },
   // 按钮文字
   buttonText: {
     type: String,
-    default: "点击上传",
+    default: '点击上传'
   },
   // 提示文字
   tip: {
     type: String,
-    default: "支持扩展名：jpg/png，单文件不超过5MB",
+    default: '支持扩展名：jpg/png，单文件不超过5MB'
   },
   // 是否禁用
   disabled: Boolean,
   // 是否自动上传
   autoUpload: {
     type: Boolean,
-    default: true,
-  },
+    default: true
+  }
 });
 
 const emit = defineEmits([
-  "update:modelValue",
-  "success",
-  "error",
-  "exceed",
-  "remove",
-  "progress",
+  'update:modelValue',
+  'success',
+  'error',
+  'exceed',
+  'remove',
+  'progress'
 ]);
 
 const uploadRef = ref(null);
 const previewVisible = ref(false);
-const previewImage = ref("");
+const previewImage = ref('');
 const fileList = computed({
   get: () => props.modelValue,
-  set: (val) => emit("update:modelValue", val),
+  set: (val) => emit('update:modelValue', val)
 });
 
 // 暴露给父组件的方法
 defineExpose({
   submit: () => uploadRef.value.submit(),
   clearFiles: () => uploadRef.value.clearFiles(),
-  getFileList: () => fileList.value,
+  getFileList: () => fileList.value
 });
 
 // 文件类型判断
 const isImage = (file) => {
   return (
-    file.type?.includes("image") || /\.(jpg|jpeg|png|gif)$/i.test(file.name)
+    file.type?.includes('image') || /\.(jpg|jpeg|png|gif)$/i.test(file.name)
   );
 };
 
@@ -179,7 +179,7 @@ const getObjectURL = (file) => {
 
 // 文件超出限制
 const handleExceed = (files) => {
-  emit("exceed", files);
+  emit('exceed', files);
   ElMessage.warning(`最多上传${props.limit}个文件`);
 };
 
@@ -191,7 +191,7 @@ const beforeUpload = (file) => {
   const isLtMaxSize = file.size / 1024 / 1024 < props.maxSize;
 
   if (!isImageType) {
-    ElMessage.error("请上传图片格式文件");
+    ElMessage.error('请上传图片格式文件');
     return false;
   }
 
@@ -206,22 +206,22 @@ const beforeUpload = (file) => {
 // 上传成功
 const handleSuccess = (res, file) => {
   file.url = res.data.url; // 根据实际接口调整
-  emit("success", { res, file, fileList: fileList.value });
+  emit('success', { res, file, fileList: fileList.value });
 };
 
 // 上传失败
 const handleError = (err, file) => {
-  emit("error", { err, file, fileList: fileList.value });
+  emit('error', { err, file, fileList: fileList.value });
 };
 
 // 上传进度
 const handleProgress = (event, file) => {
-  emit("progress", { event, file, fileList: fileList.value });
+  emit('progress', { event, file, fileList: fileList.value });
 };
 
 // 删除文件
 const handleRemove = (file) => {
-  emit("remove", { file, fileList: fileList.value });
+  emit('remove', { file, fileList: fileList.value });
 };
 
 // 预览图片

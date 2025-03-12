@@ -64,21 +64,21 @@
 </template>
 
 <script>
-import CTable from "@/components/CTable.vue";
+import CTable from '@/components/CTable.vue';
 export default {
   components: {
-    CTable,
+    CTable
   },
   data() {
     return {
       form: {
-        roomName: "",
-        type: "",
-        price: "",
-        state: null,
+        roomName: '',
+        type: '',
+        price: '',
+        state: null
       },
       columns: [],
-      tableData: [],
+      tableData: []
     };
   },
   mounted() {
@@ -99,7 +99,7 @@ export default {
       const params = {
         ...this.form,
         currentPage: this.currentPage,
-        pageSize: this.pageSize,
+        pageSize: this.pageSize
       };
       console.log(params);
     },
@@ -109,8 +109,8 @@ export default {
       const tableData = [];
       this.columns = columns;
       this.tableData = tableData;
-    },
-  },
+    }
+  }
 };
 </script>
 

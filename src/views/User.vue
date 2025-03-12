@@ -58,39 +58,39 @@
 </template>
 
 <script>
-import { ref } from "vue";
-import { ElMessage, ElMessageBox } from "element-plus";
-import CTable from "@/components/CTable.vue";
-import UserForm from "./components/UserForm.vue";
+import { ref } from 'vue';
+import { ElMessage, ElMessageBox } from 'element-plus';
+import CTable from '@/components/CTable.vue';
+import UserForm from './components/UserForm.vue';
 import {
   addEmployee,
   updateEmployee,
   getEmployeeList,
-  deleteEmployee,
-} from "@/api/user";
+  deleteEmployee
+} from '@/api/user';
 
 export default {
-  name: "User",
+  name: 'User',
   components: { CTable, UserForm },
   setup() {
     const form = ref({
-      name: "",
-      state: "",
-      position: "",
+      name: '',
+      state: '',
+      position: ''
     });
 
     const stateOptions = ref([
-      { value: 1, label: "正常" },
-      { value: 2, label: "禁用" },
+      { value: 1, label: '正常' },
+      { value: 2, label: '禁用' }
     ]);
 
     const columns = ref([
-      { label: "序号", prop: "index", width: "80" },
-      { label: "姓名", prop: "name" },
-      { label: "状态", prop: "status" },
-      { label: "电话", prop: "phone" },
-      { label: "入职时间", prop: "date" },
-      { label: "操作", slotName: "action" },
+      { label: '序号', prop: 'index', width: '80' },
+      { label: '姓名', prop: 'name' },
+      { label: '状态', prop: 'status' },
+      { label: '电话', prop: 'phone' },
+      { label: '入职时间', prop: 'date' },
+      { label: '操作', slotName: 'action' }
     ]);
 
     const tableData = ref([]);
@@ -108,49 +108,49 @@ export default {
     // 重置表单
     const resetForm = () => {
       form.value = {
-        name: "",
-        state: "",
-        position: "",
+        name: '',
+        state: '',
+        position: ''
       };
       getTableData();
     };
 
     // 添加用户
     const addUser = () => {
-      userForm.value.title = "添加用户";
+      userForm.value.title = '添加用户';
       userForm.value.openDialog();
     };
 
     const handleDetail = (row) => {
-      userForm.value.title = "用户详情";
+      userForm.value.title = '用户详情';
       userForm.value.openDialog(row);
     };
 
     const handleEdit = (row) => {
-      userForm.value.title = "编辑用户";
+      userForm.value.title = '编辑用户';
       userForm.value.openDialog(row);
     };
 
     const handleDelete = async (row) => {
-      await ElMessageBox.confirm("确定删除该用户吗？", "提示", {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        type: "warning",
+      await ElMessageBox.confirm('确定删除该用户吗？', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
       })
         .then(async () => {
           const res = await deleteEmployee(row.id);
           if (res.success) {
             ElMessage({
-              type: "success",
-              message: "删除成功!",
+              type: 'success',
+              message: '删除成功!'
             });
             getTableData();
           }
         })
         .catch(() => {
           ElMessage({
-            type: "info",
-            message: "已取消删除",
+            type: 'info',
+            message: '已取消删除'
           });
         });
     };
@@ -166,7 +166,7 @@ export default {
       const params = {
         currentPage: currentPage.value,
         pageSize: pageSize.value,
-        ...form.value,
+        ...form.value
       };
       // 删除空值
       Object.keys(params).forEach((key) => {
@@ -197,9 +197,9 @@ export default {
       handleDelete,
       handlePageChange,
       userForm,
-      getTableData,
+      getTableData
     };
-  },
+  }
 };
 </script>
 

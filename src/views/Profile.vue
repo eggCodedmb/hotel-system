@@ -23,9 +23,14 @@
         <div class="profile-info">
           <h2 class="username">{{ userInfo.name }}</h2>
           <div class="meta-info">
-            <span><el-icon><User /></el-icon> {{ userInfo.role }}</span>
+            <span
+              ><el-icon><User /></el-icon> {{ userInfo.role }}</span
+            >
             <el-divider direction="vertical" />
-            <span><el-icon><OfficeBuilding /></el-icon> {{ userInfo.department }}</span>
+            <span
+              ><el-icon><OfficeBuilding /></el-icon>
+              {{ userInfo.department }}</span
+            >
           </div>
           <!-- <div class="statistics">
             <el-statistic 
@@ -53,10 +58,10 @@
       <el-tabs v-model="activeTab" class="demo-tabs">
         <!-- 基本信息 -->
         <el-tab-pane label="基本信息" name="basic">
-          <el-form 
-            ref="formRef" 
-            :model="userInfo" 
-            label-width="100px" 
+          <el-form
+            ref="formRef"
+            :model="userInfo"
+            label-width="100px"
             label-position="left"
             :rules="formRules"
           >
@@ -81,7 +86,7 @@
                 </el-form-item>
               </el-col>
             </el-row>
-            
+
             <el-form-item label="个人简介" prop="bio">
               <el-input
                 v-model="userInfo.bio"
@@ -92,13 +97,9 @@
                 show-word-limit
               />
             </el-form-item>
-            
+
             <el-form-item>
-              <el-button 
-                type="primary" 
-                :icon="Edit" 
-                @click="handleSave"
-              >
+              <el-button type="primary" :icon="Edit" @click="handleSave">
                 保存更改
               </el-button>
             </el-form-item>
@@ -137,8 +138,8 @@
 </template>
 
 <script setup>
-import { ref, reactive } from 'vue'
-import { CameraFilled, Edit, Lock, Message } from '@element-plus/icons-vue'
+import { ref, reactive } from 'vue';
+import { CameraFilled, Edit, Lock, Message } from '@element-plus/icons-vue';
 
 // 用户信息数据
 const userInfo = reactive({
@@ -150,14 +151,14 @@ const userInfo = reactive({
   phone: '13800138000',
   email: 'zhangxm@company.com',
   bio: '专注于前端技术开发，喜欢探索新技术'
-})
+});
 
 // 用户统计
 const userStats = reactive({
   projects: 28,
   likes: 356,
   collections: 128
-})
+});
 
 // 表单验证规则
 const formRules = reactive({
@@ -170,28 +171,28 @@ const formRules = reactive({
     { required: true, message: '请输入手机号', trigger: 'blur' },
     { pattern: /^1[3-9]\d{9}$/, message: '请输入正确的手机号码' }
   ]
-})
+});
 
 // 头像上传处理
 const handleAvatarChange = (file) => {
-  const reader = new FileReader()
+  const reader = new FileReader();
   reader.onload = () => {
-    userInfo.avatar = reader.result
-  }
-  reader.readAsDataURL(file.raw)
-}
+    userInfo.avatar = reader.result;
+  };
+  reader.readAsDataURL(file.raw);
+};
 
 // 保存表单
 const handleSave = () => {
   formRef.value.validate((valid) => {
     if (valid) {
-      ElMessage.success('信息更新成功')
+      ElMessage.success('信息更新成功');
     }
-  })
-}
+  });
+};
 
-const activeTab = ref('basic')
-const formRef = ref(null)
+const activeTab = ref('basic');
+const formRef = ref(null);
 </script>
 
 <style scoped lang="scss">

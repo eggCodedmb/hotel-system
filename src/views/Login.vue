@@ -8,21 +8,43 @@
         <h1>酒店管理系统</h1>
       </div>
 
-      <el-form :model="loginForm" :rules="loginRules" ref="loginFormRef" @keyup.enter="handleLogin">
+      <el-form
+        :model="loginForm"
+        :rules="loginRules"
+        ref="loginFormRef"
+        @keyup.enter="handleLogin"
+      >
         <el-form-item prop="username">
-          <el-input v-model="loginForm.username" placeholder="请输入用户名" prefix-icon="User" size="large" />
+          <el-input
+            v-model="loginForm.username"
+            placeholder="请输入用户名"
+            prefix-icon="User"
+            size="large"
+          />
         </el-form-item>
 
         <el-form-item prop="password">
-          <el-input v-model="loginForm.password" type="password" placeholder="请输入密码" prefix-icon="Lock" size="large"
-            show-password />
+          <el-input
+            v-model="loginForm.password"
+            type="password"
+            placeholder="请输入密码"
+            prefix-icon="Lock"
+            size="large"
+            show-password
+          />
         </el-form-item>
 
         <el-form-item>
           <el-checkbox v-model="rememberMe">记住密码</el-checkbox>
         </el-form-item>
 
-        <el-button type="primary" size="large" class="login-btn" :loading="loading" @click="handleLogin">
+        <el-button
+          type="primary"
+          size="large"
+          class="login-btn"
+          :loading="loading"
+          @click="handleLogin"
+        >
           登录系统
         </el-button>
       </el-form>
@@ -31,12 +53,12 @@
 </template>
 
 <script setup>
-import { ref, reactive, onMounted } from "vue";
-import { ElMessage } from "element-plus";
-import { useRouter } from "vue-router";
-import { useUserStore } from "@/store/modules/userStore";
-import { login, getLoginInfo } from "@/api/login";
-import { setToken } from "@/utils/auth";
+import { ref, reactive, onMounted } from 'vue';
+import { ElMessage } from 'element-plus';
+import { useRouter } from 'vue-router';
+import { useUserStore } from '@/store/modules/userStore';
+import { login, getLoginInfo } from '@/api/login';
+import { setToken } from '@/utils/auth';
 const loginFormRef = ref();
 const rememberMe = ref(false);
 const loading = ref(false);
@@ -44,16 +66,16 @@ const router = useRouter();
 const userStore = useUserStore();
 
 const loginForm = reactive({
-  username: userStore.getRemember.username || "",
-  password: userStore.getRemember.password || "",
+  username: userStore.getRemember.username || '',
+  password: userStore.getRemember.password || ''
 });
 
 const loginRules = reactive({
-  username: [{ required: true, message: "用户名不能为空", trigger: "blur" }],
+  username: [{ required: true, message: '用户名不能为空', trigger: 'blur' }],
   password: [
-    { required: true, message: "密码不能为空", trigger: "blur" },
-    { min: 6, message: "密码长度不能少于6位", trigger: "blur" },
-  ],
+    { required: true, message: '密码不能为空', trigger: 'blur' },
+    { min: 6, message: '密码长度不能少于6位', trigger: 'blur' }
+  ]
 });
 
 const handleLogin = () => {
@@ -62,7 +84,7 @@ const handleLogin = () => {
     if (!valid) return;
     const parmas = {
       loginName: loginForm.username,
-      password: loginForm.password,
+      password: loginForm.password
     };
 
     const res = await login(parmas);
@@ -71,8 +93,8 @@ const handleLogin = () => {
       const { result } = await getLoginInfo();
       console.log('result', result);
 
-      ElMessage.success("登录成功");
-      router.push("/home");
+      ElMessage.success('登录成功');
+      router.push('/home');
       loading.value = false;
       userStore.saveUser(result);
       const rawToken = res.result;
@@ -83,7 +105,7 @@ const handleLogin = () => {
         userStore.removeRemember();
       }
     } else {
-      ElMessage.warning("用户名或密码错误");
+      ElMessage.warning('用户名或密码错误');
       loading.value = false;
     }
   });
@@ -103,12 +125,14 @@ const handleLogin = () => {
     position: absolute;
     width: 200%;
     height: 200%;
-    background: linear-gradient(45deg,
-        #409eff,
-        #79bbff,
-        #a0cfff,
-        #c6e2ff,
-        #d9ecff);
+    background: linear-gradient(
+      45deg,
+      #409eff,
+      #79bbff,
+      #a0cfff,
+      #c6e2ff,
+      #d9ecff
+    );
     background-size: 400% 400%;
     animation: gradientBG 15s ease infinite;
     z-index: 0;

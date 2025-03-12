@@ -61,7 +61,6 @@
               <el-option label="104" value="104" />
               <el-option label="105" value="105" />
             </el-select>
-            
           </el-form-item>
         </el-col>
 
@@ -75,8 +74,8 @@
               controls-position="right"
               style="width: 100%"
             >
-            <template #append>人</template>
-          </el-input>
+              <template #append>人</template>
+            </el-input>
           </el-form-item>
         </el-col>
         <el-col :xs="24" :md="12">
@@ -109,12 +108,12 @@
               :min="1"
               :max="30"
               controls-position="right"
-              style="width: 100%">
-            <template #append>晚/1999￥</template>
-          </el-input>
+              style="width: 100%"
+            >
+              <template #append>晚/1999￥</template>
+            </el-input>
           </el-form-item>
         </el-col>
-
       </el-row>
     </el-form>
 
@@ -128,49 +127,49 @@
 </template>
 
 <script setup>
-import { ref, defineExpose,computed } from "vue";
-import { ElMessage } from "element-plus";
+import { ref, defineExpose, computed } from 'vue';
+import { ElMessage } from 'element-plus';
 
 const form = ref({
-  name: "",
-  type: "",
-  roomNum: "",
-  phone: "",
+  name: '',
+  type: '',
+  roomNum: '',
+  phone: '',
   peopleNum: 1,
-  idCard: "",
-  checkinTime: "",
-  days: 1,
+  idCard: '',
+  checkinTime: '',
+  days: 1
 });
 
 const rules = ref({
   name: [
-    { required: true, message: "请输入姓名", trigger: "blur" },
-    { min: 2, max: 10, message: "姓名长度为2-10个字符", trigger: "blur" },
+    { required: true, message: '请输入姓名', trigger: 'blur' },
+    { min: 2, max: 10, message: '姓名长度为2-10个字符', trigger: 'blur' }
   ],
   phone: [
-    { required: true, message: "请输入手机号", trigger: "blur" },
-    { pattern: /^1[3-9]\d{9}$/, message: "手机号格式不正确", trigger: "blur" },
+    { required: true, message: '请输入手机号', trigger: 'blur' },
+    { pattern: /^1[3-9]\d{9}$/, message: '手机号格式不正确', trigger: 'blur' }
   ],
-  type: [{ required: true, message: "请选择房型", trigger: "change" }],
+  type: [{ required: true, message: '请选择房型', trigger: 'change' }],
   roomNum: [
-    { required: true, message: "请输入房间号", trigger: "blur" },
-    { pattern: /^\d{3}$/, message: "房间号为3位数字", trigger: "blur" },
+    { required: true, message: '请输入房间号', trigger: 'blur' },
+    { pattern: /^\d{3}$/, message: '房间号为3位数字', trigger: 'blur' }
   ],
-  peopleNum: [{ required: true, message: "请选择入住人数", trigger: "blur" }],
+  peopleNum: [{ required: true, message: '请选择入住人数', trigger: 'blur' }],
   idCard: [
-    { required: true, message: "请输入身份证号", trigger: "blur" },
+    { required: true, message: '请输入身份证号', trigger: 'blur' },
     {
       pattern: /^\d{17}[\dXx]$/,
-      message: "身份证号格式不正确",
-      trigger: "blur",
-    },
+      message: '身份证号格式不正确',
+      trigger: 'blur'
+    }
   ],
   checkinTime: [
-    { required: true, message: "请选择入住时间", trigger: "change" },
-  ],
+    { required: true, message: '请选择入住时间', trigger: 'change' }
+  ]
 });
 
-const title = ref("客房预订");
+const title = ref('客房预订');
 const dialogVisible = ref(false);
 const refForm = ref(null);
 
@@ -188,11 +187,11 @@ const submitForm = () => {
   refForm.value.validate((valid) => {
     if (valid) {
       // 这里添加实际提交逻辑
-      console.log("预订信息:", form.value);
-      ElMessage.success("预订成功");
+      console.log('预订信息:', form.value);
+      ElMessage.success('预订成功');
       closeDialog();
     } else {
-      ElMessage.warning("请完善表单信息");
+      ElMessage.warning('请完善表单信息');
       return false;
     }
   });
@@ -200,7 +199,7 @@ const submitForm = () => {
 
 defineExpose({
   openDialog,
-  title,
+  title
 });
 </script>
 
