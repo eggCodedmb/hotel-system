@@ -9,12 +9,7 @@
       <el-col :span="6">
         <el-form-item label="状态">
           <el-select v-model="form.state" placeholder="请选择状态">
-            <el-option
-              v-for="item in stateOptions"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            />
+            <el-option v-for="item in stateOptions" :key="item.value" :label="item.label" :value="item.value" />
           </el-select>
         </el-form-item>
       </el-col>
@@ -33,24 +28,12 @@
       <el-button type="primary" @click="addUser">新增</el-button>
     </el-row>
 
-    <c-table
-      :columns="columns"
-      :data="tableData"
-      :total="total"
-      v-model:current-page="currentPage"
-      v-model:page-size="pageSize"
-      @page-change="handlePageChange"
-    >
+    <c-table :columns="columns" :data="tableData" :total="total" v-model:current-page="currentPage"
+      v-model:page-size="pageSize" @page-change="handlePageChange">
       <template #action="{ row }">
-        <el-button type="primary" size="small" @click="handleDetail(row)"
-          >详情</el-button
-        >
-        <el-button type="primary" size="small" @click="handleEdit(row)"
-          >编辑</el-button
-        >
-        <el-button type="danger" size="small" @click="handleDelete(row)"
-          >删除</el-button
-        >
+        <el-button type="primary" size="small" @click="handleDetail(row)">详情</el-button>
+        <el-button type="primary" size="small" @click="handleEdit(row)">编辑</el-button>
+        <el-button type="danger" size="small" @click="handleDelete(row)">删除</el-button>
       </template>
     </c-table>
   </div>
@@ -58,10 +41,11 @@
 </template>
 
 <script>
-import { ref } from 'vue';
+import { ref, reactive, onMounted } from 'vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import CTable from '@/components/CTable.vue';
 import UserForm from './components/UserForm.vue';
+import { getEmployeeList } from '@/api/user';
 import {
   addEmployee,
   updateEmployee,
@@ -168,18 +152,27 @@ export default {
         pageSize: pageSize.value,
         ...form.value
       };
+
       // 删除空值
       Object.keys(params).forEach((key) => {
         if (!params[key]) {
           delete params[key];
         }
       });
+      
       const res = await getEmployeeList(params);
       if (res.success) {
+        console.log(res);
+
+        tableData.value = res.result
       } else {
         ElMessage.error(res.message);
       }
     };
+
+    onMounted(() => {
+      getTableData();
+    })
 
     return {
       form,
