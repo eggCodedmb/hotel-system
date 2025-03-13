@@ -9,7 +9,12 @@
       <el-col :span="6">
         <el-form-item label="状态">
           <el-select v-model="form.state" placeholder="请选择状态">
-            <el-option v-for="item in stateOptions" :key="item.value" :label="item.label" :value="item.value" />
+            <el-option
+              v-for="item in stateOptions"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            />
           </el-select>
         </el-form-item>
       </el-col>
@@ -28,12 +33,24 @@
       <el-button type="primary" @click="addUser">新增</el-button>
     </el-row>
 
-    <c-table :columns="columns" :data="tableData" :total="total" v-model:current-page="currentPage"
-      v-model:page-size="pageSize" @page-change="handlePageChange">
+    <c-table
+      :columns="columns"
+      :data="tableData"
+      :total="total"
+      v-model:current-page="currentPage"
+      v-model:page-size="pageSize"
+      @page-change="handlePageChange"
+    >
       <template #action="{ row }">
-        <el-button type="primary" size="small" @click="handleDetail(row)">详情</el-button>
-        <el-button type="primary" size="small" @click="handleEdit(row)">编辑</el-button>
-        <el-button type="danger" size="small" @click="handleDelete(row)">删除</el-button>
+        <el-button type="primary" size="small" @click="handleDetail(row)"
+          >详情</el-button
+        >
+        <el-button type="primary" size="small" @click="handleEdit(row)"
+          >编辑</el-button
+        >
+        <el-button type="danger" size="small" @click="handleDelete(row)"
+          >删除</el-button
+        >
       </template>
     </c-table>
   </div>
@@ -45,7 +62,6 @@ import { ref, reactive, onMounted } from 'vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import CTable from '@/components/CTable.vue';
 import UserForm from './components/UserForm.vue';
-import { getEmployeeList } from '@/api/user';
 import {
   addEmployee,
   updateEmployee,
@@ -66,15 +82,6 @@ export default {
     const stateOptions = ref([
       { value: 1, label: '正常' },
       { value: 2, label: '禁用' }
-    ]);
-
-    const columns = ref([
-      { label: '序号', prop: 'index', width: '80' },
-      { label: '姓名', prop: 'name' },
-      { label: '状态', prop: 'status' },
-      { label: '电话', prop: 'phone' },
-      { label: '入职时间', prop: 'date' },
-      { label: '操作', slotName: 'action' }
     ]);
 
     const tableData = ref([]);
@@ -148,7 +155,7 @@ export default {
 
     const getTableData = async () => {
       const params = {
-        currentPage: currentPage.value,
+        pageNumber: currentPage.value,
         pageSize: pageSize.value,
         ...form.value
       };
@@ -159,12 +166,13 @@ export default {
           delete params[key];
         }
       });
-      
+
       const res = await getEmployeeList(params);
       if (res.success) {
-        console.log(res);
-
-        tableData.value = res.result
+        tableData.value = res.result.records;
+        currentPage.value = res.result.pageNumber;
+        pageSize.value = res.result.pageSize;
+        total.value = res.result.total;
       } else {
         ElMessage.error(res.message);
       }
@@ -172,7 +180,17 @@ export default {
 
     onMounted(() => {
       getTableData();
-    })
+    });
+
+    const columns = [
+      { label: '姓名', prop: 'name' },
+      { label: '状态', prop: 'status' },
+      { label: '部门', prop: 'department' },
+      { label: '邮箱', prop: 'email' },
+      { label: '电话', prop: 'phone' },
+      { label: '头像', prop: 'picture' },
+      { label: '操作', slotName: 'action' }
+    ];
 
     return {
       form,

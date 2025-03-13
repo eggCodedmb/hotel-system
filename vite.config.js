@@ -19,7 +19,7 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': '/src',
-      // '@assets': '/src/assets'
+      '@assets': '/src/assets'
     }
   },
   build: {
@@ -36,8 +36,8 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': {
-        // target: 'http://192.168.1.166:8080',
-        target: "https://51212e4e.r22.cpolar.top",
+        target: 'http://192.168.1.166:8080',
+        // target: "https://51212e4e.r22.cpolar.top",
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api/, '')
       }

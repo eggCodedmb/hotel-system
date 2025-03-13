@@ -60,6 +60,13 @@ import { Plus, Search } from '@element-plus/icons-vue';
 import dayjs from 'dayjs';
 import NoticeForm from './components/NoticeForm.vue';
 import CTable from '@/components/CTable.vue';
+import {
+  addNotice,
+  editNotice,
+  deleteNotice,
+  getNoticeList,
+  getNoticeDetail
+} from '@/api/notice';
 // 模拟数据
 const mockData = Array.from({ length: 50 }).map((_, index) => ({
   id: index + 1,
@@ -96,6 +103,7 @@ const publishDate = ref([]);
 const currentPage = ref(1);
 const pageSize = ref(10);
 const total = ref(mockData.length);
+const pageList = ref([]);
 
 const filteredAnnouncements = computed(() => {
   return mockData
@@ -149,6 +157,19 @@ const handleDelete = (id) => {
     // 这里添加实际删除逻辑
     ElMessage.success('删除成功');
   });
+};
+
+const noticeList =async () => {
+  const parmas = {
+    pageNumber: currentPage.value,
+    pageSize: pageSize.value
+  }
+const res = await getNoticeList(parmas);
+
+if (res.success) {
+
+}
+
 };
 
 const handlePageChange = () => {};

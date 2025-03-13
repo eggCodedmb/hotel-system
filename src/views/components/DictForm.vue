@@ -133,7 +133,7 @@ const submitForm = () => {
 };
 
 const switchStatus = (row) => {
-  updateDictItem({ id: row.id, status: row.status }).then((res) => {
+  updateDictItem({ dictId: row.id, status: row.status }).then((res) => {
     if (res.success) {
       ElMessage.success(res.message || '操作成功');
     } else {
@@ -157,7 +157,7 @@ const deleteDict = (row) => {
     type: 'warning'
   })
     .then(async () => {
-      const res = await deleteDictItem(row.id);
+      const res = await deleteDictItem(row.dictId);
       if (res.success) {
         ElMessage.success(res.message || '删除成功');
         getDictData(formData.dictId);
@@ -169,7 +169,7 @@ const deleteDict = (row) => {
 };
 
 const getDictData = async (dictId) => {
-  const res = await getDictDetail({ id: dictId });
+  const res = await getDictDetail({ dictId });
   if (res.success) {
     dictList.value = res.result.records;
   } else {

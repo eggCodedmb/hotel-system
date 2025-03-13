@@ -7,9 +7,9 @@ export function addEmployee(params) {
   return request.put(`/${service}/addEmployee`, params);
 }
 
-// 获取员工列表 /employeeManagerment/getEmployeeList
+// 获取员工列表
 export function getEmployeeList(data) {
-  return request.get(`/${service}/getEmployeeList`, data);
+  return request.post(`/${service}/list`, data);
 }
 
 // 修改员工信息 /employeeManagerment/updateEmployee
