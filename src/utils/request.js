@@ -98,9 +98,8 @@ class HttpClient {
         break;
       case 401:
         errorMessage = '登录已过期，请重新登录';
-
-        // removeToken();
-        // window.location.href = "/login";
+        removeToken();
+        window.location.href = "/login";
         break;
       case 403:
         errorMessage = '没有操作权限';

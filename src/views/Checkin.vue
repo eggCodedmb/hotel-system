@@ -135,7 +135,9 @@ export default {
   },
   methods: {
     // 入住
-    handleCheckin(row) {},
+    handleCheckin(row) {
+      
+    },
 
     // 查看
     handleDetail(row) {

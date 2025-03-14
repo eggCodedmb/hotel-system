@@ -32,9 +32,13 @@
               style="width: 100%"
               :disabled="isView"
             >
-              <el-option label="单人间" value="单人间" />
-              <el-option label="双人间" value="双人间" />
-              <el-option label="套房" value="套房" />
+              <el-option
+                v-for="(item, key) in typeOptions"
+                :key="key"
+                :label="item.itemText"
+                :value="item.itemValue"
+              >
+              </el-option>
             </el-select>
           </el-form-item>
         </el-col>
@@ -61,9 +65,12 @@
               style="width: 100%"
               :disabled="isView"
             >
-              <el-option label="空闲" value="空闲" />
-              <el-option label="已预订" value="已预订" />
-              <el-option label="清洁中" value="清洁中" />
+              <el-option
+                v-for="(item, key) in statusOptions"
+                :key="key"
+                :label="item.itemText"
+                :value="item.itemValue"
+              />
             </el-select>
           </el-form-item>
         </el-col>
@@ -97,6 +104,7 @@
               placeholder="请输入房间简介"
               clearable
               :disabled="isView"
+              :rows="6"
             />
           </el-form-item>
         </el-col>
@@ -123,6 +131,8 @@ import {
   deleteRoom,
   getRoomDetail
 } from '@/api/room';
+
+import { useDictStore } from '@/store/modules/dictStore';
 const form = ref({
   id: '',
   roomId: '',
@@ -137,6 +147,8 @@ const refForm = ref(null);
 const title = ref('新增客房');
 const dialogVisible = ref(false);
 const isView = ref(false);
+const typeOptions = useDictStore().getDict('ROOMTYPE') || [];
+const statusOptions = useDictStore().getDict('ROOMSTATUS') || [];
 
 const rules = ref({
   roomId: [

@@ -28,10 +28,10 @@
         <el-form-item label="房间状态">
           <el-select v-model="form.status" placeholder="请选择">
             <el-option
-              v-for="item in stateOptions"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
+              v-for="(item, key) in stateOptions"
+              :key="key"
+              :label="item.itemText"
+              :value="item.itemValue"
             >
             </el-option>
           </el-select>
@@ -105,7 +105,6 @@ import {
   getRoomDetail
 } from '@/api/room';
 
-const dictStore = useDictStore();
 export default {
   components: {
     CTable,
@@ -119,25 +118,8 @@ export default {
         price: '',
         status: ''
       },
-      stateOptions: [
-        {
-          value: 0,
-          label: '空闲'
-        },
-        {
-          value: 1,
-          label: '已预订'
-        },
-        {
-          value: 2,
-          label: '已入住'
-        },
-        {
-          value: 3,
-          label: '已退房'
-        }
-      ],
-      roomTypeOptions: [],
+      stateOptions: useDictStore().getDict('ROOMSTATUS') || [],
+      roomTypeOptions: useDictStore().getDict('ROOMTYPE') || [],
       columns: [],
       tableData: [],
       image: 'https://picsum.photos/200/100',
@@ -149,8 +131,6 @@ export default {
   mounted() {
     this.initTable();
     this.getTableData();
-
-    
   },
   methods: {
     reset() {

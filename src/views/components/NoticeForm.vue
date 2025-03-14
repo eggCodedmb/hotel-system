@@ -20,16 +20,16 @@
         />
       </el-form-item>
 
-      <el-form-item label="状态" prop="status">
+      <!-- <el-form-item label="状态" prop="status">
         <el-radio-group v-model="formData.status">
-          <el-radio :label="1">启用</el-radio>
-          <el-radio :label="0">禁用</el-radio>
+          <el-radio :value ="1">启用</el-radio>
+          <el-radio :value ="0">禁用</el-radio>
         </el-radio-group>
-      </el-form-item>
+      </el-form-item> -->
 
       <el-form-item label="发布时间">
         <el-date-picker
-          v-model="formData.publishTime"
+          v-model="formData.createTime"
           type="datetime"
           placeholder="选择发布时间"
           value-format="YYYY-MM-DD HH:mm:ss"
@@ -72,7 +72,7 @@ const rules = ref({
     { required: true, message: '请输入公告内容', trigger: 'blur' },
     { min: 2, max: 500, message: '长度在 2 到 500 个字符', trigger: 'blur' }
   ],
-  status: [{ required: true, message: '请选择状态', trigger: 'change' }],
+  // status: [{ required: true, message: '请选择状态', trigger: 'change' }],
   publishTime: [
     { required: true, message: '请选择发布时间', trigger: 'change' }
   ]

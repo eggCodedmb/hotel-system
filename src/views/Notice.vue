@@ -19,20 +19,20 @@
           </template>
         </el-input>
 
-        <el-date-picker
+        <!-- <el-date-picker
           v-model="publishDate"
           type="daterange"
           range-separator="-"
           start-placeholder="开始日期"
           end-placeholder="结束日期"
           @change="handleDateChange"
-        />
+        /> -->
       </div>
     </div>
 
     <!-- 数据表格 -->
     <CTable
-      :data="filteredAnnouncements"
+      :data="pageList"
       :loading="loading"
       :columns="columns"
       :total="total"
@@ -54,7 +54,7 @@
 </template>
 
 <script setup>
-import { ref, computed, render } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import { Plus, Search } from '@element-plus/icons-vue';
 import dayjs from 'dayjs';
@@ -62,7 +62,7 @@ import NoticeForm from './components/NoticeForm.vue';
 import CTable from '@/components/CTable.vue';
 import {
   addNotice,
-  editNotice,
+  updateNotice,
   deleteNotice,
   getNoticeList,
   getNoticeDetail
@@ -81,16 +81,11 @@ const refNotice = ref(null);
 
 const columns = [
   { label: '标题', prop: 'title' },
-  { label: '发布时间', prop: 'publishTime' },
-  { label: '发布人', prop: 'publisher' },
-  {
-    label: '状态',
-    prop: 'status',
-    render: (row) => (row.status === 0 ? '已发布' : '未发布')
-  },
+  { label: '发布时间', prop: 'createTime' },
+  { label: '发布人', prop: 'createPerson' },
   {
     label: '操作',
-    width: 150,
+    width: 300,
     align: 'center',
     slotName: 'action'
   }
@@ -98,31 +93,11 @@ const columns = [
 
 // 状态管理
 const loading = ref(false);
-const searchKeyword = ref('');
-const publishDate = ref([]);
+const title = ref('');
 const currentPage = ref(1);
 const pageSize = ref(10);
 const total = ref(mockData.length);
 const pageList = ref([]);
-
-const filteredAnnouncements = computed(() => {
-  return mockData
-    .filter((item) => {
-      const keywordMatch = item.title.includes(searchKeyword.value);
-      const dateMatch =
-        publishDate.value?.length === 2
-          ? dayjs(item.publishTime).isBetween(
-              publishDate.value[0],
-              publishDate.value[1]
-            )
-          : true;
-      return keywordMatch && dateMatch;
-    })
-    .slice(
-      (currentPage.value - 1) * pageSize.value,
-      currentPage.value * pageSize.value
-    );
-});
 
 // 方法
 const handleAdd = () => {
@@ -131,21 +106,27 @@ const handleAdd = () => {
 };
 
 const handleEdit = (row) => {
-  console.log(row);
-
   refNotice.value.title = '编辑公告';
   refNotice.value.openDialog(row);
 };
 
 const handleSubmit = async (type, data) => {
   if (type === 'add') {
+    const res = await addNotice(data);
+    if (res.success) {
+      ElMessage.success('新增成功');
+      noticeList();
+    }
   } else {
+    const res = await updateNotice(data);
+    if (res.success) {
+      ElMessage.success('编辑成功');
+      noticeList();
+    }
   }
 };
-const handleSearch = () => {};
-
-const handleDateChange = (val) => {
-  console.log(val);
+const handleSearch = () => {
+  noticeList();
 };
 
 const handleDelete = (id) => {
@@ -154,25 +135,38 @@ const handleDelete = (id) => {
     cancelButtonText: '取消',
     type: 'warning'
   }).then(() => {
-    // 这里添加实际删除逻辑
-    ElMessage.success('删除成功');
+    deleteNotice(id).then((res) => {
+      if (res.success) {
+        ElMessage.success('删除成功');
+        noticeList();
+      }
+    });
   });
 };
 
-const noticeList =async () => {
+const noticeList = async () => {
   const parmas = {
+    title: title.value,
     pageNumber: currentPage.value,
     pageSize: pageSize.value
+  };
+  const res = await getNoticeList(parmas);
+
+  if (res.success) {
+    pageList.value = res.result.records;
+    total.value = res.result.total;
+    pageSize.value = res.result.pageSize;
+    currentPage.value = res.result.pageNumber;
+  } else {
+    ElMessage.error(res.message);
   }
-const res = await getNoticeList(parmas);
-
-if (res.success) {
-
-}
-
 };
 
 const handlePageChange = () => {};
+
+onMounted(() => {
+  noticeList();
+});
 </script>
 
 <style lang="scss" scoped>
