@@ -17,8 +17,8 @@
         <el-col :xs="24" :md="12">
           <el-form-item label="姓名" prop="name">
             <el-input
-              v-model="form.name"
-              placeholder="请输入入住人姓名"
+              v-model="form.customerName"
+              placeholder="请输入"
               clearable
             />
           </el-form-item>
@@ -52,9 +52,8 @@
         </el-col>
         <el-col :xs="24" :md="12">
           <el-form-item label="房间号" prop="roomId">
-            <!-- 下拉框 -->
             <el-select
-              v-model="form.roomNum"
+              v-model="form.roomId"
               placeholder="请选择房间号"
               style="width: 100%"
             >
@@ -94,9 +93,9 @@
 
         <!-- 第四行：入住时间 -->
         <el-col :span="12">
-          <el-form-item label="入住时间" prop="checkinTime">
+          <el-form-item label="入住时间" prop="beginTime">
             <el-date-picker
-              v-model="form.checkinTime"
+              v-model="form.beginTime"
               type="datetime"
               placeholder="选择日期和时间"
               value-format="YYYY-MM-DD HH:mm:ss"
@@ -119,82 +118,70 @@
         </el-col>
       </el-row>
     </el-form>
-
     <template #footer>
       <div class="dialog-footer">
         <el-button type="warning" @click="closeDialog">取消</el-button>
-        <el-button type="primary" @click="submitForm">确认预订</el-button>
+        <el-button type="primary" @click="submitForm">{{
+          title === '客房预订' ? '确认预订' : '修改预订'
+        }}</el-button>
       </div>
     </template>
   </el-dialog>
 </template>
 
 <script setup>
-import { ref, defineExpose, computed } from 'vue';
+import { ref, defineExpose, computed, defineEmits } from 'vue';
 import { ElMessage } from 'element-plus';
 import { useDictStore } from '@/store/modules/dictStore';
-const form = ref({
-  name: '',
-  type: '',
-  roomNum: '',
-  phone: '',
-  peopleNum: 1,
-  idCard: '',
-  checkinTime: '',
-  days: 1
-});
 
+const form = ref({
+  customerName: '',
+  phone: '',
+  type: '',
+  roomId: ''
+});
 const rules = ref({
-  name: [
-    { required: true, message: '请输入姓名', trigger: 'blur' },
-    { min: 2, max: 10, message: '姓名长度为2-10个字符', trigger: 'blur' }
+  customerName: [
+    { required: true, message: '请输入客户姓名', trigger: 'blur' }
   ],
   phone: [
-    { required: true, message: '请输入手机号', trigger: 'blur' },
-    { pattern: /^1[3-9]\d{9}$/, message: '手机号格式不正确', trigger: 'blur' }
-  ],
-  type: [{ required: true, message: '请选择房型', trigger: 'change' }],
-  roomNum: [
-    { required: true, message: '请输入房间号', trigger: 'blur' },
-    { pattern: /^\d{3}$/, message: '房间号为3位数字', trigger: 'blur' }
-  ],
-  peopleNum: [{ required: true, message: '请选择入住人数', trigger: 'blur' }],
-  idCard: [
-    { required: true, message: '请输入身份证号', trigger: 'blur' },
+    { required: true, message: '请输入联系电话', trigger: 'blur' },
     {
-      pattern: /^\d{17}[\dXx]$/,
-      message: '身份证号格式不正确',
+      pattern: /^1[3456789]\d{9}$/,
+      message: '请输入正确的手机号码',
       trigger: 'blur'
     }
   ],
-  checkinTime: [
-    { required: true, message: '请选择入住时间', trigger: 'change' }
-  ]
+  type: [{ required: true, message: '请选择房型', trigger: 'blur' }],
+  roomId: [{ required: true, message: '请选择房间号', trigger: 'blur' }]
 });
-
 const title = ref('客房预订');
 const dialogVisible = ref(false);
 const refForm = ref(null);
+const isView = ref(false);
 
 const typeOptions = useDictStore().getDict('ROOMTYPE') || [];
 const statusOptions = useDictStore().getDict('ROOMSTATUS') || [];
 
-const openDialog = () => {
+const emit = defineEmits(['submit']);
+
+const openDialog = (row) => {
   dialogVisible.value = true;
+  if (row) {
+    form.value = row;
+  }
 };
 
 const closeDialog = () => {
   dialogVisible.value = false;
   refForm.value.resetFields();
-  form.value.peopleNum = 1; // 重置为默认值
 };
 
 const submitForm = () => {
   refForm.value.validate((valid) => {
     if (valid) {
-      // 这里添加实际提交逻辑
-      console.log('预订信息:', form.value);
-      ElMessage.success('预订成功');
+      const type = title.value === '客房预订' ? 'add' : 'edit';
+      emit('submit', type, form.value);
       closeDialog();
     } else {
       ElMessage.warning('请完善表单信息');

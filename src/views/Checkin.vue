@@ -188,10 +188,6 @@ export default {
           }
         },
         {
-          label: '姓名',
-          prop: 'name'
-        },
-        {
           label: '房间号',
           prop: 'roomId'
         },
