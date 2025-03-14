@@ -31,7 +31,7 @@
               "
               class="user-avatar"
             />
-            <span class="user-name">{{ userInfo.username || '管理员' }}</span>
+            <span class="user-name">{{ userInfo.username || '无' }}</span>
             <el-icon class="arrow-icon"><arrow-down /></el-icon>
           </div>
 
@@ -58,7 +58,7 @@
 </template>
 
 <script setup>
-import { ref, watch } from 'vue';
+import { ref, watch, nextTick } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { useUserStore } from '@/store/modules/userStore';
 import { useMenuStore } from '@/store/modules/menuStore';
@@ -93,6 +93,8 @@ const handleLogout = () => {
   userStore.logout();
   router.push('/login');
 };
+
+nextTick(() => {});
 </script>
 
 <style scoped lang="scss">

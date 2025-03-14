@@ -7,11 +7,14 @@ export const useUserStore = defineStore(
   () => {
     // 用户信息
     const user = ref({});
-    const remember = ref({});
+    const remember = ref({
+      username: '',
+      password: '',
+    });
     const isRemember = ref(false);
-    
 
-  
+
+
     const saveUser = (newUser) => {
       user.value = newUser;
     };
@@ -21,7 +24,7 @@ export const useUserStore = defineStore(
     // 获取记住密码
     const getRemember = computed(() => remember.value);
     const saveRemember = (userForm) => {
-      remember.value = userForm;
+      remember.value = { ...userForm };
     };
 
     const removeRemember = () => {
@@ -44,6 +47,7 @@ export const useUserStore = defineStore(
       getUser,
       getRemember,
       isRemember,
+      remember,
       saveUser,
       saveRemember,
       removeRemember,

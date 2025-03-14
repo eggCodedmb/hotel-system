@@ -122,12 +122,6 @@ class HttpClient {
   handleBusinessError(code, message) {
     console.error(`业务错误 ${code}: ${message}`);
     ElMessage.error(message || '操作失败');
-
-    // // 特殊状态码处理
-    // if (code === 401) {
-    //   // 跳转登录页
-    //   window.location.href = '/login'
-    // }
   }
 
   // 通用请求方法
