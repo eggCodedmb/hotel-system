@@ -3,12 +3,12 @@
     <el-row :gutter="20">
       <el-col :span="6">
         <el-form-item label="字典名称">
-          <el-input v-model="form.roomName" placeholder="请输入" />
+          <el-input v-model="form.dictName" placeholder="请输入" />
         </el-form-item>
       </el-col>
       <el-col :span="18">
-        <el-button type="primary">查询</el-button>
-        <el-button type="primary">重置</el-button>
+        <el-button type="primary" @click="getTableData">查询</el-button>
+        <el-button type="primary" @click="reset">重置</el-button>
       </el-col>
     </el-row>
 
@@ -27,6 +27,9 @@
       <template #action="{ row }">
         <el-button type="primary" size="small" @click="handleEdit(row)"
           >编辑</el-button
+        >
+        <el-button type="primary" size="small" @click="handleDetail(row)"
+          >详情</el-button
         >
         <el-button type="danger" size="small" @click="handleDelete(row)"
           >删除</el-button
@@ -71,14 +74,27 @@ export default {
     this.getTableData();
   },
   methods: {
+    reset() {
+      this.form = {};
+      this.currentPage = 1;
+      this.pageSize = 10;
+      this.getTableData();
+    },
     addDict() {
       this.$refs.addForm.title = '新增字典';
       this.$refs.addForm.openDialog();
     },
+
     handleEdit(row) {
+      this.$refs.addForm.title = '编辑字典';
+      this.$refs.addForm.openDialog(row);
+    },
+
+    handleDetail(row) {
       this.$refs.dictForm.title = '编辑字典';
       this.$refs.dictForm.openDialog(row.id);
     },
+
     handleDelete(row) {
       this.$confirm('确定删除该字典吗？', '提示', {
         confirmButtonText: '确定',
@@ -86,9 +102,13 @@ export default {
         type: 'warning'
       })
         .then(() => {
-          this.$message({
-            type: 'success',
-            message: '删除成功!'
+          deleteDict(row.id).then((res) => {
+            if (res.success) {
+              this.$message.success('删除成功');
+              this.getTableData();
+            } else {
+              this.$message.error(res.message);
+            }
           });
         })
         .catch(() => {});
@@ -111,7 +131,27 @@ export default {
       }
     },
 
-    refreshCache() {},
+    async refreshCache() {
+      // 刷新缓存
+      const params = {
+        ...this.form,
+        pageNumber: 1,
+        pageSize: 999
+      };
+      const { result, success } = await getDictList(params);
+      const { records } = result;
+      if (success) {
+        records.map(async (item) => {
+          const res = await getDictDetail({ dictId: item.id });
+          if (res.success) {
+            const dictData = res.result.records.filter(
+              (item) => item.status === '1'
+            );
+            useDictStore().setDict(item.dictCode, dictData);
+          }
+        });
+      }
+    },
     initTable() {
       const columns = [
         {

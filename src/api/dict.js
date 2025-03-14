@@ -32,7 +32,7 @@ export function updateDictItem(data) {
 
 // 删除字典
 export function deleteDict(id) {
-  return request.post('/deleteDic', id);
+  return request.get(`/deleteDic?id=${id}`);
 }
 
 // 删除字典项

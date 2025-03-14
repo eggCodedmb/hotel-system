@@ -1,38 +1,64 @@
-import { defineStore } from 'pinia';
-import { ref, computed } from 'vue';
+import { defineStore } from 'pinia'
+import { ref, computed } from 'vue'
 
 export const useDictStore = defineStore(
   'dict',
   () => {
-    const dicts = ref([
-      {
-        key: 'SEX',
-        values: [
-          { label: '男', value: 'M' },
-          { label: '女', value: 'F' }
-        ]
+    const dicts = ref([])
+
+    // 核心方法：智能合并重复 key
+    const setDict = (key, values) => {
+      const existIndex = dicts.value.findIndex(item => item.key === key)
+      if (existIndex > -1) {
+        dicts.value[existIndex] = {
+          ...dicts.value[existIndex].v,
+          values: [...values]
+        }
+      } else {
+        dicts.value.push({ key, values })
       }
-    ]);
+    }
 
-    const saveDict = (dict) => {};
+    // 核心方法：获取字典项
+    const getDict = computed(() => (key) => {
+      return dicts.value.find(item => item.key === key).values
+    })
 
-    const getDict = computed((key) => {});
+    // 删除字典（支持批量）
+    const removeDict = (key) => {
+      const keys = Array.isArray(key) ? key : [key]
+      dicts.value = dicts.value.filter(item => !keys.includes(item.key))
+    }
 
-    const removeDict = (key) => {};
-
-    const updateDict = (key, dict) => {};
+    // 清空字典（保留指定 key）
+    const clearDict = (keepKeys) => {
+      if (keepKeys.length === 0) {
+        dicts.value = []
+      } else {
+        dicts.value = dicts.value.filter(item => keepKeys.includes(item.key))
+      }
+    }
 
     return {
-      saveDict,
+      dicts,
+      setDict,
       getDict,
       removeDict,
-      updateDict
-    };
+      clearDict
+    }
   },
   {
     persist: {
       enabled: true,
-      strategies: [{ storage: localStorage, paths: ['dicts'] }]
+      strategies: [{
+        storage: localStorage,
+        // 序列化处理（可选）
+        serializer: {
+          serialize: JSON.stringify,
+          deserialize: JSON.parse
+        },
+        paths: ['dicts']
+      }]
     }
   }
-);
+)

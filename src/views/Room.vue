@@ -11,9 +11,9 @@
           <el-select v-model="form.type" placeholder="请选择">
             <el-option
               v-for="item in roomTypeOptions"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
+              :key="item.id"
+              :label="item.itemText"
+              :value="item.itemValue"
             >
             </el-option>
           </el-select>
@@ -96,6 +96,7 @@
 import CTable from '@/components/CTable.vue';
 import RoomForm from './components/RoomForm.vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
+import { useDictStore } from '@/store/modules/dictStore';
 import {
   addRoom,
   getRoomList,
@@ -103,6 +104,8 @@ import {
   deleteRoom,
   getRoomDetail
 } from '@/api/room';
+
+const dictStore = useDictStore();
 export default {
   components: {
     CTable,
@@ -134,24 +137,7 @@ export default {
           label: '已退房'
         }
       ],
-      roomTypeOptions: [
-        {
-          value: 0,
-          label: '单人间'
-        },
-        {
-          value: 1,
-          label: '双人间'
-        },
-        {
-          value: 2,
-          label: '三人间'
-        },
-        {
-          value: 3,
-          label: '四人间'
-        }
-      ],
+      roomTypeOptions: [],
       columns: [],
       tableData: [],
       image: 'https://picsum.photos/200/100',
@@ -163,6 +149,8 @@ export default {
   mounted() {
     this.initTable();
     this.getTableData();
+
+    
   },
   methods: {
     reset() {

@@ -37,7 +37,9 @@
     <template #footer>
       <div class="dialog-footer">
         <el-button type="warning" @click="closeDialog">关闭</el-button>
-        <el-button type="primary" @click="submitForm">新增</el-button>
+        <el-button type="primary" @click="submitForm">{{
+          title == '新增字典' ? '新增' : '修改'
+        }}</el-button>
       </div>
     </template>
   </el-dialog>
@@ -46,7 +48,7 @@
 <script setup>
 import { ref, defineExpose, defineEmits, reactive, defineProps } from 'vue';
 import { ElMessage } from 'element-plus';
-import { addDict } from '@/api/dict.js';
+import { addDict, updateDict } from '@/api/dict.js';
 const formData = reactive({
   dictName: '',
   dictCode: '',
@@ -63,8 +65,12 @@ const rules = ref({
   dictCode: [{ required: true, message: '请输入字典代码', trigger: 'blur' }]
 });
 
-const openDialog = () => {
+const openDialog = (row) => {
   dialogVisible.value = true;
+  if (row) {
+    formData.dictName = row.dictName;
+    formData.dictCode = row.dictCode;
+  }
 };
 
 const closeDialog = () => {
@@ -75,9 +81,16 @@ const closeDialog = () => {
 const submitForm = () => {
   refForm.value.validate(async (valid) => {
     if (valid) {
-      const res = await addDict(formData);
-      if (res.success) {
-        ElMessage.success('新增成功');
+      if (title.value === '编辑字典') {
+        const res = await updateDict(formData);
+        if (res.success) {
+          ElMessage.success('编辑成功');
+        }
+      } else if (title.value === '新增字典') {
+        const res = await addDict(formData);
+        if (res.success) {
+          ElMessage.success('新增成功');
+        }
       }
       emit('submit');
       closeDialog();

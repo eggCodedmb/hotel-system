@@ -133,7 +133,7 @@ const submitForm = () => {
 };
 
 const switchStatus = (row) => {
-  updateDictItem({ dictId: row.id, status: row.status }).then((res) => {
+  updateDictItem({ id: row.id, status: row.status }).then((res) => {
     if (res.success) {
       ElMessage.success(res.message || '操作成功');
     } else {
@@ -157,7 +157,7 @@ const deleteDict = (row) => {
     type: 'warning'
   })
     .then(async () => {
-      const res = await deleteDictItem(row.dictId);
+      const res = await deleteDictItem(row.id);
       if (res.success) {
         ElMessage.success(res.message || '删除成功');
         getDictData(formData.dictId);
