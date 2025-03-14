@@ -37,8 +37,8 @@
                 :key="key"
                 :label="item.itemText"
                 :value="item.itemValue"
-              >
-              </el-option>
+              />
+
             </el-select>
           </el-form-item>
         </el-col>

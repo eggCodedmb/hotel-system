@@ -41,14 +41,17 @@
               placeholder="请选择房型"
               style="width: 100%"
             >
-              <el-option label="单人间" value="单人间" />
-              <el-option label="双人间" value="双人间" />
-              <el-option label="套房" value="套房" />
+              <el-option
+                v-for="(item, key) in typeOptions"
+                :key="key"
+                :label="item.itemText"
+                :value="item.itemValue"
+              />
             </el-select>
           </el-form-item>
         </el-col>
         <el-col :xs="24" :md="12">
-          <el-form-item label="房间号" prop="roomNum">
+          <el-form-item label="房间号" prop="roomId">
             <!-- 下拉框 -->
             <el-select
               v-model="form.roomNum"
@@ -129,7 +132,7 @@
 <script setup>
 import { ref, defineExpose, computed } from 'vue';
 import { ElMessage } from 'element-plus';
-
+import { useDictStore } from '@/store/modules/dictStore';
 const form = ref({
   name: '',
   type: '',
@@ -172,6 +175,9 @@ const rules = ref({
 const title = ref('客房预订');
 const dialogVisible = ref(false);
 const refForm = ref(null);
+
+const typeOptions = useDictStore().getDict('ROOMTYPE') || [];
+const statusOptions = useDictStore().getDict('ROOMSTATUS') || [];
 
 const openDialog = () => {
   dialogVisible.value = true;

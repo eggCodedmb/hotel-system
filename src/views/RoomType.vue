@@ -51,7 +51,6 @@
 <script>
 import CTable from '@/components/CTable.vue';
 import RoomForm from './components/RoomTypeForm.vue';
-import { ElMessage, ElMessageBox } from 'element-plus';
 export default {
   components: {
     CTable,
