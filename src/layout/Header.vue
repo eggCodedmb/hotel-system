@@ -3,11 +3,7 @@
     <div class="header-content">
       <!-- 面包屑导航 -->
       <el-breadcrumb separator="/" class="breadcrumb">
-        <el-breadcrumb-item
-          v-for="(item, index) in breadcrumbList"
-          :key="index"
-          :to="item.path"
-        >
+        <el-breadcrumb-item v-for="(item, index) in breadcrumbList" :key="index" :to="item.path">
           <el-icon v-if="index === 0" class="breadcrumb-icon">
             <location />
           </el-icon>
@@ -17,20 +13,11 @@
 
       <!-- 用户操作区 -->
       <div class="user-area">
-        <el-dropdown
-          trigger="hover"
-          placement="bottom-end"
-          @command="handleCommand"
-        >
+        <el-dropdown trigger="hover" placement="bottom-end" @command="handleCommand">
           <div class="user-wrapper">
-            <el-avatar
-              :size="36"
-              :src="
-                userInfo.avatar ||
-                '/public/img/3ea6beec64369c2642b92c6726f1epng.png'
-              "
-              class="user-avatar"
-            />
+            <el-avatar :size="36" :src="userInfo.avatar ||
+              '/public/img/3ea6beec64369c2642b92c6726f1epng.png'
+              " class="user-avatar" />
             <span class="user-name">{{ userInfo.username || '无' }}</span>
             <el-icon class="arrow-icon"><arrow-down /></el-icon>
           </div>
@@ -38,11 +25,15 @@
           <template #dropdown>
             <el-dropdown-menu class="user-menu">
               <el-dropdown-item command="profile">
-                <el-icon><user /></el-icon>
+                <el-icon>
+                  <user />
+                </el-icon>
                 个人中心
               </el-dropdown-item>
               <el-dropdown-item command="front">
-                <el-icon><OfficeBuilding /></el-icon>
+                <el-icon>
+                  <OfficeBuilding />
+                </el-icon>
                 前台
               </el-dropdown-item>
               <el-dropdown-item divided command="logout">
@@ -55,15 +46,26 @@
       </div>
     </div>
   </el-header>
+
+  <userInfoForm v-if="isShow" ref="userInfoFormRef" />
+
 </template>
 
 <script setup>
-import { ref, watch, nextTick } from 'vue';
+import { ref, watch, nextTick, defineAsyncComponent } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { useUserStore } from '@/store/modules/userStore';
 import { useMenuStore } from '@/store/modules/menuStore';
 import { useDark, useToggle } from '@vueuse/core';
+//异步组件import userInfoForm from '@/views/components/userInfoForm.vue';
 
+const userInfoForm = defineAsyncComponent(() =>
+  import('@/views/components/userInfoForm.vue')
+)
+
+
+const userInfoFormRef = ref(null);
+const isShow = ref(false);
 const router = useRouter();
 const route = useRoute();
 const userStore = useUserStore();
@@ -94,7 +96,11 @@ const handleLogout = () => {
   router.push('/login');
 };
 
-nextTick(() => {});
+nextTick(() => {
+  if (userInfo.name) {
+    userInfoFormRef.value.openDialog(); // 打开用户信息表单
+  }
+});
 </script>
 
 <style scoped lang="scss">
