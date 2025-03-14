@@ -129,22 +129,8 @@ import { ref, reactive } from 'vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import dayjs from 'dayjs';
 import CTable from '@/components/CTable.vue';
+import { addLeave, getLeaveList, updateLeave, deleteLeave } from '@/api/leave';
 
-// 模拟数据
-const mockData = [
-  {
-    id: 1,
-    applicant: '张三',
-    type: '事假',
-    startTime: '2024-03-01 09:00',
-    endTime: '2024-03-03 18:00',
-    duration: 3,
-    reason: '家庭事务处理',
-    status: 0, // 0-待审批 1-已通过 2-已拒绝
-    createTime: '2024-02-28 14:30',
-    attachment: '/api/file/1'
-  }
-];
 const columns = [
   { label: '申请人', prop: 'applicant' },
   { label: '请假类型', prop: 'type', tag: true, tagType: 'type' },
@@ -200,17 +186,7 @@ const statusOptions = [
 ];
 
 // 表格数据
-const tableData = ref(mockData);
-
-// 标签类型映射
-const getTagType = (type) => {
-  const map = {
-    事假: 'primary',
-    病假: 'warning',
-    年假: 'success'
-  };
-  return map[type] || 'info';
-};
+const tableData = ref([]);
 
 // 操作处理
 const showDetail = (row) => {
@@ -242,7 +218,16 @@ const handleSearch = () => {
   loadData();
 };
 
-const loadData = async () => {};
+const loadData = async () => {
+  const params = {
+    pageNumber: currentPage.value,
+    pageSize: pageSize.value,
+    ...searchForm
+  };
+  const res = await getLeaveList(params);
+  if (res.success) {
+  }
+};
 </script>
 
 <style scoped>

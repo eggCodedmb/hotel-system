@@ -32,8 +32,8 @@
     </el-row>
     <el-row>
       <el-col :span="3" :offset="21">
-        <el-button type="primary">查询</el-button>
-        <el-button type="warning">重置</el-button>
+        <el-button type="primary" @click="handleSearch">查询</el-button>
+        <el-button type="warning" @click="handleReset">重置</el-button>
       </el-col>
     </el-row>
     <el-col :span="21">
@@ -106,6 +106,20 @@ export default {
     this.getTableData();
   },
   methods: {
+    // 搜索
+    handleSearch() {
+      this.getTableData();
+    },
+
+    // 重置
+    handleReset() {
+      this.form = {
+        roomId: '',
+        customerName: '',
+        phone: ''
+      };
+    },
+    
     // 入住
     handleCheckin(row) {},
 

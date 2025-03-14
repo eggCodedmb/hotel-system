@@ -5,10 +5,9 @@
       <el-button type="primary" @click="handleAdd" :icon="Plus"
         >新增公告</el-button
       >
-
       <div class="search-area">
         <el-input
-          v-model="searchKeyword"
+          v-model="title"
           placeholder="搜索公告标题"
           clearable
           style="width: 300px"
@@ -18,15 +17,6 @@
             <el-button :icon="Search" />
           </template>
         </el-input>
-
-        <!-- <el-date-picker
-          v-model="publishDate"
-          type="daterange"
-          range-separator="-"
-          start-placeholder="开始日期"
-          end-placeholder="结束日期"
-          @change="handleDateChange"
-        /> -->
       </div>
     </div>
 
@@ -47,7 +37,6 @@
         >
       </template>
     </CTable>
-
     <!-- 编辑对话框 -->
     <NoticeForm ref="refNotice" @submit="handleSubmit" />
   </div>
@@ -67,15 +56,6 @@ import {
   getNoticeList,
   getNoticeDetail
 } from '@/api/notice';
-// 模拟数据
-const mockData = Array.from({ length: 50 }).map((_, index) => ({
-  id: index + 1,
-  title: `系统公告 ${index + 1}`,
-  content: `这里是第 ${index + 1} 条公告的详细内容，包含重要的系统更新信息...`,
-  publisher: '管理员',
-  status: index % 3 === 0 ? 0 : 1,
-  publishTime: dayjs().subtract(index, 'day').format('YYYY-MM-DD HH:mm:ss')
-}));
 
 const refNotice = ref(null);
 
@@ -96,7 +76,7 @@ const loading = ref(false);
 const title = ref('');
 const currentPage = ref(1);
 const pageSize = ref(10);
-const total = ref(mockData.length);
+const total = ref(0);
 const pageList = ref([]);
 
 // 方法
