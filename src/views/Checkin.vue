@@ -66,7 +66,7 @@
       </template>
     </c-table>
   </div>
-  <CheckinForm ref="checkinForm" />
+  <CheckinForm ref="checkinForm" @submit="onSubmit" />
 </template>
 
 <script>
@@ -106,6 +106,27 @@ export default {
     this.getTableData();
   },
   methods: {
+    async onSubmit(type, data) {
+      if (type === 'add') {
+        const res = await addCheckin(data);
+        if (res.success) {
+          this.$message({
+            type: 'success',
+            message: '添加成功'
+          });
+          this.getTableData();
+        }
+      } else if (type === 'edit') {
+        const res = await updateCheckin(data);
+        if (res.success) {
+          this.$message({
+            type: 'success',
+            message: '修改成功'
+          });
+          this.getTableData();
+        }
+      }
+    },
     // 搜索
     handleSearch() {
       this.getTableData();
@@ -119,7 +140,7 @@ export default {
         phone: ''
       };
     },
-    
+
     // 入住
     handleCheckin(row) {},
 
@@ -165,9 +186,15 @@ export default {
     async getTableData() {
       const params = {
         ...this.form,
-        currentPage: this.currentPage,
+        pageNumber: this.currentPage,
         pageSize: this.pageSize
       };
+      // 删除空值
+      Object.keys(params).forEach((key) => {
+        if (!params[key]) {
+          delete params[key];
+        }
+      });
       const res = await getCheckinList(params);
       if (res.success) {
         this.tableData = res.result.records;

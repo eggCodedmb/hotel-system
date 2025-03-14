@@ -19,7 +19,7 @@ export function updateRoom(params) {
 
 // 删除房间
 export function deleteRoom(id) {
-  return request.delete('/roomManager/deleteRoomManager', { id });
+  return request.delete(`/roomManager/deleteRoomManager?ids=${id}`);
 }
 
 // 获取房间详情

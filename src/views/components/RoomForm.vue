@@ -38,7 +38,6 @@
                 :label="item.itemText"
                 :value="item.itemValue"
               />
-
             </el-select>
           </el-form-item>
         </el-col>
@@ -74,19 +73,18 @@
             </el-select>
           </el-form-item>
         </el-col>
-
         <!-- 客房图片上传 -->
         <el-col :span="24">
           <el-form-item label="客房图片">
             <el-upload
               class="avatar-uploader"
-              action="/api/upload"
               :show-file-list="false"
-              :on-success="handleImageSuccess"
               :before-upload="beforeImageUpload"
+              :on-change="handleChange"
               :disabled="isView"
+              :auto-upload="false"
             >
-              <img v-if="form.img" :src="form.image" class="avatar" />
+              <img v-if="form.img" :src="form.img" class="avatar" />
               <el-icon v-else class="avatar-uploader-icon">
                 <Plus />
               </el-icon>
@@ -114,7 +112,9 @@
     <template #footer>
       <div class="dialog-footer">
         <el-button type="warning" @click="closeDialog">关闭</el-button>
-        <el-button type="primary" @click="submitForm">保存</el-button>
+        <el-button type="primary" @click="submitForm" v-if="!isView"
+          >保存</el-button
+        >
       </div>
     </template>
   </el-dialog>
@@ -131,6 +131,7 @@ import {
   deleteRoom,
   getRoomDetail
 } from '@/api/room';
+import { uploadFile } from '@/api/upload';
 
 import { useDictStore } from '@/store/modules/dictStore';
 const form = ref({
@@ -167,9 +168,13 @@ const rules = ref({
 const emit = defineEmits(['refresh']);
 
 const openDialog = (data) => {
+  form.value = {};
   dialogVisible.value = true;
   if (data) {
     form.value = { ...data };
+  }
+  if (title.value === '房间详情') {
+    isView.value = true;
   }
 };
 
@@ -177,9 +182,14 @@ const closeDialog = () => {
   dialogVisible.value = false;
   refForm.value.resetFields();
 };
-
-const handleImageSuccess = (res) => {
-  form.value.img = res.url;
+const handleChange = (file, fileList) => {
+  uploadFile({ multipartFiles: file.raw }).then((res) => {
+    if (res.success) {
+      form.value.img = res.result;
+    } else {
+      ElMessage.error('上传失败');
+    }
+  });
 };
 
 const beforeImageUpload = (file) => {

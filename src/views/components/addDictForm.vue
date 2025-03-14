@@ -49,7 +49,10 @@ const rules = ref({
 const openDialog = (row) => {
   dialogVisible.value = true;
   if (row) {
-    formData = row;
+    formData.id = row.id;
+    formData.dictName = row.dictName;
+    formData.dictCode = row.dictCode;
+    formData.dictDescription = row.dictDescription;
   }
 };
 

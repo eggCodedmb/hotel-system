@@ -146,6 +146,7 @@ export default {
       this.getTableData();
     },
     addRoom() {
+      this.$refs.roomForm.title = '新增客房';
       this.$refs.roomForm.openDialog();
     },
     handleEdit(row) {
@@ -170,12 +171,14 @@ export default {
         type: 'warning'
       })
         .then(async () => {
+          const ids = [row.id];
           const res = await deleteRoom(row.id);
           if (res.success) {
             this.$message({
               type: 'success',
               message: '删除成功!'
             });
+            this.getTableData();
           } else {
             this.$message({
               type: 'error',

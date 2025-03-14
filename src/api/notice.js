@@ -9,7 +9,7 @@ export function updateNotice(data) {
 
 // 查询公告信息
 export function getNoticeList(data) {
-    return request.get(`${service}/getNotice`, data);
+    return request.post(`${service}/getNotice`, data);
 }
 
 // 获取信息详情

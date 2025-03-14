@@ -51,11 +51,9 @@ import { ElMessage } from 'element-plus';
 import dayjs from 'dayjs';
 
 const formData = reactive({
-  id: null,
   title: '',
   content: '',
-  status: 1,
-  publishTime: dayjs().format('YYYY-MM-DD HH:mm:ss')
+  createTime: ''
 });
 const emit = defineEmits(['submit']);
 
@@ -72,8 +70,7 @@ const rules = ref({
     { required: true, message: '请输入公告内容', trigger: 'blur' },
     { min: 2, max: 500, message: '长度在 2 到 500 个字符', trigger: 'blur' }
   ],
-  // status: [{ required: true, message: '请选择状态', trigger: 'change' }],
-  publishTime: [
+  createTime: [
     { required: true, message: '请选择发布时间', trigger: 'change' }
   ]
 });

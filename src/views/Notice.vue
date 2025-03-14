@@ -49,6 +49,7 @@ import { Plus, Search } from '@element-plus/icons-vue';
 import dayjs from 'dayjs';
 import NoticeForm from './components/NoticeForm.vue';
 import CTable from '@/components/CTable.vue';
+import { useUserStore } from '@/store/modules/userStore';
 import {
   addNotice,
   updateNotice,
@@ -59,8 +60,11 @@ import {
 
 const refNotice = ref(null);
 
+const userStore = useUserStore();
+
 const columns = [
   { label: '标题', prop: 'title' },
+  { label: '内容', prop: 'content' },
   { label: '发布时间', prop: 'createTime' },
   { label: '发布人', prop: 'createPerson' },
   {
@@ -87,7 +91,8 @@ const handleAdd = () => {
 
 const handleEdit = (row) => {
   refNotice.value.title = '编辑公告';
-  refNotice.value.openDialog(row);
+  const { createPerson, ...data } = row;
+  refNotice.value.openDialog(data);
 };
 
 const handleSubmit = async (type, data) => {
@@ -130,6 +135,12 @@ const noticeList = async () => {
     pageNumber: currentPage.value,
     pageSize: pageSize.value
   };
+  // 删除空字段
+  Object.keys(parmas).forEach((key) => {
+    if (!parmas[key]) {
+      delete parmas[key];
+    }
+  });
   const res = await getNoticeList(parmas);
 
   if (res.success) {
@@ -142,7 +153,11 @@ const noticeList = async () => {
   }
 };
 
-const handlePageChange = () => {};
+const handlePageChange = (currentPage, pageSize) => {
+  currentPage.value = currentPage;
+  pageSize.value = pageSize;
+  noticeList();
+};
 
 onMounted(() => {
   noticeList();

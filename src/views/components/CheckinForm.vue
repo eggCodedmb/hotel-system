@@ -15,7 +15,7 @@
       <el-row :gutter="20">
         <!-- 第一行：姓名 + 手机号 -->
         <el-col :xs="24" :md="12">
-          <el-form-item label="姓名" prop="name">
+          <el-form-item label="姓名" prop="customerName">
             <el-input
               v-model="form.customerName"
               placeholder="请输入"
@@ -68,16 +68,19 @@
 
         <!-- 第三行：入住人数 + 身份证号 -->
         <el-col :xs="24" :md="12">
-          <el-form-item label="入住人数" prop="peopleNum">
-            <el-input
-              v-model.number="form.peopleNum"
-              :min="1"
-              :max="4"
-              controls-position="right"
+          <el-form-item label="状态" prop="roomStatus">
+            <el-select
+              v-model="form.roomStatus"
+              placeholder="请选择状态"
               style="width: 100%"
             >
-              <template #append>人</template>
-            </el-input>
+              <el-option
+                v-for="(item, key) in statusOptions"
+                :key="key"
+                :label="item.itemText"
+                :value="item.itemValue"
+              />
+            </el-select>
           </el-form-item>
         </el-col>
         <el-col :xs="24" :md="12">
@@ -94,26 +97,35 @@
         <!-- 第四行：入住时间 -->
         <el-col :span="12">
           <el-form-item label="入住时间" prop="beginTime">
+            <!-- 范围 -->
             <el-date-picker
               v-model="form.beginTime"
               type="datetime"
-              placeholder="选择日期和时间"
-              value-format="YYYY-MM-DD HH:mm:ss"
+              placeholder="请选择入住时间"
               style="width: 100%"
             />
           </el-form-item>
         </el-col>
         <el-col :span="12">
-          <el-form-item label="入住晚数" prop="days">
-            <el-input
-              v-model.number="form.days"
-              :min="1"
-              :max="30"
-              controls-position="right"
+          <el-form-item label="退房时间" prop="endTime">
+            <el-date-picker
+              v-model="form.endTime"
+              type="datetime"
+              placeholder="请选择退房时间"
               style="width: 100%"
-            >
-              <template #append>晚/1999￥</template>
-            </el-input>
+            />
+          </el-form-item>
+        </el-col>
+        <!-- remark -->
+        <el-col :span="24">
+          <el-form-item label="备注">
+            <el-input
+              v-model="form.remark"
+              type="textarea"
+              placeholder="请输入备注"
+              maxlength="200"
+              show-word-limit
+            />
           </el-form-item>
         </el-col>
       </el-row>
@@ -121,8 +133,8 @@
     <template #footer>
       <div class="dialog-footer">
         <el-button type="warning" @click="closeDialog">取消</el-button>
-        <el-button type="primary" @click="submitForm">{{
-          title === '客房预订' ? '确认预订' : '修改预订'
+        <el-button type="primary" v-if="!isView" @click="submitForm">{{
+          title === '客房预订' ? '确认预订' : '预订'
         }}</el-button>
       </div>
     </template>
@@ -135,12 +147,18 @@ import { ElMessage } from 'element-plus';
 import { useDictStore } from '@/store/modules/dictStore';
 
 const form = ref({
+  roomId: '',
   customerName: '',
   phone: '',
-  type: '',
-  roomId: ''
+  roomStatus: '',
+  beginTime: '', //入住时间
+  endTime: '', //退房时间
+  remark: '',
+  status: '',
+  idcard: ''
 });
 const rules = ref({
+  roomId: [{ required: true, message: '请选择房间号', trigger: 'change' }],
   customerName: [
     { required: true, message: '请输入客户姓名', trigger: 'blur' }
   ],
@@ -152,8 +170,8 @@ const rules = ref({
       trigger: 'blur'
     }
   ],
-  type: [{ required: true, message: '请选择房型', trigger: 'blur' }],
-  roomId: [{ required: true, message: '请选择房间号', trigger: 'blur' }]
+  idCard: [{ required: true, message: '请输入身份证号', trigger: 'blur' }],
+  beginTime: [{ required: true, message: '请选择入住时间', trigger: 'change' }]
 });
 const title = ref('客房预订');
 const dialogVisible = ref(false);
@@ -169,6 +187,9 @@ const openDialog = (row) => {
   dialogVisible.value = true;
   if (row) {
     form.value = row;
+  }
+  if (title.value === '详情') {
+    isView.value = true;
   }
 };
 

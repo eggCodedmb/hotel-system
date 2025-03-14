@@ -166,7 +166,7 @@ const searchForm = reactive({
 // 分页参数
 const currentPage = ref(1);
 const pageSize = ref(10);
-const total = ref(100);
+const total = ref(20);
 
 // 弹窗控制
 const dialogVisible = ref(false);
@@ -210,7 +210,10 @@ const handleApprove = async (row, status) => {
   }
 };
 
-const handlePageChange = (page) => {};
+const handlePageChange = (currentPage, pageSize) => {
+  this.currentPage = currentPage;
+  this.pageSize = pageSize;
+};
 
 // 搜索
 const handleSearch = () => {

@@ -9,7 +9,7 @@ export function addCheckin(data) {
 
 // 获取入住记录列表
 export function getCheckinList(data) {
-  return request.get(`${service}/list`, data);
+  return request.post(`${service}/list`, data);
 }
 
 // 修改入住记录

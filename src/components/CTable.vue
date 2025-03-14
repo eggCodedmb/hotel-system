@@ -65,7 +65,7 @@ const props = defineProps({
   columns: { type: Array, required: true, default: () => [] },
   data: { type: Array, required: true, default: () => [] },
   total: { type: Number, required: false, default: 0 },
-  currentPage: { type: Number, default: 1 },
+  currentPage: { type: Number, default: 1 }, 
   pageSize: { type: Number, default: 10 },
   pageSizes: { type: Array, default: () => [10, 20, 50, 100] },
   showPagination: { type: Boolean, default: true }

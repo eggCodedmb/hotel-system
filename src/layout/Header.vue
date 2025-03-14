@@ -18,7 +18,7 @@
             <el-avatar :size="36" :src="userInfo.avatar ||
               '/public/img/3ea6beec64369c2642b92c6726f1epng.png'
               " class="user-avatar" />
-            <span class="user-name">{{ userInfo.username || '无' }}</span>
+            <span class="user-name">{{ userInfo.loginName || '无' }}</span>
             <el-icon class="arrow-icon"><arrow-down /></el-icon>
           </div>
 
@@ -47,7 +47,7 @@
     </div>
   </el-header>
 
-  <userInfoForm v-if="isShow" ref="userInfoFormRef" />
+  <userInfoForm ref="userInfoFormRef" />
 
 </template>
 
