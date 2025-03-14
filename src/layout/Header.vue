@@ -96,7 +96,7 @@ const handleLogout = () => {
   router.push('/login');
 };
 
-nextTick(() => {
+nextTick(() => { //在组件渲染完成后执行
   if (userInfo.name) {
     userInfoFormRef.value.openDialog(); // 打开用户信息表单
   }
