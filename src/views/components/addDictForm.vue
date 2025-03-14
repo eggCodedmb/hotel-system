@@ -1,35 +1,16 @@
 <template>
-  <el-dialog
-    :title="title"
-    v-model="dialogVisible"
-    :close-on-click-modal="false"
-  >
+  <el-dialog :title="title" v-model="dialogVisible" :close-on-click-modal="false">
     <el-row>
       <el-col>
-        <el-form
-          ref="refForm"
-          :model="formData"
-          :rules="rules"
-          label-width="80px"
-        >
+        <el-form ref="refForm" :model="formData" :rules="rules" label-width="80px">
           <el-form-item label="字典名称" prop="dictName">
-            <el-input
-              v-model="formData.dictName"
-              placeholder="请输入字典名称"
-            ></el-input>
+            <el-input v-model="formData.dictName" placeholder="请输入字典名称"></el-input>
           </el-form-item>
           <el-form-item label="字典代码" prop="dictCode">
-            <el-input
-              v-model="formData.dictCode"
-              placeholder="请输入字典代码"
-            ></el-input>
+            <el-input v-model="formData.dictCode" placeholder="请输入字典代码"></el-input>
           </el-form-item>
           <el-form-item label="详情">
-            <el-input
-              v-model="formData.dictDescription"
-              type="textarea"
-              placeholder="请输入字典详情"
-            ></el-input>
+            <el-input v-model="formData.dictDescription" type="textarea" placeholder="请输入字典详情"></el-input>
           </el-form-item>
         </el-form>
       </el-col>
@@ -68,8 +49,7 @@ const rules = ref({
 const openDialog = (row) => {
   dialogVisible.value = true;
   if (row) {
-    formData.dictName = row.dictName;
-    formData.dictCode = row.dictCode;
+    formData = row;
   }
 };
 

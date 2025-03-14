@@ -114,13 +114,13 @@ router.beforeEach((to, from, next) => {
   const isPublicRoute = to.matched.some(record => record.meta.public)
   const token = localStorage.getItem('token')
 
-  // 公开路由直接放行
-  if (isPublicRoute) return next()
+  // // 公开路由直接放行
+  // if (isPublicRoute) return next()
 
-  // Token存在性检查
-  if (!token) {
-    return next({ path: '/login', query: { redirect: to.fullPath } })
-  }
+  // // Token存在性检查
+  // if (!token) {
+  //   return next({ path: '/login', query: { redirect: to.fullPath } })
+  // }
 
   next()
 })

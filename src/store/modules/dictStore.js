@@ -21,7 +21,7 @@ export const useDictStore = defineStore(
 
     // 核心方法：获取字典项
     const getDict = computed(() => (key) => {
-      return dicts.value.find(item => item.key === key).values
+      return dicts.value.find(item => item.key === key)?.values || []
     })
 
     // 删除字典（支持批量）

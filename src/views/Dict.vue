@@ -16,24 +16,12 @@
       <el-button type="primary" @click="addDict">新增</el-button>
       <el-button type="danger" @click="refreshCache">刷新缓存</el-button>
     </el-col>
-    <c-table
-      :columns="columns"
-      :data="tableData"
-      :total="total"
-      v-model:current-page="currentPage"
-      v-model:page-size="pageSize"
-      @page-change="handlePageChange"
-    >
+    <c-table :columns="columns" :data="tableData" :total="total" v-model:current-page="currentPage"
+      v-model:page-size="pageSize" @page-change="handlePageChange">
       <template #action="{ row }">
-        <el-button type="primary" size="small" @click="handleEdit(row)"
-          >编辑</el-button
-        >
-        <el-button type="primary" size="small" @click="handleDetail(row)"
-          >详情</el-button
-        >
-        <el-button type="danger" size="small" @click="handleDelete(row)"
-          >删除</el-button
-        >
+        <el-button type="primary" size="small" @click="handleEdit(row)">编辑</el-button>
+        <el-button type="primary" size="small" @click="handleDetail(row)">详情</el-button>
+        <el-button type="danger" size="small" @click="handleDelete(row)">删除</el-button>
       </template>
     </c-table>
     <dict-form ref="dictForm" />
@@ -111,7 +99,7 @@ export default {
             }
           });
         })
-        .catch(() => {});
+        .catch(() => { });
     },
     handlePageChange() {
       this.getTableData();
