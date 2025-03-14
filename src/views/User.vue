@@ -8,7 +8,7 @@
       </el-col>
       <el-col :span="6">
         <el-form-item label="状态">
-          <el-select v-model="form.state" placeholder="请选择状态">
+          <el-select v-model="form.status" placeholder="请选择状态">
             <el-option
               v-for="item in stateOptions"
               :key="item.value"
@@ -19,8 +19,8 @@
         </el-form-item>
       </el-col>
       <el-col :span="6">
-        <el-form-item label="职位">
-          <el-input v-model="form.position" placeholder="请输入职位" />
+        <el-form-item label="部门">
+          <el-input v-model="form.department" placeholder="请输入部门" />
         </el-form-item>
       </el-col>
       <el-col :span="6">
@@ -75,8 +75,8 @@ export default {
   setup() {
     const form = ref({
       name: '',
-      state: '',
-      position: ''
+      status: '',
+      department: ''
     });
 
     const stateOptions = ref([
@@ -98,27 +98,25 @@ export default {
 
     // 重置表单
     const resetForm = () => {
-      form.value = {
-        name: '',
-        state: '',
-        position: ''
-      };
+      form.value = {};
+      currentPage.value = 1;
+      pageSize.value = 10;
       getTableData();
     };
 
     // 添加用户
     const addUser = () => {
-      userForm.value.title = '添加用户';
+      userForm.value.title = '新增员工';
       userForm.value.openDialog();
     };
 
     const handleDetail = (row) => {
-      userForm.value.title = '用户详情';
+      userForm.value.title = '员工详情';
       userForm.value.openDialog(row);
     };
 
     const handleEdit = (row) => {
-      userForm.value.title = '编辑用户';
+      userForm.value.title = '编辑信息';
       userForm.value.openDialog(row);
     };
 

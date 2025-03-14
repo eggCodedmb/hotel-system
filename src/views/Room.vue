@@ -39,14 +39,14 @@
       </el-col>
     </el-row>
     <el-row>
-      <el-col :span="3" :offset="21">
+      <el-col :span="21">
+        <el-button type="primary" @click="addRoom">新增</el-button>
+      </el-col>
+      <el-col :span="3">
         <el-button type="primary" @click="search">查询</el-button>
         <el-button type="warning" @click="reset">重置</el-button>
       </el-col>
     </el-row>
-    <el-col :span="21">
-      <el-button type="primary" @click="addRoom">新增</el-button>
-    </el-col>
     <c-table
       :columns="columns"
       :data="tableData"

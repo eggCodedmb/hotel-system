@@ -166,7 +166,7 @@ const searchForm = reactive({
 // 分页参数
 const currentPage = ref(1);
 const pageSize = ref(10);
-const total = ref(20);
+const total = ref(0);
 
 // 弹窗控制
 const dialogVisible = ref(false);

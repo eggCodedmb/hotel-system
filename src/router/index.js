@@ -27,21 +27,24 @@ const routes = [
       },
       {
         path: '/room',
-        meta: { title: '客房管理', icon: 'House' },
-        children: [
-          {
-            path: '/roomList',
-            name: 'RoomList',
-            component: () => import('@/views/Room.vue'),
-            meta: { title: '客房列表', icon: 'Document', public: false }
-          },
-          {
-            path: '/roomType',
-            name: 'RoomType',
-            meta: { title: '房型管理', icon: 'Document', public: false },
-            component: () => import('@/views/RoomType.vue')
-          }
-        ]
+        // meta: { title: '客房管理', icon: 'House' },
+        name: 'Room',
+        component: () => import('@/views/Room.vue'),
+        meta: { title: '客房列表', icon: 'House', public: false }
+        // children: [
+        //   {
+        //     path: '/roomList',
+        //     name: 'RoomList',
+        //     component: () => import('@/views/Room.vue'),
+        //     meta: { title: '客房列表', icon: 'Document', public: false }
+        //   },
+        //   {
+        //     path: '/roomType',
+        //     name: 'RoomType',
+        //     meta: { title: '房型管理', icon: 'Document', public: false },
+        //     component: () => import('@/views/RoomType.vue')
+        //   }
+        // ]
       },
       {
         path: '/checkin',

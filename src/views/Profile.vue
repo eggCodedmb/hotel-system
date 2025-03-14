@@ -21,7 +21,7 @@
 
         <!-- 用户信息 -->
         <div class="profile-info">
-          <h2 class="username">{{ userInfo.name }}</h2>
+          <h2 class="username">{{ userInfo.loginName }}</h2>
           <div class="meta-info">
             <span
               ><el-icon><User /></el-icon> {{ userInfo.role }}</span
@@ -70,12 +70,7 @@
                 <el-form-item label="姓名" prop="name">
                   <el-input v-model="userInfo.name" />
                 </el-form-item>
-                <el-form-item label="性别" prop="gender">
-                  <el-select v-model="userInfo.gender">
-                    <el-option label="男" value="male" />
-                    <el-option label="女" value="female" />
-                  </el-select>
-                </el-form-item>
+                <el-form-item label="状态" prop="status"> </el-form-item>
               </el-col>
               <el-col :md="12" :sm="24">
                 <el-form-item label="手机号" prop="phone">
@@ -86,21 +81,12 @@
                 </el-form-item>
               </el-col>
             </el-row>
-
-            <el-form-item label="个人简介" prop="bio">
-              <el-input
-                v-model="userInfo.bio"
-                type="textarea"
-                :rows="3"
-                resize="none"
-                maxlength="150"
-                show-word-limit
-              />
-            </el-form-item>
-
             <el-form-item>
               <el-button type="primary" :icon="Edit" @click="handleSave">
                 保存更改
+              </el-button>
+              <el-button type="primary" :icon="Edit" @click="handleSave">
+                我要请假
               </el-button>
             </el-form-item>
           </el-form>
@@ -112,16 +98,16 @@
             <div class="security-info">
               <el-icon class="security-icon"><Lock /></el-icon>
               <div>
-                <h4>登录密码</h4>
-                <p>已设置密码，建议定期更换</p>
+                <h4>重置密码</h4>
+                <p>重置密码</p>
               </div>
             </div>
-            <el-button type="text">修改密码</el-button>
+            <el-button type="text">重置密码</el-button>
           </div>
 
           <el-divider />
 
-          <div class="security-item">
+          <!-- <div class="security-item">
             <div class="security-info">
               <el-icon class="security-icon"><Message /></el-icon>
               <div>
@@ -130,7 +116,7 @@
               </div>
             </div>
             <el-button type="text">更换邮箱</el-button>
-          </div>
+          </div> -->
         </el-tab-pane>
       </el-tabs>
     </el-card>
@@ -140,17 +126,20 @@
 <script setup>
 import { ref, reactive } from 'vue';
 import { CameraFilled, Edit, Lock, Message } from '@element-plus/icons-vue';
+import { useUserStore } from '@/store/modules/userStore';
 
+const userStore = useUserStore();
 // 用户信息数据
 const userInfo = reactive({
-  name: '张晓明',
-  avatar: 'https://example.com/avatar.jpg',
+  name: '',
+  avatar: '',
   role: '高级管理员',
-  department: '产品研发部',
-  gender: 'male',
-  phone: '13800138000',
-  email: 'zhangxm@company.com',
-  bio: '专注于前端技术开发，喜欢探索新技术'
+  department: '',
+  gender: '',
+  phone: '',
+  email: '',
+  bio: '',
+  ...userStore.getUser
 });
 
 // 用户统计
@@ -186,7 +175,6 @@ const handleAvatarChange = (file) => {
 const handleSave = () => {
   formRef.value.validate((valid) => {
     if (valid) {
-      ElMessage.success('信息更新成功');
     }
   });
 };

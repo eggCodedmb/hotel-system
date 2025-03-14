@@ -15,26 +15,34 @@
       <el-row :gutter="20">
         <!-- 姓名、年龄 -->
         <el-col :xs="24" :md="12">
-          <el-form-item label="姓名" prop="name">
-            <el-input v-model="form.name" placeholder="请输入姓名" clearable />
-          </el-form-item>
-        </el-col>
-        <el-col :xs="24" :md="12">
-          <el-form-item label="年龄" prop="age">
-            <el-input v-model="form.age" placeholder="请输入年龄" clearable />
-          </el-form-item>
-        </el-col>
-        <!-- 第一行：用户名 + 密码 -->
-        <el-col :xs="24" :md="12">
-          <el-form-item label="用户名" prop="username">
+          <el-form-item label="账号" prop="loginName">
             <el-input
-              v-model="form.username"
-              placeholder="请输入用户名"
+              v-model="form.loginName"
+              placeholder="请输入账号"
               clearable
             />
           </el-form-item>
         </el-col>
         <el-col :xs="24" :md="12">
+          <el-form-item label="部门" prop="department">
+            <!-- 下拉 -->
+            <el-select
+              v-model="form.department"
+              placeholder="请选择部门"
+              style="width: 100%"
+            >
+              <el-option label="技术部" value="技术部" />
+              <el-option label="市场部" value="市场部" />
+              <el-option label="人事部" value="人事部" />
+            </el-select>
+          </el-form-item>
+        </el-col>
+        <el-col :xs="24" :md="12" v-if="isEmployee">
+          <el-form-item label="姓名" prop="name">
+            <el-input v-model="form.name" placeholder="请输入姓名" clearable />
+          </el-form-item>
+        </el-col>
+        <el-col :xs="24" :md="12" v-if="isEmployee">
           <el-form-item label="密码" prop="password">
             <el-input
               v-model="form.password"
@@ -46,7 +54,7 @@
         </el-col>
 
         <!-- 第二行：手机号 + 性别 -->
-        <el-col :xs="24" :md="12">
+        <el-col :xs="24" :md="12" v-if="isEmployee">
           <el-form-item label="手机号" prop="phone">
             <el-input
               v-model="form.phone"
@@ -55,17 +63,20 @@
             />
           </el-form-item>
         </el-col>
-        <el-col :xs="24" :md="12">
-          <el-form-item label="性别" prop="gender">
-            <el-radio-group v-model="form.gender">
-              <el-radio value="1">男</el-radio>
-              <el-radio value="0">女</el-radio>
-            </el-radio-group>
+        <el-col :xs="24" :md="12" v-if="isEmployee">
+          <el-form-item label="状态" prop="status">
+            <el-select
+              v-model="form.status"
+              placeholder="请选择状态"
+              style="width: 100%"
+            >
+              <el-option label="正常" value="1" />
+              <el-option label="禁用" value="0" />
+            </el-select>
           </el-form-item>
         </el-col>
 
-        <!-- 第三行：入职日期 + 角色 -->
-        <el-col :xs="24" :md="12">
+        <el-col :xs="24" :md="12" v-if="isEmployee">
           <el-form-item label="入职日期" prop="entryDate">
             <el-date-picker
               v-model="form.entryDate"
@@ -76,27 +87,23 @@
             />
           </el-form-item>
         </el-col>
-        <el-col :xs="24" :md="12">
+        <el-col :xs="24" :md="12" v-if="isEmployee">
           <el-form-item label="角色" prop="role">
             <el-select
               v-model="form.role"
               placeholder="请选择角色"
               style="width: 100%"
             >
-              <el-option label="管理员" value="admin" />
-              <el-option label="普通用户" value="common" />
+              <el-option label="管理员" value="1" />
+              <el-option label="普通用户" value="0" />
             </el-select>
           </el-form-item>
         </el-col>
-
-        <!-- 头像上传 -->
-        <el-col :span="24">
-          <el-form-item label="头像">
+        <el-col :span="12" v-if="isEmployee">
+          <!-- <el-form-item label="头像">
             <el-upload
               class="avatar-uploader"
-              action="/api/upload"
               :show-file-list="false"
-              :on-success="handleAvatarSuccess"
               :before-upload="beforeAvatarUpload"
             >
               <img v-if="form.avatar" :src="form.avatar" class="avatar" />
@@ -105,6 +112,19 @@
               </el-icon>
             </el-upload>
             <div class="upload-tip">建议尺寸 200x200，支持 JPG/PNG 格式</div>
+          </el-form-item> -->
+          <!-- 地址 -->
+          <el-form-item label="地址" prop="address">
+            <el-input
+              v-model="form.address"
+              placeholder="请输入地址"
+              clearable
+            />
+          </el-form-item>
+        </el-col>
+        <el-col :span="12" v-if="isEmployee">
+          <el-form-item label="邮箱" prop="email">
+            <el-input v-model="form.email" placeholder="请输入邮箱" clearable />
           </el-form-item>
         </el-col>
       </el-row>
@@ -131,22 +151,26 @@ import {
 } from '@/api/user';
 
 const form = ref({
-  username: '',
+  employeeId: '',
+  loginName: '',
   password: '',
-  phone: '',
-  date: '',
   role: '',
-  gender: '',
-  avatar: ''
+  name: '',
+  picture: '',
+  phone: '',
+  email: '',
+  address: '',
+  department: '',
+  status: ''
 });
 const emit = defineEmits(['refresh']);
 
-const title = ref('新增用户');
+const title = ref('新增员工');
 const refForm = ref(null);
 const dialogVisible = ref(false);
 
 const rules = ref({
-  username: [
+  loginName: [
     { required: true, message: '请输入用户名', trigger: 'blur' },
     {
       min: 3,
@@ -169,13 +193,31 @@ const rules = ref({
   ],
   entryDate: [{ required: true, message: '请选择入职日期', trigger: 'change' }],
   role: [{ required: true, message: '请选择角色', trigger: 'change' }],
-  gender: [{ required: true, message: '请选择性别', trigger: 'change' }]
+  name: [{ required: true, message: '请输入姓名', trigger: 'blur' }],
+  email: [
+    { required: true, message: '请输入邮箱', trigger: 'blur' },
+    {
+      pattern: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+      message: '请输入正确的邮箱',
+      trigger: 'blur'
+    }
+  ],
+  address: [{ required: true, message: '请输入地址', trigger: 'blur' }],
+  department: [{ required: true, message: '请输入部门', trigger: 'blur' }],
+  status: [{ required: true, message: '请选择状态', trigger: 'change' }]
 });
+
+//是否是员工
+const isEmployee = ref(false);
+const isView = ref(false);
 
 const openDialog = (row) => {
   dialogVisible.value = true;
   if (!row) return;
   form.value = { ...row };
+  if (title.value === '详情') {
+    isView.value = true;
+  }
 };
 
 const closeDialog = () => {
@@ -183,18 +225,12 @@ const closeDialog = () => {
   refForm.value.resetFields();
 };
 
-const handleAvatarSuccess = (res) => {
-  form.value.avatar = res.url;
-};
-
-const beforeAvatarUpload = (file) => {};
-
 const submitForm = () => {
   refForm.value.validate((valid) => {
     if (valid) {
-      if (title.value === '新增用户') {
+      if (title.value === '新增员工') {
         saveUser();
-      } else if (title.value === '编辑用户') {
+      } else if (title.value === '编辑信息') {
         handleEdit();
       }
       emit('refresh');
@@ -215,7 +251,11 @@ const handleEdit = () => {
   });
 };
 const saveUser = () => {
-  addEmployee(form.value).then((res) => {
+  const params = {
+    loginName: form.value.loginName,
+    department: form.value.department
+  };
+  addEmployee(params).then((res) => {
     if (res.success) {
       ElMessage.success('添加成功');
     } else {
