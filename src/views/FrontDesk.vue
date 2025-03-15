@@ -76,7 +76,7 @@
               :preview-src-list="[room.img]"
             />
             <div class="room-info">
-              <h3 class="room-title">{{ room.type }}</h3>
+              <h3 class="room-title">{{ getDictValue('ROOMTYPE', room.type)}}</h3>
               <div class="room-tags">
                 <el-tag
                   v-for="(tag, index) in room.tags"
@@ -115,9 +115,10 @@ import { getNoticeList } from '@/api/notice';
 import useDict from '@/hooks/useDict';
 import { getRoomList } from '@/api/room';
 
+
 const TITLE = import.meta.env.VITE_APP_TITLE;
 
-const { getDict } = useDict();
+const { getDict,getDictValue } = useDict();
 
 // 公告数据
 const announcements = ref([]);
@@ -163,7 +164,7 @@ const roomTypes = getDict('ROOMTYPE') || [];
 
 // 预订处理
 const handleBook = (room) => {
-  checkinForm.value.title = '预订房间';
+  checkinForm.value.title = '预定客房';
   checkinForm.value.openDialog(room);
 };
 

@@ -24,16 +24,17 @@
           <h2 class="username">{{ userInfo.loginName }}</h2>
           <div class="meta-info">
             <span
-              ><el-icon><User /></el-icon> {{ userInfo.role }}</span
+              ><el-icon><User /></el-icon>
+              {{ getDictValue('ROLE', userInfo.role) }}</span
             >
             <el-divider direction="vertical" />
             <span
               ><el-icon><OfficeBuilding /></el-icon>
-              {{ userInfo.department }}</span
+              {{ getDictValue('Department', userInfo.department) }}</span
             >
           </div>
-          <!-- <div class="statistics">
-            <el-statistic 
+          <div class="statistics">
+            <!-- <el-statistic 
               title="项目数" 
               :value="userStats.projects" 
               class="stat-item"
@@ -47,8 +48,8 @@
               title="收藏数"
               :value="userStats.collections"
               class="stat-item"
-            />
-          </div> -->
+            /> -->
+          </div>
         </div>
       </div>
     </el-card>
@@ -127,13 +128,15 @@
 import { ref, reactive } from 'vue';
 import { CameraFilled, Edit, Lock, Message } from '@element-plus/icons-vue';
 import { useUserStore } from '@/store/modules/userStore';
+import useDict from '@/hooks/useDict';
+
+const { getDict, getDictValue } = useDict();
 
 const userStore = useUserStore();
 // 用户信息数据
 const userInfo = reactive({
   name: '',
   avatar: '',
-  role: '高级管理员',
   department: '',
   gender: '',
   phone: '',

@@ -19,5 +19,11 @@ export function updateEmployee(params) {
 
 // 删除员工 /employeeManagerment/deleteEmployee
 export function deleteEmployee(id) {
-  return request.delete(`/${service}/deleteEmployee/${id}`);
+  return request.delete(`/${service}/deleteEmployee`, { id });
+}
+
+
+// 获取员工详情
+export function getEmployeeDetail(id) {
+  return request.get(`/${service}/getOne`, { id });
 }

@@ -43,6 +43,7 @@
               placeholder="请选择房间状态"
               style="width: 100%"
               :disabled="isView"
+              default-value="0"
             >
               <el-option
                 v-for="(item, key) in statusOptions"
@@ -52,21 +53,6 @@
               />
             </el-select>
           </el-form-item>
-          <!-- <el-form-item label="房型" prop="type">
-            <el-select
-              v-model="form.type"
-              placeholder="请选择房型"
-              style="width: 100%"
-              :disabled="isView"
-            >
-              <el-option
-                v-for="(item, key) in typeOptions"
-                :key="key"
-                :label="item.itemText"
-                :value="item.itemValue"
-              />
-            </el-select>
-          </el-form-item> -->
         </el-col>
         <el-col :xs="24" :md="12">
           <el-form-item label="房间号" prop="roomId">
@@ -94,6 +80,7 @@
               placeholder="请选择状态"
               style="width: 100%"
               :disabled="isView"
+              default-value="0"
             >
               <el-option
                 v-for="(item, key) in statusOptions"
@@ -192,15 +179,14 @@ const rules = ref({
   idcard: [{ required: true, message: '请输入身份证号', trigger: 'blur' }],
   beginTime: [{ required: true, message: '请选择入住时间', trigger: 'change' }],
   endTime: [{ required: true, message: '请选择退房时间', trigger: 'change' }],
-  // remark: [{ required: true, message: '请输入备注', trigger: 'blur' }],
   status: [{ required: true, message: '请选择房间状态', trigger: 'change' }],
   roomStatus: [{ required: true, message: '请选择房间状态', trigger: 'change' }]
-  // type: [{ required: true, message: '请选择房间类型', trigger: 'change' }]
 });
 const title = ref('客房预订');
 const dialogVisible = ref(false);
 const refForm = ref(null);
 const isView = ref(false);
+const isUser = ref(false);
 
 // const typeOptions = useDictStore().getDict('ROOMTYPE') || [];
 const statusOptions = useDictStore().getDict('ROOMSTATUS') || [];
@@ -208,9 +194,13 @@ const statusOptions = useDictStore().getDict('ROOMSTATUS') || [];
 const emit = defineEmits(['submit']);
 
 const openDialog = (row) => {
+  form.value = {};
   dialogVisible.value = true;
   if (row) {
     form.value = { ...row };
+    if (row.status) {
+      form.value.roomStatus = row.status;
+    }
   }
 };
 

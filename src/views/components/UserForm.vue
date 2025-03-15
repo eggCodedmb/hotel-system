@@ -25,15 +25,17 @@
         </el-col>
         <el-col :xs="24" :md="12">
           <el-form-item label="部门" prop="department">
-            <!-- 下拉 -->
             <el-select
               v-model="form.department"
               placeholder="请选择部门"
               style="width: 100%"
             >
-              <el-option label="技术部" value="技术部" />
-              <el-option label="市场部" value="市场部" />
-              <el-option label="人事部" value="人事部" />
+              <el-option
+                v-for="(item, key) in items"
+                :key="key"
+                :label="item.itemText"
+                :value="item.itemValue"
+              />
             </el-select>
           </el-form-item>
         </el-col>
@@ -70,8 +72,12 @@
               placeholder="请选择状态"
               style="width: 100%"
             >
-              <el-option label="正常" value="1" />
-              <el-option label="禁用" value="0" />
+              <el-option
+                v-for="(item, key) in getDict('USER_STATUS')"
+                :key="key"
+                :label="item.itemText"
+                :value="item.itemValue"
+              />
             </el-select>
           </el-form-item>
         </el-col>
@@ -87,15 +93,19 @@
             />
           </el-form-item>
         </el-col>
-        <el-col :xs="24" :md="12" v-if="isEmployee">
+        <el-col :xs="24" :md="12">
           <el-form-item label="角色" prop="role">
             <el-select
               v-model="form.role"
               placeholder="请选择角色"
               style="width: 100%"
             >
-              <el-option label="管理员" value="1" />
-              <el-option label="普通用户" value="0" />
+              <el-option
+                v-for="item in getDict('ROLE')"
+                :key="item.id"
+                :label="item.itemText"
+                :value="item.itemValue"
+              />
             </el-select>
           </el-form-item>
         </el-col>
@@ -150,18 +160,20 @@ import {
   deleteEmployee
 } from '@/api/user';
 
+import useDict from '@/hooks/useDict';
+
 const form = ref({
   employeeId: '',
   loginName: '',
   password: '',
-  role: '',
   name: '',
   picture: '',
   phone: '',
   email: '',
   address: '',
   department: '',
-  status: ''
+  status: '',
+  role: '0'
 });
 const emit = defineEmits(['refresh']);
 
@@ -207,9 +219,13 @@ const rules = ref({
   status: [{ required: true, message: '请选择状态', trigger: 'change' }]
 });
 
+const { getDict } = useDict();
+
 //是否是员工
 const isEmployee = ref(false);
 const isView = ref(false);
+
+const items = getDict('Department');
 
 const openDialog = (row) => {
   dialogVisible.value = true;
@@ -253,7 +269,8 @@ const handleEdit = () => {
 const saveUser = () => {
   const params = {
     loginName: form.value.loginName,
-    department: form.value.department
+    department: form.value.department,
+    role: form.value.role,
   };
   addEmployee(params).then((res) => {
     if (res.success) {
@@ -266,7 +283,9 @@ const saveUser = () => {
 
 defineExpose({
   openDialog,
-  title
+  title,
+  isEmployee,
+  isView
 });
 </script>
 

@@ -20,7 +20,14 @@
       </el-col>
       <el-col :span="6">
         <el-form-item label="部门">
-          <el-input v-model="form.department" placeholder="请输入部门" />
+          <el-select v-model="form.department" placeholder="请选择部门">
+            <el-option
+              v-for="(item, key) in items"
+              :key="key"
+              :label="item.itemText"
+              :value="item.itemValue"
+            />
+          </el-select>
         </el-form-item>
       </el-col>
       <el-col :span="6">
@@ -58,7 +65,7 @@
 </template>
 
 <script>
-import { ref, reactive, onMounted } from 'vue';
+import { ref, reactive, onMounted, render } from 'vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import CTable from '@/components/CTable.vue';
 import UserForm from './components/UserForm.vue';
@@ -69,10 +76,15 @@ import {
   deleteEmployee
 } from '@/api/user';
 
+import useDict from '@/hooks/useDict';
+
 export default {
   name: 'User',
   components: { CTable, UserForm },
   setup() {
+    const { getDict } = useDict();
+
+    const items = getDict('Department');
     const form = ref({
       name: '',
       status: '',
@@ -107,15 +119,18 @@ export default {
     // 添加用户
     const addUser = () => {
       userForm.value.title = '新增员工';
+      userForm.value.isEmployee = false;
       userForm.value.openDialog();
     };
 
     const handleDetail = (row) => {
       userForm.value.title = '员工详情';
+      userForm.value.isEmployee = true;
       userForm.value.openDialog(row);
     };
 
     const handleEdit = (row) => {
+      userForm.value.isEmployee = true;
       userForm.value.title = '编辑信息';
       userForm.value.openDialog(row);
     };
@@ -168,8 +183,8 @@ export default {
       const res = await getEmployeeList(params);
       if (res.success) {
         tableData.value = res.result.records;
-        currentPage.value = res.result.pageNumber;
-        pageSize.value = res.result.pageSize;
+        currentPage.value = res.result.pageNumber | 1;
+        pageSize.value = res.result.pageSize | 10;
         total.value = res.result.total;
       } else {
         ElMessage.error(res.message);
@@ -181,13 +196,21 @@ export default {
     });
 
     const columns = [
+      {
+        label: '序号',
+        prop: 'id',
+        width: 100,
+        render: (row, index, column) => {
+          return (currentPage.value - 1) * pageSize.value + index + 1;
+        }
+      },
       { label: '姓名', prop: 'name' },
       { label: '状态', prop: 'status' },
       { label: '部门', prop: 'department' },
       { label: '邮箱', prop: 'email' },
       { label: '电话', prop: 'phone' },
-      { label: '头像', prop: 'picture' },
-      { label: '操作', slotName: 'action' }
+      // { label: '头像', prop: 'picture' },
+      { label: '操作', slotName: 'action', width: 300 }
     ];
 
     return {
