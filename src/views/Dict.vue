@@ -204,6 +204,7 @@ export default {
         {
           label: '序号',
           prop: 'id',
+          width: 120,
           render: (row, index, column) => {
             return (this.currentPage - 1) * this.pageSize + index + 1;
           }

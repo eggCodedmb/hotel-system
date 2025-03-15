@@ -5,42 +5,10 @@
         <el-col :span="6">
           <el-form-item label="申请人">
             <el-input
-              v-model="searchForm.applicant"
+              v-model="searchForm.leaveApplicant"
               placeholder="请输入姓名"
               clearable
             />
-          </el-form-item>
-        </el-col>
-        <el-col :span="6">
-          <el-form-item label="请假类型">
-            <el-select
-              v-model="searchForm.type"
-              clearable
-              placeholder="请选择请假类型"
-            >
-              <el-option
-                v-for="item in leaveTypes"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value"
-              />
-            </el-select>
-          </el-form-item>
-        </el-col>
-        <el-col :span="6">
-          <el-form-item label="状态">
-            <el-select
-              v-model="searchForm.status"
-              clearable
-              placeholder="请选择状态"
-            >
-              <el-option
-                v-for="item in statusOptions"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value"
-              />
-            </el-select>
           </el-form-item>
         </el-col>
         <el-col :span="6">
@@ -125,27 +93,30 @@
 </template>
 
 <script setup>
-import { ref, reactive } from 'vue';
+import { ref, reactive, render } from 'vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import dayjs from 'dayjs';
 import CTable from '@/components/CTable.vue';
 import { addLeave, getLeaveList, updateLeave, deleteLeave } from '@/api/leave';
 
 const columns = [
-  { label: '申请人', prop: 'applicant' },
-  { label: '请假类型', prop: 'type', tag: true, tagType: 'type' },
   {
-    label: '请假时间',
+    label: '序号',
+    type: 'id',
+    width: 120,
+    render: (row, index, column) => {
+      return (currentPage.value - 1) * pageSize.value + index + 1;
+    }
+  },
+  { label: '申请人', prop: 'leaveApplicant' },
+  { label: '结果', prop: 'result' },
+  {
+    label: '开始请假时间',
     prop: 'startTime',
     formatter: (row) => `${row.startTime} 至 ${row.endTime}`
   },
-  { label: '申请时间', prop: 'createTime' },
-  {
-    label: '请假时长',
-    prop: 'duration',
-    formatter: (row) => `${row.duration}天`
-  },
-  { label: '状态', prop: 'status', slotName: 'status' },
+  { label: '结束请假时间', prop: 'endTime' },
+  { label: '理由', prop: 'comment' },
   { label: '操作', prop: 'action', slotName: 'action', width: 300 }
 ];
 
@@ -158,9 +129,7 @@ const statusMap = {
 
 // 搜索表单
 const searchForm = reactive({
-  applicant: '',
-  type: '',
-  status: ''
+  leaveApplicant: ''
 });
 
 // 分页参数
@@ -171,19 +140,6 @@ const total = ref(0);
 // 弹窗控制
 const dialogVisible = ref(false);
 const currentRow = ref(null);
-
-// 静态选项
-const leaveTypes = [
-  { label: '事假', value: '事假' },
-  { label: '病假', value: '病假' },
-  { label: '年假', value: '年假' }
-];
-
-const statusOptions = [
-  { label: '待审批', value: 0 },
-  { label: '已通过', value: 1 },
-  { label: '已拒绝', value: 2 }
-];
 
 // 表格数据
 const tableData = ref([]);
@@ -229,6 +185,12 @@ const loadData = async () => {
   };
   const res = await getLeaveList(params);
   if (res.success) {
+    tableData.value = res.result.records;
+    currentPage.value = res.result.current | 1;
+    pageSize.value = res.result.size | 10;
+    total.value = res.result.total;
+  } else {
+    ElMessage.error(res.message);
   }
 };
 </script>

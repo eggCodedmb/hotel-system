@@ -11,8 +11,8 @@
           :auto-upload="false"
           :on-change="handleAvatarChange"
         >
-          <el-avatar :size="120" :src="userInfo.avatar">
-            <img src="/public/img/3ea6beec64369c2642b92c6726f1epng.png" />
+          <el-avatar :size="120" :src="getUrl">
+            <img :src="getUrl" />
           </el-avatar>
           <div class="avatar-mask">
             <el-icon :size="24"><CameraFilled /></el-icon>
@@ -71,7 +71,20 @@
                 <el-form-item label="姓名" prop="name">
                   <el-input v-model="userInfo.name" />
                 </el-form-item>
-                <el-form-item label="状态" prop="status"> </el-form-item>
+                <el-form-item label="状态" prop="status">
+                  <el-select
+                    v-model="userInfo.status"
+                    placeholder="请选择状态"
+                    disabled
+                  >
+                    <el-option
+                      v-for="(item, key) in statusOptions"
+                      :key="key"
+                      :label="item.itemText"
+                      :value="item.itemValue"
+                    />
+                  </el-select>
+                </el-form-item>
               </el-col>
               <el-col :md="12" :sm="24">
                 <el-form-item label="手机号" prop="phone">
@@ -83,10 +96,10 @@
               </el-col>
             </el-row>
             <el-form-item>
-              <el-button type="primary" :icon="Edit" @click="handleSave">
+              <!-- <el-button type="primary" :icon="Edit" @click="handleSave">
                 保存更改
-              </el-button>
-              <el-button type="primary" :icon="Edit" @click="handleSave">
+              </el-button> -->
+              <el-button type="primary" :icon="Edit" @click="onSubmit">
                 我要请假
               </el-button>
             </el-form-item>
@@ -103,7 +116,7 @@
                 <p>重置密码</p>
               </div>
             </div>
-            <el-button type="text">重置密码</el-button>
+            <el-button type="text" @click="reset">重置密码</el-button>
           </div>
 
           <el-divider />
@@ -122,35 +135,32 @@
       </el-tabs>
     </el-card>
   </div>
+  <LeaveForm ref="LeaveRef" />
 </template>
 
 <script setup>
-import { ref, reactive } from 'vue';
+import { ref, reactive, computed } from 'vue';
 import { CameraFilled, Edit, Lock, Message } from '@element-plus/icons-vue';
 import { useUserStore } from '@/store/modules/userStore';
 import useDict from '@/hooks/useDict';
+import LeaveForm from './components/LeaveForm.vue';
+import { resetPassword } from '@/api/user';
+import { ElMessage, ElMessageBox } from 'element-plus';
+
+const getUrl = computed(() => {
+  return import.meta.env.VITE_APP_RESOURCE_URL + userInfo.picture;
+});
 
 const { getDict, getDictValue } = useDict();
 
 const userStore = useUserStore();
 // 用户信息数据
 const userInfo = reactive({
-  name: '',
-  avatar: '',
-  department: '',
-  gender: '',
-  phone: '',
-  email: '',
-  bio: '',
   ...userStore.getUser
 });
 
-// 用户统计
-const userStats = reactive({
-  projects: 28,
-  likes: 356,
-  collections: 128
-});
+const LeaveRef = ref(null);
+const statusOptions = getDict('USER_STATUS');
 
 // 表单验证规则
 const formRules = reactive({
@@ -174,6 +184,21 @@ const handleAvatarChange = (file) => {
   reader.readAsDataURL(file.raw);
 };
 
+const reset = () => {
+  ElMessageBox.confirm('确定要重置密码吗？', '提示', {
+    confirmButtonText: '确定',
+    cancelButtonText: '取消',
+    type: 'warning'
+  }).then(async () => {
+    const res = await resetPassword(userInfo.employeeId);
+    if (res.success) {
+      ElMessage.success('密码重置成功');
+    } else {
+      ElMessage.error('密码重置失败');
+    }
+  });
+};
+
 // 保存表单
 const handleSave = () => {
   formRef.value.validate((valid) => {
@@ -182,6 +207,9 @@ const handleSave = () => {
   });
 };
 
+const onSubmit = () => {
+  LeaveRef.value.openDialog();
+};
 const activeTab = ref('basic');
 const formRef = ref(null);
 </script>

@@ -23,14 +23,7 @@
           @command="handleCommand"
         >
           <div class="user-wrapper">
-            <el-avatar
-              :size="36"
-              :src="
-                userInfo.avatar ||
-                '/public/img/3ea6beec64369c2642b92c6726f1epng.png'
-              "
-              class="user-avatar"
-            />
+            <el-avatar :size="36" :src="getUrl" class="user-avatar" />
             <span class="user-name">{{ userInfo.name || '无' }}</span>
             <el-icon class="arrow-icon"><arrow-down /></el-icon>
           </div>
@@ -63,7 +56,7 @@
 </template>
 
 <script setup>
-import { ref, watch, nextTick, defineAsyncComponent } from 'vue';
+import { ref, watch, nextTick, computed, onMounted } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { useUserStore } from '@/store/modules/userStore';
 import { useMenuStore } from '@/store/modules/menuStore';
@@ -78,8 +71,10 @@ const userStore = useUserStore();
 const menuStore = useMenuStore();
 
 const userInfo = userStore.getUser;
-console.log(userInfo);
 
+const getUrl = computed(() => {
+  return import.meta.env.VITE_APP_RESOURCE_URL + userInfo.picture;
+});
 
 // 面包屑数据
 const breadcrumbList = ref([]);
@@ -104,14 +99,18 @@ const handleLogout = () => {
   router.push('/login');
 };
 
-nextTick(() => {
+onMounted(() => {
   //在组件渲染完成后执行
-  if (!userInfo.name || !userInfo.phone) {
-    // userInfoFormRef.value.title = '完善信息';
-    // userInfoFormRef.value.isEmployee = true;
-    // userInfoFormRef.value.openDialog(userInfo);
-  }
+  setTimeout(() => {
+    if (!userInfo.name) {
+      userInfoFormRef.value.title = '完善信息';
+      userInfoFormRef.value.isEmployee = true;
+      userInfoFormRef.value.openDialog(userInfo);
+    }
+  }, 500);
 });
+
+nextTick(() => {});
 </script>
 
 <style scoped lang="scss">

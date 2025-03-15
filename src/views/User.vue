@@ -12,8 +12,8 @@
             <el-option
               v-for="item in stateOptions"
               :key="item.value"
-              :label="item.label"
-              :value="item.value"
+              :label="item.itemText"
+              :value="item.itemValue"
             />
           </el-select>
         </el-form-item>
@@ -22,7 +22,7 @@
         <el-form-item label="部门">
           <el-select v-model="form.department" placeholder="请选择部门">
             <el-option
-              v-for="(item, key) in items"
+              v-for="(item, key) in depOptions"
               :key="key"
               :label="item.itemText"
               :value="item.itemValue"
@@ -76,29 +76,20 @@ import {
   deleteEmployee,
   getEmployeeDetail
 } from '@/api/user';
-
 import useDict from '@/hooks/useDict';
 
 export default {
   name: 'User',
   components: { CTable, UserForm },
   setup() {
-    const { getDict } = useDict();
+    const { getDict, getDictValue } = useDict();
 
-    const items = getDict('Department');
-    const form = ref({
-      name: '',
-      status: '',
-      department: ''
-    });
+    const form = ref({});
 
-    const stateOptions = ref([
-      { value: 1, label: '正常' },
-      { value: 2, label: '禁用' }
-    ]);
+    const depOptions = getDict('Department');
+    const stateOptions = getDict('USER_STATUS');
 
     const tableData = ref([]);
-
     const currentPage = ref(1);
     const pageSize = ref(10);
     const total = ref(10);
@@ -170,7 +161,7 @@ export default {
         });
     };
     // 处理分页
-    const handlePageChange = ({ currentPage, pageSize }) => {
+    const handlePageChange = (currentPage, pageSize) => {
       currentPage.value = currentPage;
       pageSize.value = pageSize;
       getTableData();
@@ -215,15 +206,28 @@ export default {
         }
       },
       { label: '姓名', prop: 'name' },
-      { label: '状态', prop: 'status' },
+      {
+        label: '状态',
+        prop: 'status',
+        render: (row) => {
+          if (row.status === null) {
+            return '--';
+          }
+          return getDictValue('USER_STATUS', row.status);
+        }
+      },
       {
         label: '部门',
         prop: 'department',
-        render: (row) => {}
+        render: (row) => {
+          if (row.department === null) {
+            return '--';
+          }
+          return getDictValue('Department', row.department);
+        }
       },
       { label: '邮箱', prop: 'email' },
       { label: '电话', prop: 'phone' },
-      // { label: '头像', prop: 'picture' },
       { label: '操作', slotName: 'action', width: 300 }
     ];
 
@@ -243,7 +247,8 @@ export default {
       handleDelete,
       handlePageChange,
       userForm,
-      getTableData
+      getTableData,
+      depOptions
     };
   }
 };

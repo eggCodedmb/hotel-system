@@ -70,13 +70,15 @@
         >
           <el-card class="room-card" shadow="hover">
             <el-image
-              :src="room.img"
+              :src="`${URL}${room.img}`"
               fit="cover"
               class="room-image"
               :preview-src-list="[room.img]"
             />
             <div class="room-info">
-              <h3 class="room-title">{{ getDictValue('ROOMTYPE', room.type)}}</h3>
+              <h3 class="room-title">
+                {{ getDictValue('ROOMTYPE', room.type) }}
+              </h3>
               <div class="room-tags">
                 <el-tag
                   v-for="(tag, index) in room.tags"
@@ -115,10 +117,14 @@ import { getNoticeList } from '@/api/notice';
 import useDict from '@/hooks/useDict';
 import { getRoomList } from '@/api/room';
 
+const getURL = computed(() => {
+  return import.meta.env.VITE_APP_RESOURCE_URL + imageUrl.value;
+});
 
+const URL = import.meta.env.VITE_APP_RESOURCE_URL;
 const TITLE = import.meta.env.VITE_APP_TITLE;
 
-const { getDict,getDictValue } = useDict();
+const { getDict, getDictValue } = useDict();
 
 // 公告数据
 const announcements = ref([]);

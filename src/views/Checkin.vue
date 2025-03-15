@@ -48,21 +48,15 @@
       @page-change="handlePageChange"
     >
       <template #action="{ row }">
-        <!-- 入住 -->
-        <!-- <el-button type="primary" size="small" @click="handleCheckin(row)"
-          >入住</el-button
-        > -->
-        <!-- 查看 -->
         <el-button type="primary" size="small" @click="handleDetail(row)"
           >查看</el-button
         >
         <el-button type="primary" size="small" @click="handleEdit(row)"
           >编辑</el-button
         >
-        <!-- 取消 -->
-        <!-- <el-button type="warning" size="small" @click="handleCancel(row)"
-          >取消</el-button
-        > -->
+        <el-button type="danger" size="small" @click="handleDelete(row)">
+          删除
+        </el-button>
       </template>
     </c-table>
   </div>
@@ -76,7 +70,8 @@ import {
   addCheckin,
   getCheckinList,
   updateCheckin,
-  getCheckinDetail
+  getCheckinDetail,
+  deleteCheckin
 } from '@/api/checkin';
 import { useDictStore } from '@/store/modules/dictStore';
 export default {
@@ -202,7 +197,18 @@ export default {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
-      }).then(() => {});
+      }).then(async () => {
+        const res = await deleteCheckin(row.id);
+        if (res.success) {
+          this.$message({
+            type: 'success',
+            message: '删除成功'
+          });
+          this.getTableData();
+        } else {
+          this.$message.error(res.message);
+        }
+      });
     },
     handlePageChange(currentPage, pageSize) {
       this.currentPage = currentPage;
@@ -225,8 +231,8 @@ export default {
       if (res.success) {
         this.tableData = res.result.records;
         this.currentPage = res.result.pageNumber || 1;
-        this.pageSize = res.result.pageSize || 10
-        this.total = res.result.total
+        this.pageSize = res.result.pageSize || 10;
+        this.total = res.result.total;
       } else {
         this.$message.error(res.message);
       }
@@ -238,8 +244,6 @@ export default {
           width: '80',
           prop: 'id',
           render: (row, index, column) => {
-            console.log(index);
-
             return (this.currentPage - 1) * this.pageSize + index + 1;
           }
         },

@@ -84,7 +84,7 @@
               :disabled="isView"
               :auto-upload="false"
             >
-              <img v-if="form.img" :src="form.img" class="avatar" />
+              <img v-if="form.img" :src="getURL" class="avatar" />
               <el-icon v-else class="avatar-uploader-icon">
                 <Plus />
               </el-icon>
@@ -121,7 +121,7 @@
 </template>
 
 <script setup>
-import { ref, defineExpose, defineEmits } from 'vue';
+import { ref, defineExpose, defineEmits, computed } from 'vue';
 import { Plus } from '@element-plus/icons-vue';
 import { ElMessage } from 'element-plus';
 import {
@@ -134,14 +134,10 @@ import {
 import { uploadFile } from '@/api/upload';
 
 import { useDictStore } from '@/store/modules/dictStore';
-const form = ref({
-  id: '',
-  roomId: '',
-  type: '',
-  price: '',
-  intro: '',
-  img: '',
-  status: ''
+const form = ref({});
+
+const getURL = computed(() => {
+  return import.meta.env.VITE_APP_RESOURCE_URL + form.value.img;
 });
 
 const refForm = ref(null);
@@ -171,7 +167,7 @@ const openDialog = (data) => {
   form.value = {};
   dialogVisible.value = true;
   if (data) {
-    form.value = { ...data };
+    form.value = Object.assign({}, data);
   }
   if (title.value === '房间详情') {
     isView.value = true;
@@ -179,8 +175,8 @@ const openDialog = (data) => {
 };
 
 const closeDialog = () => {
+  form.value = {};
   dialogVisible.value = false;
-  refForm.value.resetFields();
   isView.value = false;
 };
 const handleChange = (file, fileList) => {
@@ -251,7 +247,7 @@ const updateRoomById = async () => {
     type: form.value.type,
     price: form.value.price,
     intro: form.value.intro,
-    // img: form.value.img,
+    img: form.value.img,
     status: form.value.status
   };
 

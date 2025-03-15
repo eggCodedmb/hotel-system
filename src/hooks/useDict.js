@@ -21,12 +21,8 @@ export default function useDict() {
     const getDictValue = (key, value) => {
         // 参数有效性校验
         if (typeof key !== 'string' || !value) return undefined;
-
         // 安全获取字典数据 
         const dictList = dictStore.getDict(key);
-        console.log(dictList);
-        
-
         // 返回匹配项
         return dictList.find(item => item.itemValue === value)?.itemText ?? undefined;
     }
@@ -40,8 +36,6 @@ export default function useDict() {
         }
         const res = await getRoomList(params)
         if (res.success) {
-            console.log(res);
-
             roomList.value = res.result.records.map(item => {
                 return {
                     itemText: item.roomId,

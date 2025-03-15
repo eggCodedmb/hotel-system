@@ -55,6 +55,12 @@
       v-model:page-size="pageSize"
       @page-change="handlePageChange"
     >
+      <template #img="{ row }">
+        <!-- 按钮查看图片 -->
+        <el-button type="primary" size="small" @click="handleImg(row)"
+          >查看图片</el-button
+        >
+      </template>
       <template #action="{ row }">
         <!-- 入住 -->
         <el-button
@@ -102,9 +108,11 @@
     </c-table>
   </div>
   <RoomForm ref="roomForm" @refresh="getTableData" />
+  <image-preview ref="imagePreview" />
 </template>
 
 <script>
+import ImagePreview from '@/views/components/ViewImage.vue';
 import CTable from '@/components/CTable.vue';
 import RoomForm from './components/RoomForm.vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
@@ -121,7 +129,8 @@ import useDict from '@/hooks/useDict';
 export default {
   components: {
     CTable,
-    RoomForm
+    RoomForm,
+    ImagePreview
   },
   data() {
     return {
@@ -132,7 +141,8 @@ export default {
       tableData: [],
       total: 0,
       currentPage: 1,
-      pageSize: 10
+      pageSize: 10,
+      previewVisible: false
     };
   },
   mounted() {
@@ -147,6 +157,9 @@ export default {
     search() {
       this.currentPage = 1;
       this.getTableData();
+    },
+    handleImg(row) {
+      this.$refs.imagePreview.open(row.img);
     },
     addRoom() {
       this.$refs.roomForm.title = '新增客房';
@@ -164,7 +177,7 @@ export default {
       }).then(async () => {
         const res = await updateRoom({
           id: row.id,
-          status: '3'
+          status: '0'
         });
         if (res.success) {
           this.$message({
@@ -248,9 +261,9 @@ export default {
       getRoomList(params).then((res) => {
         if (res.success) {
           this.tableData = res.result.records;
+          this.currentPage = res.result.current | 1;
+          this.pageSize = res.result.size | 10;
           this.total = res.result.total;
-          this.currentPage = res.result.pageNumber || 1;
-          this.pageSize = res.result.pageSize || 10;
         } else {
           this.$message({
             type: 'error',
@@ -280,7 +293,10 @@ export default {
           prop: 'type',
           width: 140,
           render: (row, index, column) => {
-            return getDictValue('ROOMTYPE', row.type) || '--';
+            if (row.type === null) {
+              return '--';
+            }
+            return getDictValue('ROOMTYPE', row.type);
           }
         },
         {
@@ -288,7 +304,10 @@ export default {
           prop: 'status',
           width: 140,
           render: (row, index, column) => {
-            return getDictValue('ROOMSTATUS', row.status) || row.status;
+            if (row.status === null) {
+              return '--';
+            }
+            return getDictValue('ROOMSTATUS', row.status);
           }
         },
         {

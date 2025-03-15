@@ -100,7 +100,7 @@ const getUserInfo = async () => {
   if (res.success || success) {
     const newUser = {
       ...result,
-      ...res.result,
+      ...res.result
       // id: result.id
     };
     userStore.saveUser(newUser);
@@ -127,12 +127,14 @@ const handleLogin = () => {
       };
       const res = await login(parmas);
       if (res.success) {
-        ElMessage.success('登录成功');
-        router.push('/home');
-        loading.value = false;
+        getUserInfo();
         const rawToken = res.result;
         setToken(rawToken);
-        getUserInfo();
+        setTimeout(() => {
+          ElMessage.success('登录成功');
+          router.push('/home');
+          loading.value = false;
+        }, 300);
       } else {
         ElMessage.warning(res.message);
         loading.value = false;

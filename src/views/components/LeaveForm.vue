@@ -4,7 +4,65 @@
     v-model="dialogVisible"
     :close-on-click-modal="false"
   >
-    <el-form> </el-form>
+    <el-form ref="refForm" :model="form" :rules="rules" label-width="80px">
+      <el-row :gutter="20">
+        <el-col :xs="24" :md="12">
+          <el-form-item label="审批人" prop="approverId">
+            <el-select
+              v-model="form.approverId"
+              placeholder="请选择审批人"
+              clearable
+              :disabled="isView"
+              @change="handleApproverChange"
+            >
+              <el-option
+                v-for="item in options"
+                :key="item.value"
+                :label="item.itemText"
+                :value="item.itemValue"
+              />
+            </el-select>
+          </el-form-item>
+        </el-col>
+        <el-col :xs="24" :md="12">
+          <el-form-item label="请假人" prop="leaveApplicant">
+            <el-input v-model="form.leaveApplicant" :disabled="true" />
+          </el-form-item>
+        </el-col>
+        <el-col :xs="24" :md="12">
+          <el-form-item label="开始时间" prop="startTime">
+            <el-date-picker
+              v-model="form.startTime"
+              type="datetime"
+              placeholder="请选择开始时间"
+              :disabled="isView"
+              style="width: 100%"
+            />
+          </el-form-item>
+        </el-col>
+        <el-col :xs="24" :md="12">
+          <el-form-item label="结束时间" prop="endTime">
+            <el-date-picker
+              v-model="form.endTime"
+              type="datetime"
+              placeholder="请选择结束时间"
+              :disabled="isView"
+              style="width: 100%"
+            />
+          </el-form-item>
+        </el-col>
+        <el-col :xs="24" :md="24">
+          <el-form-item label="请假理由" prop="comment">
+            <el-input v-model="form.comment" type="textarea" />
+          </el-form-item>
+        </el-col>
+        <el-col :xs="24" :md="24">
+          <el-form-item label="审批结果">
+            <el-input v-model="form.result" type="textarea" :disabled="true" />
+          </el-form-item>
+        </el-col>
+      </el-row>
+    </el-form>
     <template #footer>
       <div class="dialog-footer">
         <el-button type="warning" @click="closeDialog">关闭</el-button>
@@ -15,102 +73,87 @@
 </template>
 
 <script setup>
-import { ref, defineExpose, defineOptions, defineEmits } from 'vue';
-import { Plus } from '@element-plus/icons-vue';
+import { ref, defineExpose, defineEmits } from 'vue';
 import { ElMessage } from 'element-plus';
-import {
-  addEmployee,
-  updateEmployee,
-  getEmployeeList,
-  deleteEmployee
-} from '@/api/user';
-
 import useDict from '@/hooks/useDict';
+import { addLeave } from '@/api/Leave';
+import { useUserStore } from '@/store/modules/userStore';
+
+const userStore = useUserStore();
 
 const form = ref({
-  approverId: '',
-  approver: '',
-  leaveApplicantId: '',
-  leaveApplicant: '',
-  startTime: '',
-  endTime: '',
-  result: '',
-  comment: '',
-  approvalTime: ''
+  // approverId: '', //审批人id
+  // approver: '', //审批人
+  // leaveApplicantId: '', //请假人id
+  // leaveApplicant: '', //请假人
+  // startTime: '', //请假开始时间
+  // endTime: '', //请假结束时间
+  // result: '', //审批结果
+  // comment: '', //备注
+  // approvalTime: '' //审批时间
 });
+const userInfo = userStore.getUser;
+
+form.value.leaveApplicant = userInfo?.name;
+form.value.leaveApplicantId = userInfo?.id;
+console.log(form.value);
+
 const emit = defineEmits(['refresh']);
 
 const title = ref('请假申请');
 const refForm = ref(null);
 const dialogVisible = ref(false);
-
-const rules = ref({});
-
+const rules = ref({
+  approverId: [{ required: true, message: '请选择审批人', trigger: 'change' }],
+  leaveApplicantId: [
+    { required: true, message: '请输入请假人', trigger: 'blur' }
+  ],
+  leaveApplicant: [
+    { required: true, message: '请输入请假人', trigger: 'blur' }
+  ],
+  startTime: [{ required: true, message: '请选择开始时间', trigger: 'change' }],
+  endTime: [{ required: true, message: '请选择结束时间', trigger: 'change' }],
+  comment: [{ required: true, message: '请输入请假理由', trigger: 'blur' }]
+});
 const { getDict } = useDict();
-
-//是否是员工
-const isEmployee = ref(false);
 const isView = ref(false);
-
-const items = getDict('Department');
+const options = getDict('SPR');
 
 const openDialog = (row) => {
   dialogVisible.value = true;
-  if (!row) return;
-  form.value = { ...row };
-  if (title.value === '详情') {
-    isView.value = true;
-  }
 };
 
 const closeDialog = () => {
   dialogVisible.value = false;
-  refForm.value.resetFields();
+};
+const handleApproverChange = (value) => {
+  const approver = options.find((item) => item.itemValue === value);
+  form.value.approver = approver?.itemText;
 };
 
 const submitForm = () => {
   refForm.value.validate((valid) => {
     if (valid) {
-      if (title.value === '新增员工') {
-        saveUser();
-      } else if (title.value === '编辑信息') {
-        handleEdit();
-      }
       emit('refresh');
-      closeDialog();
+      onSubmit();
     } else {
       ElMessage.warning('请填写完整信息');
     }
   });
 };
-
-const handleEdit = () => {
-  updateEmployee(form.value).then((res) => {
-    if (res.success) {
-      ElMessage.success('修改成功');
-    } else {
-      ElMessage.error('修改失败');
-    }
-  });
-};
-const saveUser = () => {
-  const params = {
-    loginName: form.value.loginName,
-    department: form.value.department
-  };
-  addEmployee(params).then((res) => {
-    if (res.success) {
-      ElMessage.success('添加成功');
-    } else {
-      ElMessage.error('添加失败');
-    }
-  });
+const onSubmit = async () => {
+  const res = await addLeave(form.value);
+  if (res.success) {
+    ElMessage.success('申请已提交');
+    closeDialog();
+  } else {
+    ElMessage.error(res.message);
+  }
 };
 
 defineExpose({
   openDialog,
   title,
-  isEmployee,
   isView
 });
 </script>
