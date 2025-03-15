@@ -3,7 +3,11 @@
     <div class="header-content">
       <!-- 面包屑导航 -->
       <el-breadcrumb separator="/" class="breadcrumb">
-        <el-breadcrumb-item v-for="(item, index) in breadcrumbList" :key="index" :to="item.path">
+        <el-breadcrumb-item
+          v-for="(item, index) in breadcrumbList"
+          :key="index"
+          :to="item.path"
+        >
           <el-icon v-if="index === 0" class="breadcrumb-icon">
             <location />
           </el-icon>
@@ -13,12 +17,21 @@
 
       <!-- 用户操作区 -->
       <div class="user-area">
-        <el-dropdown trigger="hover" placement="bottom-end" @command="handleCommand">
+        <el-dropdown
+          trigger="hover"
+          placement="bottom-end"
+          @command="handleCommand"
+        >
           <div class="user-wrapper">
-            <el-avatar :size="36" :src="userInfo.avatar ||
-              '/public/img/3ea6beec64369c2642b92c6726f1epng.png'
-              " class="user-avatar" />
-            <span class="user-name">{{ userInfo.loginName || '无' }}</span>
+            <el-avatar
+              :size="36"
+              :src="
+                userInfo.avatar ||
+                '/public/img/3ea6beec64369c2642b92c6726f1epng.png'
+              "
+              class="user-avatar"
+            />
+            <span class="user-name">{{ userInfo.name || '无' }}</span>
             <el-icon class="arrow-icon"><arrow-down /></el-icon>
           </div>
 
@@ -46,9 +59,7 @@
       </div>
     </div>
   </el-header>
-
-  <userInfoForm ref="userInfoFormRef" />
-
+  <userForm ref="userInfoFormRef" />
 </template>
 
 <script setup>
@@ -57,12 +68,7 @@ import { useRouter, useRoute } from 'vue-router';
 import { useUserStore } from '@/store/modules/userStore';
 import { useMenuStore } from '@/store/modules/menuStore';
 import { useDark, useToggle } from '@vueuse/core';
-//异步组件import userInfoForm from '@/views/components/userInfoForm.vue';
-
-const userInfoForm = defineAsyncComponent(() =>
-  import('@/views/components/userInfoForm.vue')
-)
-
+import userForm from '@/views/components/userForm.vue';
 
 const userInfoFormRef = ref(null);
 const isShow = ref(false);
@@ -72,6 +78,8 @@ const userStore = useUserStore();
 const menuStore = useMenuStore();
 
 const userInfo = userStore.getUser;
+console.log(userInfo);
+
 
 // 面包屑数据
 const breadcrumbList = ref([]);
@@ -96,9 +104,12 @@ const handleLogout = () => {
   router.push('/login');
 };
 
-nextTick(() => { //在组件渲染完成后执行
-  if (userInfo.name) {
-    userInfoFormRef.value.openDialog(); // 打开用户信息表单
+nextTick(() => {
+  //在组件渲染完成后执行
+  if (!userInfo.name || !userInfo.phone) {
+    // userInfoFormRef.value.title = '完善信息';
+    // userInfoFormRef.value.isEmployee = true;
+    // userInfoFormRef.value.openDialog(userInfo);
   }
 });
 </script>

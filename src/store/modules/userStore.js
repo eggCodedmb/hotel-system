@@ -7,14 +7,17 @@ export const useUserStore = defineStore(
   () => {
     // 用户信息
     const user = ref({});
-    const remember = ref({
-      username: '',
-      password: '',
-    });
+    const remember = ref({});
     const isRemember = ref(false);
+    // 是否是初始化用户
+    const isInitUser = ref(true);
 
     const saveUser = (newUser) => {
-      user.value = newUser;
+      if (newUser) {
+        user.value = Object.assign({}, newUser);
+      } else {
+        user.value = {};
+      }
     };
 
     const getUser = computed(() => user.value);
@@ -46,6 +49,7 @@ export const useUserStore = defineStore(
       getRemember,
       isRemember,
       remember,
+      isInitUser,
       saveUser,
       saveRemember,
       removeRemember,

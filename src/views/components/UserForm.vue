@@ -3,6 +3,7 @@
     :title="title"
     v-model="dialogVisible"
     :close-on-click-modal="false"
+    :show-close="false"
   >
     <el-form
       ref="refForm"
@@ -20,6 +21,7 @@
               v-model="form.loginName"
               placeholder="请输入账号"
               clearable
+              :disabled="isEmployee || isView"
             />
           </el-form-item>
         </el-col>
@@ -29,6 +31,7 @@
               v-model="form.department"
               placeholder="请选择部门"
               style="width: 100%"
+              :disabled="isView"
             >
               <el-option
                 v-for="(item, key) in items"
@@ -41,7 +44,12 @@
         </el-col>
         <el-col :xs="24" :md="12" v-if="isEmployee">
           <el-form-item label="姓名" prop="name">
-            <el-input v-model="form.name" placeholder="请输入姓名" clearable />
+            <el-input
+              v-model="form.name"
+              placeholder="请输入姓名"
+              clearable
+              :disabled="isView"
+            />
           </el-form-item>
         </el-col>
         <el-col :xs="24" :md="12" v-if="isEmployee">
@@ -51,6 +59,7 @@
               type="password"
               placeholder="请输入密码"
               show-password
+              :disabled="isView"
             />
           </el-form-item>
         </el-col>
@@ -62,6 +71,7 @@
               v-model="form.phone"
               placeholder="请输入手机号"
               maxlength="11"
+              :disabled="isView"
             />
           </el-form-item>
         </el-col>
@@ -71,6 +81,7 @@
               v-model="form.status"
               placeholder="请选择状态"
               style="width: 100%"
+              :disabled="isView"
             >
               <el-option
                 v-for="(item, key) in getDict('USER_STATUS')"
@@ -83,13 +94,12 @@
         </el-col>
 
         <el-col :xs="24" :md="12" v-if="isEmployee">
-          <el-form-item label="入职日期" prop="entryDate">
-            <el-date-picker
-              v-model="form.entryDate"
-              type="date"
-              placeholder="选择日期"
-              value-format="YYYY-MM-DD"
-              style="width: 100%"
+          <el-form-item label="邮箱" prop="email">
+            <el-input
+              v-model="form.email"
+              placeholder="请输入邮箱"
+              clearable
+              :disabled="isView"
             />
           </el-form-item>
         </el-col>
@@ -99,6 +109,7 @@
               v-model="form.role"
               placeholder="请选择角色"
               style="width: 100%"
+              :disabled="isEmployee || isView"
             >
               <el-option
                 v-for="item in getDict('ROLE')"
@@ -110,31 +121,32 @@
           </el-form-item>
         </el-col>
         <el-col :span="12" v-if="isEmployee">
-          <!-- <el-form-item label="头像">
-            <el-upload
-              class="avatar-uploader"
-              :show-file-list="false"
-              :before-upload="beforeAvatarUpload"
-            >
-              <img v-if="form.avatar" :src="form.avatar" class="avatar" />
-              <el-icon v-else class="avatar-uploader-icon">
-                <Plus />
-              </el-icon>
-            </el-upload>
-            <div class="upload-tip">建议尺寸 200x200，支持 JPG/PNG 格式</div>
-          </el-form-item> -->
-          <!-- 地址 -->
           <el-form-item label="地址" prop="address">
             <el-input
               v-model="form.address"
               placeholder="请输入地址"
               clearable
+              :disabled="isView"
             />
           </el-form-item>
         </el-col>
-        <el-col :span="12" v-if="isEmployee">
-          <el-form-item label="邮箱" prop="email">
-            <el-input v-model="form.email" placeholder="请输入邮箱" clearable />
+
+        <el-col :span="24" v-if="isEmployee">
+          <el-form-item label="头像">
+            <el-upload
+              class="avatar-uploader"
+              :show-file-list="false"
+              :auto-upload="false"
+              :before-upload="beforeImageUpload"
+              :on-change="handleChange"
+              :disabled="isView"
+            >
+              <img v-if="form.picture" :src="getUrl" class="avatar" />
+              <el-icon v-else class="avatar-uploader-icon">
+                <Plus />
+              </el-icon>
+            </el-upload>
+            <div class="upload-tip">建议尺寸 200x200，支持 JPG/PNG 格式</div>
           </el-form-item>
         </el-col>
       </el-row>
@@ -142,15 +154,25 @@
 
     <template #footer>
       <div class="dialog-footer">
-        <el-button type="warning" @click="closeDialog">关闭</el-button>
-        <el-button type="primary" @click="submitForm">保存</el-button>
+        <template v-if="isEmployee">
+          <el-button type="warning" v-if="isEmployee" @click="closeDialog"
+            >关闭</el-button
+          >
+          <el-button type="primary" @click="submitForm">保存</el-button>
+        </template>
+        <template v-else>
+          <el-button type="warning" @click="closeDialog">关闭</el-button>
+          <el-button :disabled="isView" type="primary" @click="submitForm"
+            >保存</el-button
+          >
+        </template>
       </div>
     </template>
   </el-dialog>
 </template>
 
 <script setup>
-import { ref, defineExpose, defineOptions, defineEmits } from 'vue';
+import { ref, defineExpose, defineOptions, defineEmits, computed } from 'vue';
 import { Plus } from '@element-plus/icons-vue';
 import { ElMessage } from 'element-plus';
 import {
@@ -159,22 +181,12 @@ import {
   getEmployeeList,
   deleteEmployee
 } from '@/api/user';
-
+import { uploadFile } from '@/api/upload';
 import useDict from '@/hooks/useDict';
+import { useUserStore } from '@/store/modules/userStore';
+const userStore = useUserStore();
 
-const form = ref({
-  employeeId: '',
-  loginName: '',
-  password: '',
-  name: '',
-  picture: '',
-  phone: '',
-  email: '',
-  address: '',
-  department: '',
-  status: '',
-  role: '0'
-});
+const form = ref({});
 const emit = defineEmits(['refresh']);
 
 const title = ref('新增员工');
@@ -203,7 +215,6 @@ const rules = ref({
       trigger: 'blur'
     }
   ],
-  entryDate: [{ required: true, message: '请选择入职日期', trigger: 'change' }],
   role: [{ required: true, message: '请选择角色', trigger: 'change' }],
   name: [{ required: true, message: '请输入姓名', trigger: 'blur' }],
   email: [
@@ -221,6 +232,10 @@ const rules = ref({
 
 const { getDict } = useDict();
 
+const getUrl = computed(() => {
+  return import.meta.env.VITE_APP_RESOURCE_URL + form.value.picture;
+});
+
 //是否是员工
 const isEmployee = ref(false);
 const isView = ref(false);
@@ -230,15 +245,19 @@ const items = getDict('Department');
 const openDialog = (row) => {
   dialogVisible.value = true;
   if (!row) return;
-  form.value = { ...row };
-  if (title.value === '详情') {
+  form.value = Object.assign({}, row);
+  form.value.password = '';
+  form.value.role = '0';
+  if (title.value === '员工详情') {
     isView.value = true;
   }
 };
 
 const closeDialog = () => {
   dialogVisible.value = false;
-  refForm.value.resetFields();
+  isEmployee.value = false;
+  isView.value = false;
+  form.value = {};
 };
 
 const submitForm = () => {
@@ -246,21 +265,62 @@ const submitForm = () => {
     if (valid) {
       if (title.value === '新增员工') {
         saveUser();
-      } else if (title.value === '编辑信息') {
+      } else if (title.value === '编辑信息' || title.value === '完善信息') {
         handleEdit();
       }
       emit('refresh');
-      closeDialog();
     } else {
       ElMessage.warning('请填写完整信息');
     }
   });
 };
 
+const handleChange = (file, fileList) => {
+  console.log(file, fileList);
+
+  uploadFile({ multipartFiles: file.raw }).then((res) => {
+    if (res.success) {
+      form.value.picture = res.result;
+    } else {
+      ElMessage.error('上传失败');
+    }
+  });
+};
+
+const beforeImageUpload = (file) => {
+  const isImage = file.type.startsWith('image/');
+  const isLt5M = file.size / 1024 / 1024 < 5;
+
+  if (!isImage) {
+    ElMessage.error('只能上传图片文件!');
+    return false;
+  }
+  if (!isLt5M) {
+    ElMessage.error('图片大小不能超过5MB!');
+    return false;
+  }
+  return true;
+};
+
 const handleEdit = () => {
-  updateEmployee(form.value).then((res) => {
+  const params = {
+    id: form.value.id,
+    employeeId: userStore.getUser.employeeId,
+    loginName: form.value.loginName,
+    password: form.value.password,
+    role: form.value.role,
+    name: form.value.name,
+    picture: form.value.picture,
+    phone: form.value.phone,
+    email: form.value.email,
+    address: form.value.address,
+    department: form.value.department,
+    status: form.value.status
+  };
+  updateEmployee(params).then((res) => {
     if (res.success) {
       ElMessage.success('修改成功');
+      closeDialog();
     } else {
       ElMessage.error('修改失败');
     }
@@ -270,11 +330,12 @@ const saveUser = () => {
   const params = {
     loginName: form.value.loginName,
     department: form.value.department,
-    role: form.value.role,
+    role: form.value.role
   };
   addEmployee(params).then((res) => {
     if (res.success) {
       ElMessage.success('添加成功');
+      closeDialog();
     } else {
       ElMessage.error('添加失败');
     }

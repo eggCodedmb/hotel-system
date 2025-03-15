@@ -73,7 +73,8 @@ import {
   addEmployee,
   updateEmployee,
   getEmployeeList,
-  deleteEmployee
+  deleteEmployee,
+  getEmployeeDetail
 } from '@/api/user';
 
 import useDict from '@/hooks/useDict';
@@ -123,16 +124,26 @@ export default {
       userForm.value.openDialog();
     };
 
-    const handleDetail = (row) => {
-      userForm.value.title = '员工详情';
-      userForm.value.isEmployee = true;
-      userForm.value.openDialog(row);
+    const handleDetail = async (row) => {
+      const res = await getEmployeeDetail(row.id);
+      if (res.success) {
+        userForm.value.title = '员工详情';
+        userForm.value.isEmployee = true;
+        userForm.value.openDialog(res.result);
+      } else {
+        ElMessage.error(res.message);
+      }
     };
 
-    const handleEdit = (row) => {
-      userForm.value.isEmployee = true;
-      userForm.value.title = '编辑信息';
-      userForm.value.openDialog(row);
+    const handleEdit = async (row) => {
+      const res = await getEmployeeDetail(row.id);
+      if (res.success) {
+        userForm.value.title = '编辑信息';
+        userForm.value.isEmployee = true;
+        userForm.value.openDialog(res.result);
+      } else {
+        ElMessage.error(res.message);
+      }
     };
 
     const handleDelete = async (row) => {
@@ -158,7 +169,6 @@ export default {
           });
         });
     };
-
     // 处理分页
     const handlePageChange = ({ currentPage, pageSize }) => {
       currentPage.value = currentPage;
@@ -183,8 +193,8 @@ export default {
       const res = await getEmployeeList(params);
       if (res.success) {
         tableData.value = res.result.records;
-        currentPage.value = res.result.pageNumber | 1;
-        pageSize.value = res.result.pageSize | 10;
+        currentPage.value = res.result.current | 1;
+        pageSize.value = res.result.size | 10;
         total.value = res.result.total;
       } else {
         ElMessage.error(res.message);
@@ -206,7 +216,11 @@ export default {
       },
       { label: '姓名', prop: 'name' },
       { label: '状态', prop: 'status' },
-      { label: '部门', prop: 'department' },
+      {
+        label: '部门',
+        prop: 'department',
+        render: (row) => {}
+      },
       { label: '邮箱', prop: 'email' },
       { label: '电话', prop: 'phone' },
       // { label: '头像', prop: 'picture' },

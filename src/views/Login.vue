@@ -61,6 +61,7 @@ import { useRouter } from 'vue-router';
 import { useUserStore } from '@/store/modules/userStore';
 import { login, getLoginInfo } from '@/api/login';
 import { setToken } from '@/utils/auth';
+import { getEmployeeDetail } from '@/api/user';
 
 const router = useRouter();
 const userStore = useUserStore();
@@ -94,10 +95,26 @@ const isRememberChange = (e) => {
 
 const getUserInfo = async () => {
   const res = await getLoginInfo();
-  if (res.success) {
-    userStore.saveUser(res.result);
+
+  const { success, result } = await getEmployeeDetail(res.result.employeeId);
+  if (res.success || success) {
+    const newUser = {
+      ...result,
+      ...res.result,
+      // id: result.id
+    };
+    userStore.saveUser(newUser);
+  } else {
+    ElMessage.warning('获取用户信息失败');
   }
 };
+
+onMounted(() => {
+  if (userStore.isRemember) {
+    loginForm.username = userStore.getRemember.username;
+    loginForm.password = userStore.getRemember.password;
+  }
+});
 // 登录
 const handleLogin = () => {
   loginFormRef.value.validate(async (valid) => {

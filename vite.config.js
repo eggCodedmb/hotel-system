@@ -42,5 +42,7 @@ export default defineConfig({
         rewrite: (path) => path.replace(/^\/api/, '')
       }
     }
-  }
+  },
+  // http://192.168.1.166:8080
+  base: './',
 });
