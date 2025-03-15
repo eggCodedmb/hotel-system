@@ -99,18 +99,17 @@ const handleLogout = () => {
   router.push('/login');
 };
 
-onMounted(() => {
-  //在组件渲染完成后执行
+onMounted(() => {});
+
+nextTick(() => {
   setTimeout(() => {
     if (!userInfo.name) {
       userInfoFormRef.value.title = '完善信息';
       userInfoFormRef.value.isEmployee = true;
       userInfoFormRef.value.openDialog(userInfo);
     }
-  }, 500);
+  }, 200);
 });
-
-nextTick(() => {});
 </script>
 
 <style scoped lang="scss">
