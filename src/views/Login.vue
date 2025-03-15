@@ -100,10 +100,10 @@ const getUserInfo = async () => {
 };
 // 登录
 const handleLogin = () => {
-  loading.value = true;
   loginFormRef.value.validate(async (valid) => {
     if (!valid) return;
     try {
+      loading.value = true;
       const parmas = {
         loginName: loginForm.username,
         password: loginForm.password

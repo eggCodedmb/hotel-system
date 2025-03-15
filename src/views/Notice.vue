@@ -97,7 +97,8 @@ const handleEdit = (row) => {
 
 const handleSubmit = async (type, data) => {
   if (type === 'add') {
-    const res = await addNotice(data);
+    const { id, ...parmas } = data;
+    const res = await addNotice(parmas);
     if (res.success) {
       ElMessage.success('新增成功');
       noticeList();

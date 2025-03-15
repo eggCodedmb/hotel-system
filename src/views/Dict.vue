@@ -113,7 +113,9 @@ export default {
         })
         .catch(() => {});
     },
-    handlePageChange() {
+    handlePageChange(currentPage, pageSize) {
+      this.currentPage = currentPage;
+      this.pageSize = pageSize;
       this.getTableData();
     },
     async getTableData() {
@@ -132,25 +134,69 @@ export default {
     },
 
     async refreshCache() {
-      // 刷新缓存
-      const params = {
-        ...this.form,
-        pageNumber: 1,
-        pageSize: 9999
-      };
-      const { result, success } = await getDictList(params);
-      const { records } = result;
-      if (success) {
-        records.map(async (item) => {
-          const res = await getDictDetail({ dictId: item.id });
-          if (res.success) {
-            const dictData = res.result.records.filter(
-              (item) => item.status === '1' && item.dictCode
-            );
-            useDictStore().removeDict(item.dictCode); // 先删除旧的字典数据
-            useDictStore().setDict(item.dictCode, dictData); // 再添加新的字典数据
-          }
-        });
+      try {
+        const dictStore = useDictStore();
+        dictStore.clearAllDicts(); // 清空 Pinia 存储
+
+        // 2. 自动分页加载全部数据
+        let currentPage = 1;
+        const pageSize = 100; // 合理分页大小
+        let allRecords = [];
+
+        do {
+          const params = {
+            ...this.form,
+            pageNumber: currentPage,
+            pageSize
+          };
+
+          const { result, success } = await getDictList(params);
+          if (!success) throw new Error('Failed to load dictionary list');
+
+          allRecords = [...allRecords, ...result.records];
+          currentPage = result.current < result.pages ? currentPage + 1 : 0;
+        } while (currentPage > 0);
+
+        // 3. 并行处理详情请求
+        const detailRequests = allRecords.map((item) =>
+          getDictDetail({ dictId: item.id })
+            .then((res) => {
+              if (!res.success) return null;
+              return {
+                dictCode: item.dictCode,
+                data: res.result.records.filter(
+                  (record) => record.status === '1'
+                )
+              };
+            })
+            .catch(() => null)
+        );
+
+        // 4. 等待所有请求完成
+        const detailResults = await Promise.all(detailRequests);
+        console.log(detailResults);
+
+        // 5. 处理有效数据
+        const validData = detailResults
+          .filter(Boolean)
+          .reduce((acc, { dictCode, data }) => {
+            if (data?.length) {
+              acc[dictCode] = data;
+            }
+            return acc;
+          }, {});
+
+        // 6. 批量更新存储
+        dictStore.batchSetDicts(validData);
+
+        // 7. 更新本地存储（按需）
+        if (Object.keys(validData).length) {
+          localStorage.setItem('dict', JSON.stringify(validData));
+        }
+        this.$message.success('刷新缓存成功');
+      } catch (error) {
+        this.$message.error('刷新缓存失败');
+        throw error;
       }
     },
     initTable() {

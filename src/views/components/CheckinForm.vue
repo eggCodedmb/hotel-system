@@ -20,6 +20,7 @@
               v-model="form.customerName"
               placeholder="请输入"
               clearable
+              :disabled="isView"
             />
           </el-form-item>
         </el-col>
@@ -29,17 +30,34 @@
               v-model="form.phone"
               placeholder="请输入联系电话"
               maxlength="11"
+              :disabled="isView"
             />
           </el-form-item>
         </el-col>
 
         <!-- 第二行：房型 + 房间号 -->
         <el-col :xs="24" :md="12">
-          <el-form-item label="房型" prop="type">
+          <el-form-item label="房间状态" prop="roomStatus">
+            <el-select
+              v-model="form.roomStatus"
+              placeholder="请选择房间状态"
+              style="width: 100%"
+              :disabled="isView"
+            >
+              <el-option
+                v-for="(item, key) in statusOptions"
+                :key="key"
+                :label="item.itemText"
+                :value="item.itemValue"
+              />
+            </el-select>
+          </el-form-item>
+          <!-- <el-form-item label="房型" prop="type">
             <el-select
               v-model="form.type"
               placeholder="请选择房型"
               style="width: 100%"
+              :disabled="isView"
             >
               <el-option
                 v-for="(item, key) in typeOptions"
@@ -48,7 +66,7 @@
                 :value="item.itemValue"
               />
             </el-select>
-          </el-form-item>
+          </el-form-item> -->
         </el-col>
         <el-col :xs="24" :md="12">
           <el-form-item label="房间号" prop="roomId">
@@ -56,23 +74,26 @@
               v-model="form.roomId"
               placeholder="请选择房间号"
               style="width: 100%"
+              :disabled="isView"
             >
-              <el-option label="101" value="101" />
-              <el-option label="102" value="102" />
-              <el-option label="103" value="103" />
-              <el-option label="104" value="104" />
-              <el-option label="105" value="105" />
+              <el-option
+                v-for="(item, key) in roomList"
+                :key="key"
+                :label="item.itemText"
+                :value="item.itemText"
+              />
             </el-select>
           </el-form-item>
         </el-col>
 
         <!-- 第三行：入住人数 + 身份证号 -->
         <el-col :xs="24" :md="12">
-          <el-form-item label="状态" prop="roomStatus">
+          <el-form-item label="状态" prop="status">
             <el-select
-              v-model="form.roomStatus"
+              v-model="form.status"
               placeholder="请选择状态"
               style="width: 100%"
+              :disabled="isView"
             >
               <el-option
                 v-for="(item, key) in statusOptions"
@@ -84,12 +105,13 @@
           </el-form-item>
         </el-col>
         <el-col :xs="24" :md="12">
-          <el-form-item label="身份证号" prop="idCard">
+          <el-form-item label="身份证号" prop="idcard">
             <el-input
-              v-model="form.idCard"
+              v-model="form.idcard"
               placeholder="请输入18位身份证号码"
               maxlength="18"
               show-word-limit
+              :disabled="isView"
             />
           </el-form-item>
         </el-col>
@@ -102,7 +124,9 @@
               v-model="form.beginTime"
               type="datetime"
               placeholder="请选择入住时间"
+              value-format="YYYY-MM-DD HH:mm:ss"
               style="width: 100%"
+              :disabled="isView"
             />
           </el-form-item>
         </el-col>
@@ -112,11 +136,12 @@
               v-model="form.endTime"
               type="datetime"
               placeholder="请选择退房时间"
+              value-format="YYYY-MM-DD HH:mm:ss"
               style="width: 100%"
+              :disabled="isView"
             />
           </el-form-item>
         </el-col>
-        <!-- remark -->
         <el-col :span="24">
           <el-form-item label="备注">
             <el-input
@@ -125,6 +150,7 @@
               placeholder="请输入备注"
               maxlength="200"
               show-word-limit
+              :disabled="isView"
             />
           </el-form-item>
         </el-col>
@@ -142,21 +168,14 @@
 </template>
 
 <script setup>
-import { ref, defineExpose, computed, defineEmits } from 'vue';
+import { ref, defineExpose, computed, defineEmits, onMounted } from 'vue';
 import { ElMessage } from 'element-plus';
 import { useDictStore } from '@/store/modules/dictStore';
+import useDict from '@/hooks/useDict';
 
-const form = ref({
-  roomId: '',
-  customerName: '',
-  phone: '',
-  roomStatus: '',
-  beginTime: '', //入住时间
-  endTime: '', //退房时间
-  remark: '',
-  status: '',
-  idcard: ''
-});
+const { roomList, getRoomListData } = useDict();
+
+const form = ref({});
 const rules = ref({
   roomId: [{ required: true, message: '请选择房间号', trigger: 'change' }],
   customerName: [
@@ -170,15 +189,20 @@ const rules = ref({
       trigger: 'blur'
     }
   ],
-  idCard: [{ required: true, message: '请输入身份证号', trigger: 'blur' }],
-  beginTime: [{ required: true, message: '请选择入住时间', trigger: 'change' }]
+  idcard: [{ required: true, message: '请输入身份证号', trigger: 'blur' }],
+  beginTime: [{ required: true, message: '请选择入住时间', trigger: 'change' }],
+  endTime: [{ required: true, message: '请选择退房时间', trigger: 'change' }],
+  // remark: [{ required: true, message: '请输入备注', trigger: 'blur' }],
+  status: [{ required: true, message: '请选择房间状态', trigger: 'change' }],
+  roomStatus: [{ required: true, message: '请选择房间状态', trigger: 'change' }]
+  // type: [{ required: true, message: '请选择房间类型', trigger: 'change' }]
 });
 const title = ref('客房预订');
 const dialogVisible = ref(false);
 const refForm = ref(null);
 const isView = ref(false);
 
-const typeOptions = useDictStore().getDict('ROOMTYPE') || [];
+// const typeOptions = useDictStore().getDict('ROOMTYPE') || [];
 const statusOptions = useDictStore().getDict('ROOMSTATUS') || [];
 
 const emit = defineEmits(['submit']);
@@ -186,10 +210,7 @@ const emit = defineEmits(['submit']);
 const openDialog = (row) => {
   dialogVisible.value = true;
   if (row) {
-    form.value = row;
-  }
-  if (title.value === '详情') {
-    isView.value = true;
+    form.value = { ...row };
   }
 };
 
@@ -201,7 +222,7 @@ const closeDialog = () => {
 const submitForm = () => {
   refForm.value.validate((valid) => {
     if (valid) {
-      const type = title.value === '客房预订' ? 'add' : 'edit';
+      const type = title.value === '预定客房' ? 'add' : 'edit';
       emit('submit', type, form.value);
       closeDialog();
     } else {
@@ -214,6 +235,10 @@ const submitForm = () => {
 defineExpose({
   openDialog,
   title
+});
+
+onMounted(() => {
+  // getRoomListData();
 });
 </script>
 

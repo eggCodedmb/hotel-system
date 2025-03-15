@@ -56,7 +56,19 @@
       @page-change="handlePageChange"
     >
       <template #action="{ row }">
-        <el-button type="warning" size="small" @click="handleCheckout(row)"
+        <!-- 入住 -->
+        <el-button
+          type="primary"
+          v-if="['0', '3'].includes(row.status)"
+          size="small"
+          @click="handleCheckin(row)"
+          >入住</el-button
+        >
+        <el-button
+          type="warning"
+          v-if="['1', '2'].includes(row.status)"
+          size="small"
+          @click="handleCheckout(row)"
           >退房</el-button
         >
         <el-button type="primary" size="small" @click="handleDetail(row)"
@@ -104,6 +116,7 @@ import {
   deleteRoom,
   getRoomDetail
 } from '@/api/room';
+import useDict from '@/hooks/useDict';
 
 export default {
   components: {
@@ -112,17 +125,11 @@ export default {
   },
   data() {
     return {
-      form: {
-        roomId: '',
-        type: '',
-        price: '',
-        status: ''
-      },
+      form: {},
       stateOptions: useDictStore().getDict('ROOMSTATUS') || [],
       roomTypeOptions: useDictStore().getDict('ROOMTYPE') || [],
       columns: [],
       tableData: [],
-      image: 'https://picsum.photos/200/100',
       total: 0,
       currentPage: 1,
       pageSize: 10
@@ -134,12 +141,8 @@ export default {
   },
   methods: {
     reset() {
-      this.form = {
-        roomId: '',
-        type: '',
-        price: '',
-        status: ''
-      };
+      this.form = {};
+      this.getTableData();
     },
     search() {
       this.currentPage = 1;
@@ -158,11 +161,49 @@ export default {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
+      }).then(async () => {
+        const res = await updateRoom({
+          id: row.id,
+          status: '3'
+        });
+        if (res.success) {
+          this.$message({
+            type: 'success',
+            message: '退房成功!'
+          });
+          this.getTableData();
+        } else {
+          this.$message({
+            type: 'error',
+            message: '退房失败!'
+          });
+        }
       });
     },
     handleDetail(row) {
       this.$refs.roomForm.title = '房间详情';
       this.$refs.roomForm.openDialog(row);
+    },
+    handleCheckin(row) {
+      this.$confirm('确定入住吗？', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(async () => {
+        const res = await updateRoom({
+          id: row.id,
+          status: '1'
+        });
+        if (res.success) {
+          this.$message({
+            type: 'success',
+            message: '入住成功!'
+          });
+          this.getTableData();
+        } else {
+          this.$message;
+        }
+      });
     },
     async handleDelete(row) {
       this.$confirm('确定删除该房间吗？', '提示', {
@@ -193,7 +234,9 @@ export default {
           });
         });
     },
-    handlePageChange() {
+    handlePageChange(currentPage, pageSize) {
+      this.currentPage = currentPage;
+      this.pageSize = pageSize;
       this.getTableData();
     },
     getTableData() {
@@ -202,18 +245,12 @@ export default {
         pageNumber: this.currentPage,
         pageSize: this.pageSize
       };
-      // params 删除空值
-      for (const key in params) {
-        if (params[key] === '') {
-          delete params[key];
-        }
-      }
       getRoomList(params).then((res) => {
         if (res.success) {
           this.tableData = res.result.records;
           this.total = res.result.total;
-          this.currentPage = res.result.current;
-          this.pageSize = res.result.size;
+          this.currentPage = res.result.pageNumber || 1;
+          this.pageSize = res.result.pageSize || 10;
         } else {
           this.$message({
             type: 'error',
@@ -223,6 +260,7 @@ export default {
       });
     },
     initTable() {
+      const { getDictValue } = useDict();
       const columns = [
         {
           label: '序号',
@@ -239,7 +277,19 @@ export default {
         },
         {
           label: '房间类型',
-          prop: 'type'
+          prop: 'type',
+          width: 140,
+          render: (row, index, column) => {
+            return getDictValue('ROOMTYPE', row.type) || '--';
+          }
+        },
+        {
+          label: '房间状态',
+          prop: 'status',
+          width: 140,
+          render: (row, index, column) => {
+            return getDictValue('ROOMSTATUS', row.status) || row.status;
+          }
         },
         {
           label: '房间价格',
@@ -248,11 +298,6 @@ export default {
         {
           label: '房间图片',
           slotName: 'img'
-        },
-        {
-          label: '房间状态',
-          slotName: 'status',
-          width: 90
         },
         {
           label: '操作',

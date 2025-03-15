@@ -7,8 +7,9 @@ import { useMenuStore } from '@/store/modules/menuStore';
 import { generateMenu, filterNonAdminRoutes } from '@/utils/menu';
 import router from '@/router';
 
-const menu = generateMenu(router.options.routes)[0].children; // 生成菜单
 const menuStore = useMenuStore();
+
+const menu = generateMenu(router.options.routes)[0].children; // 生成菜单
 const routes = filterNonAdminRoutes(router.options.routes); // 过滤掉非管理员路由
 const menuItems = generateMenu(routes)[0].children; // 递归生成菜单
 

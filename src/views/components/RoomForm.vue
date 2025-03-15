@@ -181,6 +181,7 @@ const openDialog = (data) => {
 const closeDialog = () => {
   dialogVisible.value = false;
   refForm.value.resetFields();
+  isView.value = false;
 };
 const handleChange = (file, fileList) => {
   uploadFile({ multipartFiles: file.raw }).then((res) => {
@@ -212,7 +213,7 @@ const submitForm = () => {
     if (valid) {
       if (title.value === '新增客房') {
         saveRoom();
-      } else if (title.value === '修改客房') {
+      } else {
         updateRoomById();
       }
       closeDialog();
@@ -250,7 +251,7 @@ const updateRoomById = async () => {
     type: form.value.type,
     price: form.value.price,
     intro: form.value.intro,
-    img: form.value.img,
+    // img: form.value.img,
     status: form.value.status
   };
 

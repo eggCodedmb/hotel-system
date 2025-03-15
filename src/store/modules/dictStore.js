@@ -24,27 +24,26 @@ export const useDictStore = defineStore(
       return dicts.value.find(item => item.key === key)?.values || []
     })
 
-    // 删除字典（支持批量）
-    const removeDict = (key) => {
-      const keys = Array.isArray(key) ? key : [key]
-      dicts.value = dicts.value.filter(item => !keys.includes(item.key))
+    // 删除字典
+    const clearAllDicts = () => {
+      dicts.value = []
     }
 
-    // 清空字典（保留指定 key）
-    const clearDict = (keepKeys) => {
-      if (keepKeys.length === 0) {
-        dicts.value = []
-      } else {
-        dicts.value = dicts.value.filter(item => keepKeys.includes(item.key))
-      }
+    const batchSetDicts = (payload) => {
+      console.log(payload);
+
+      Object.entries(payload).forEach(([key, value]) => {
+        console.log(key, value);
+        setDict(key, value)
+      });
     }
 
     return {
       dicts,
       setDict,
       getDict,
-      removeDict,
-      clearDict
+      clearAllDicts,
+      batchSetDicts
     }
   },
   {

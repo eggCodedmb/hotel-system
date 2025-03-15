@@ -14,7 +14,7 @@ export function getRoomList(data) {
 
 // 修改房间
 export function updateRoom(params) {
-  return request.post('/roomManager/selectRoomManagerList', params);
+  return request.post('/roomManager/updateRoomManager', params);
 }
 
 // 删除房间

@@ -29,22 +29,30 @@
 
       <!-- 房间筛选 -->
       <div class="filter-container">
-        <el-input
+        <!-- <el-input
           placeholder="搜索房型"
           style="width: 300px"
           clearable
           v-model="searchKeyword"
+        
+          @keyup.enter="onSearch"
         >
           <template #append>
             <el-button :icon="Search" />
           </template>
-        </el-input>
-        <el-select v-model="roomType" placeholder="全部房型" clearable>
+        </el-input> -->
+        <el-select
+          v-model="roomType"
+          placeholder="全部房型"
+          @change="onChange"
+          clearable
+          style="width: 20%"
+        >
           <el-option
-            v-for="item in roomTypes"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value"
+            v-for="(item, key) in roomTypes"
+            :key="key"
+            :label="item.itemText"
+            :value="item.itemValue"
           />
         </el-select>
       </div>
@@ -52,7 +60,7 @@
       <!-- 房间展示 -->
       <el-row :gutter="20" class="room-list">
         <el-col
-          v-for="room in filteredRooms"
+          v-for="room in rooms"
           :key="room.id"
           :xs="24"
           :sm="12"
@@ -62,13 +70,13 @@
         >
           <el-card class="room-card" shadow="hover">
             <el-image
-              :src="room.image"
+              :src="room.img"
               fit="cover"
               class="room-image"
-              :preview-src-list="[room.image]"
+              :preview-src-list="[room.img]"
             />
             <div class="room-info">
-              <h3 class="room-title">{{ room.name }}</h3>
+              <h3 class="room-title">{{ room.type }}</h3>
               <div class="room-tags">
                 <el-tag
                   v-for="(tag, index) in room.tags"
@@ -100,65 +108,97 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import { Search } from '@element-plus/icons-vue';
 import CheckinForm from './components/CheckinForm.vue';
+import { getNoticeList } from '@/api/notice';
+import useDict from '@/hooks/useDict';
+import { getRoomList } from '@/api/room';
 
 const TITLE = import.meta.env.VITE_APP_TITLE;
 
-// 公告数据
-const announcements = ref([
-  { title: '系统维护通知', content: '8月1日0:00-6:00进行系统升级维护' },
-  { title: '优惠活动', content: '提前7天预订可享8折优惠' },
-  { title: '节日问候', content: '中秋节期间赠送每位客人月饼礼盒' }
-]);
+const { getDict } = useDict();
 
+// 公告数据
+const announcements = ref([]);
+// 预订表单
 const checkinForm = ref(null);
 
-// 房间数据
-const rooms = ref([
-  {
-    id: 1,
-    name: '豪华海景套房',
-    price: 1588,
-    type: 'suite',
-    image: 'https://via.placeholder.com/400x250',
-    tags: ['65㎡', '海景阳台', '双人床']
-  },
-  {
-    id: 2,
-    name: '行政商务房',
-    price: 988,
-    type: 'business',
-    image: 'https://via.placeholder.com/400x250',
-    tags: ['45㎡', '办公区', '高速WiFi']
+// 分页
+const pagination = ref({
+  pageNumber: 1,
+  pageSize: 10
+});
+
+// 获取房间列表
+const getRoomListData = async () => {
+  const parmas = {
+    type: roomType.value,
+    pageNumber: pagination.value.pageNumber,
+    pageSize: pagination.value.pageSize
+  };
+  // 删除空字段
+  Object.keys(parmas).forEach((key) => {
+    if (!parmas[key]) {
+      delete parmas[key];
+    }
+  });
+  const res = await getRoomList(parmas);
+  if (res.success) {
+    rooms.value = res.result.records;
+  } else {
+    ElMessage.error(res.message);
   }
-]);
+};
+
+// 获取房间类型字典
+
+// 房间数据
+const rooms = ref([]);
 
 // 搜索条件
 const searchKeyword = ref('');
 const roomType = ref('');
-const roomTypes = ref([
-  { value: 'suite', label: '套房' },
-  { value: 'business', label: '商务房' }
-]);
-
-// 过滤后的房间列表
-const filteredRooms = computed(() => {
-  return rooms.value.filter((room) => {
-    const matchesSearch = room.name
-      .toLowerCase()
-      .includes(searchKeyword.value.toLowerCase());
-    const matchesType = !roomType.value || room.type === roomType.value;
-    return matchesSearch && matchesType;
-  });
-});
+const roomTypes = getDict('ROOMTYPE') || [];
 
 // 预订处理
 const handleBook = (room) => {
   checkinForm.value.title = '预订房间';
   checkinForm.value.openDialog(room);
 };
+
+const onSearch = () => {
+  getRoomListData();
+};
+
+const onChange = () => {
+  getRoomListData();
+};
+
+const noticeList = async () => {
+  const parmas = {
+    pageNumber: 1,
+    pageSize: 99
+  };
+  // 删除空字段
+  Object.keys(parmas).forEach((key) => {
+    if (!parmas[key]) {
+      delete parmas[key];
+    }
+  });
+  const res = await getNoticeList(parmas);
+
+  if (res.success) {
+    announcements.value = res.result.records;
+  } else {
+    ElMessage.error(res.message);
+  }
+};
+
+onMounted(() => {
+  noticeList();
+  getRoomListData();
+});
 </script>
 
 <style lang="scss" scoped>

@@ -8,9 +8,10 @@ import * as ElementPlusIconsVue from '@element-plus/icons-vue';
 import setupStore from '@/store';
 import '@/assets/index.css';
 import 'element-plus/theme-chalk/dark/css-vars.css';
+// import hooksPlugin  from '@/plugins/hooks';
 
 const app = createApp(App);
-
+// app.use(hooksPlugin);
 app.use(setupStore);
 app.use(router);
 app.use(ElementPlus);

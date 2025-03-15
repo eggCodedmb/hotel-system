@@ -49,9 +49,9 @@
     >
       <template #action="{ row }">
         <!-- 入住 -->
-        <el-button type="primary" size="small" @click="handleCheckin(row)"
+        <!-- <el-button type="primary" size="small" @click="handleCheckin(row)"
           >入住</el-button
-        >
+        > -->
         <!-- 查看 -->
         <el-button type="primary" size="small" @click="handleDetail(row)"
           >查看</el-button
@@ -60,9 +60,9 @@
           >编辑</el-button
         >
         <!-- 取消 -->
-        <el-button type="warning" size="small" @click="handleCancel(row)"
+        <!-- <el-button type="warning" size="small" @click="handleCancel(row)"
           >取消</el-button
-        >
+        > -->
       </template>
     </c-table>
   </div>
@@ -76,7 +76,6 @@ import {
   addCheckin,
   getCheckinList,
   updateCheckin,
-  deleteCheckin,
   getCheckinDetail
 } from '@/api/checkin';
 import { useDictStore } from '@/store/modules/dictStore';
@@ -134,20 +133,35 @@ export default {
 
     // 重置
     handleReset() {
-      this.form = {
-        roomId: '',
-        customerName: '',
-        phone: ''
-      };
+      this.form = {};
+      this.getTableData();
     },
 
     // 入住
-    handleCheckin(row) {},
+    handleCheckin(row) {
+      this.$confirm('是否入住该客房？', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(async () => {
+        const params = {
+          id: row.id,
+          status: '1'
+        };
+        const res = await updateCheckin(params);
+        this.$message({
+          type: 'success',
+          message: res.message
+        });
+        this.getTableData();
+      });
+    },
 
     // 查看
     handleDetail(row) {
       this.$refs.checkinForm.title = '详情';
-      this.$refs.checkinForm.openDialog();
+      this.$refs.checkinForm.isView = true;
+      this.$refs.checkinForm.openDialog(row);
     },
 
     // 取消
@@ -156,11 +170,20 @@ export default {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
-      }).then(() => {
-        this.$message({
-          type: 'success',
-          message: '取消成功'
-        });
+      }).then(async () => {
+        const params = {
+          id: row.id,
+          status: '0'
+        };
+        const res = await updateCheckin(params);
+        if (res.success) {
+          this.$message({
+            type: 'success',
+            message: '取消成功'
+          });
+          s;
+          this.getTableData();
+        }
       });
     },
     // 预订客房
@@ -171,6 +194,7 @@ export default {
 
     handleEdit(row) {
       this.$refs.checkinForm.title = '编辑';
+      this.$refs.checkinForm.isView = false;
       this.$refs.checkinForm.openDialog(row);
     },
     handleDelete(row) {
@@ -180,7 +204,9 @@ export default {
         type: 'warning'
       }).then(() => {});
     },
-    handlePageChange() {
+    handlePageChange(currentPage, pageSize) {
+      this.currentPage = currentPage;
+      this.pageSize = pageSize;
       this.getTableData();
     },
     async getTableData() {
@@ -198,9 +224,9 @@ export default {
       const res = await getCheckinList(params);
       if (res.success) {
         this.tableData = res.result.records;
-        (this.currentPage = res.result.pageNumber),
-          (this.pageSize = res.result.pageSize),
-          (this.total = res.result.total);
+        this.currentPage = res.result.pageNumber || 1;
+        this.pageSize = res.result.pageSize || 10
+        this.total = res.result.total
       } else {
         this.$message.error(res.message);
       }
@@ -210,7 +236,10 @@ export default {
         {
           label: '序号',
           width: '80',
+          prop: 'id',
           render: (row, index, column) => {
+            console.log(index);
+
             return (this.currentPage - 1) * this.pageSize + index + 1;
           }
         },
