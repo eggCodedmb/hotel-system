@@ -27,11 +27,6 @@
       v-model:page-size="pageSize"
       @page-change="handlePageChange"
     >
-      <template #status="{ row }">
-        <el-tag :type="statusMap[row.status].type">
-          {{ statusMap[row.status].label }}
-        </el-tag>
-      </template>
       <template #action="{ row }">
         <el-button type="primary" size="small" @click="showDetail(row)"
           >详情</el-button
@@ -54,48 +49,12 @@
         </el-button>
       </template>
     </c-table>
-
-    <!-- 审批对话框 -->
-    <el-dialog
-      v-model="dialogVisible"
-      :title="`审批详情 - ${currentRow?.applicant}`"
-      width="40%"
-    >
-      <el-descriptions :column="1" border>
-        <el-descriptions-item label="申请人">{{
-          currentRow?.applicant
-        }}</el-descriptions-item>
-        <el-descriptions-item label="请假类型">{{
-          currentRow?.type
-        }}</el-descriptions-item>
-        <el-descriptions-item label="请假时间">
-          {{ dayjs(currentRow?.startTime).format('YYYY-MM-DD HH:mm') }} 至
-          {{ dayjs(currentRow?.endTime).format('YYYY-MM-DD HH:mm') }}
-        </el-descriptions-item>
-        <el-descriptions-item label="请假事由">{{
-          currentRow?.reason
-        }}</el-descriptions-item>
-        <el-descriptions-item label="附件">
-          <el-link
-            v-if="currentRow?.attachment"
-            :href="currentRow.attachment"
-            target="_blank"
-          >
-            下载附件
-          </el-link>
-        </el-descriptions-item>
-      </el-descriptions>
-      <template #footer>
-        <el-button @click="dialogVisible = false">关闭</el-button>
-      </template>
-    </el-dialog>
   </div>
 </template>
 
 <script setup>
-import { ref, reactive, render } from 'vue';
+import { ref, reactive, onMounted } from 'vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
-import dayjs from 'dayjs';
 import CTable from '@/components/CTable.vue';
 import { addLeave, getLeaveList, updateLeave, deleteLeave } from '@/api/leave';
 
@@ -109,28 +68,18 @@ const columns = [
     }
   },
   { label: '申请人', prop: 'leaveApplicant' },
+  { label: '请假理由', prop: 'comment' },
   { label: '结果', prop: 'result' },
   {
-    label: '开始请假时间',
-    prop: 'startTime',
-    formatter: (row) => `${row.startTime} 至 ${row.endTime}`
+    label: '开始时间',
+    prop: 'startTime'
   },
-  { label: '结束请假时间', prop: 'endTime' },
-  { label: '理由', prop: 'comment' },
+  { label: '结束时间', prop: 'endTime' },
   { label: '操作', prop: 'action', slotName: 'action', width: 300 }
 ];
 
-// 状态配置
-const statusMap = {
-  0: { label: '待审批', type: 'warning' },
-  1: { label: '已通过', type: 'success' },
-  2: { label: '已拒绝', type: 'danger' }
-};
-
 // 搜索表单
-const searchForm = reactive({
-  leaveApplicant: ''
-});
+const searchForm = reactive({});
 
 // 分页参数
 const currentPage = ref(1);
@@ -157,8 +106,6 @@ const handleApprove = async (row, status) => {
       '操作确认',
       { type: 'warning' }
     );
-
-    // 这里调用API接口
     row.status = status;
     ElMessage.success('操作成功');
   } catch (error) {
@@ -192,6 +139,10 @@ const loadData = async () => {
     ElMessage.error(res.message);
   }
 };
+
+onMounted(() => {
+  loadData();
+});
 </script>
 
 <style scoped>
