@@ -203,7 +203,11 @@ export default {
           return (currentPage.value - 1) * pageSize.value + index + 1;
         }
       },
-      { label: '姓名', prop: 'name' },
+      {
+        label: '姓名',
+        prop: 'name',
+        render: (row) => (row.name ? row.name : '--')
+      },
       {
         label: '状态',
         prop: 'status',
@@ -224,8 +228,16 @@ export default {
           return getDictValue('Department', row.department);
         }
       },
-      { label: '邮箱', prop: 'email' },
-      { label: '电话', prop: 'phone' },
+      {
+        label: '邮箱',
+        prop: 'email',
+        render: (row) => (row.email ? row.email : '--')
+      },
+      {
+        label: '电话',
+        prop: 'phone',
+        render: (row) => (row.phone ? row.phone : '--')
+      },
       { label: '操作', slotName: 'action', width: 300 }
     ];
 
