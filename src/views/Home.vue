@@ -7,28 +7,28 @@
           <el-card class="data-card">
             <div class="data-title">今日预定</div>
             <div class="data-value">128</div>
-            <div class="data-change">较昨日 +12.5%</div>
+            <!-- <div class="data-change">较昨日 +12.5%</div> -->
           </el-card>
         </el-col>
         <el-col :span="6">
           <el-card class="data-card">
             <div class="data-title">销售额</div>
             <div class="data-value">¥25,648</div>
-            <div class="data-change">较昨日 +8.2%</div>
+            <!-- <div class="data-change">较昨日 +8.2%</div> -->
           </el-card>
         </el-col>
         <el-col :span="6">
           <el-card class="data-card">
             <div class="data-title">新增预定</div>
             <div class="data-value">356</div>
-            <div class="data-change">较上月 +15.8%</div>
+            <!-- <div class="data-change">较上月 +15.8%</div> -->
           </el-card>
         </el-col>
         <el-col :span="6">
           <el-card class="data-card">
-            <div class="data-title">活跃度</div>
-            <div class="data-value">89%</div>
-            <div class="data-change">较上周 +2.3%</div>
+            <div class="data-title">空闲房间数</div>
+            <div class="data-value">{{ roomList.length }} 间</div>
+            <!-- <div class="data-change">间</div> -->
           </el-card>
         </el-col>
       </el-row>
@@ -62,15 +62,19 @@
 import LineChart from '@/components/lineChart.vue';
 import PieChar from '@/components/pieChar.vue';
 import { ref } from 'vue';
+import useDict from '@/hooks/useDict';
 export default {
   name: 'Home',
   components: { LineChart, PieChar },
   setup() {
     const radio = ref('周');
+    const { roomList } = useDict();
     return {
-      radio
+      radio,
+      roomList
     };
   },
+
   methods: {
     lineChartChange() {
       console.log(this.radio);

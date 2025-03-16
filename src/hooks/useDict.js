@@ -39,9 +39,10 @@ export default function useDict() {
             roomList.value = res.result.records.map(item => {
                 return {
                     itemText: item.roomId,
-                    itemValue: item.id
+                    itemValue: item.id,
+                    itemStatus: item.status
                 }
-            })
+            }).filter(item => item.itemStatus === '0')
         }
     };
     return {
