@@ -57,7 +57,7 @@
     >
       <template #img="{ row }">
         <!-- 按钮查看图片 -->
-        <el-button type="primary" size="small" @click="handleImg(row)"
+        <el-button type="primary" link size="small" @click="handleImg(row)"
           >查看图片</el-button
         >
       </template>
@@ -247,7 +247,7 @@ export default {
           });
         });
     },
-    handlePageChange(pagination) {;
+    handlePageChange(pagination) {
       this.getTableData();
     },
     getTableData() {
@@ -309,7 +309,7 @@ export default {
           }
         },
         {
-          label: '房间价格',
+          label: '房间价格(元/晚)',
           prop: 'price'
         },
         {

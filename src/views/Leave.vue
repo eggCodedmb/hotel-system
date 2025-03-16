@@ -28,11 +28,11 @@
       @page-change="handlePageChange"
     >
       <template #action="{ row }">
-        <el-button type="primary" size="small" @click="showDetail(row)"
+        <!-- <el-button type="primary" size="small" @click="showDetail(row)"
           >详情</el-button
-        >
+        > -->
         <el-button
-          v-if="row.status === 0"
+          v-if="row.result !== '拒绝'"
           type="success"
           size="small"
           @click="handleApprove(row, 1)"
@@ -40,7 +40,7 @@
           通过
         </el-button>
         <el-button
-          v-if="row.status === 0"
+          v-if="row.result !== '通过'"
           type="danger"
           size="small"
           @click="handleApprove(row, 2)"
@@ -56,8 +56,8 @@
 import { ref, reactive, onMounted } from 'vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import CTable from '@/components/CTable.vue';
-import { addLeave, getLeaveList, updateLeave, deleteLeave } from '@/api/leave';
-
+import { getLeaveList, updateLeave } from '@/api/leave';
+import { dayjs } from 'element-plus';
 const columns = [
   {
     label: '序号',
@@ -106,8 +106,14 @@ const handleApprove = async (row, status) => {
       '操作确认',
       { type: 'warning' }
     );
-    row.status = status;
-    ElMessage.success('操作成功');
+    const data = { ...row };
+    data.result = status === 1 ? '通过' : '拒绝';
+    data.approvalTime = dayjs().format('YYYY-MM-DD HH:mm:ss');
+    const res = await updateLeave(data);
+    if (res.success) {
+      loadData();
+      ElMessage.success('操作成功');
+    }
   } catch (error) {
     console.log('取消操作');
   }

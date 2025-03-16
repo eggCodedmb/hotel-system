@@ -73,7 +73,7 @@
               :src="`${URL}${room.img}`"
               fit="cover"
               class="room-image"
-              :preview-src-list="[room.img]"
+              :preview-src-list="[`${URL}${room.img}`]"
             />
             <div class="room-info">
               <h3 class="room-title">

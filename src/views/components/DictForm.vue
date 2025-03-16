@@ -3,6 +3,7 @@
     :title="title"
     v-model="dialogVisible"
     :close-on-click-modal="false"
+    width="900px"
   >
     <el-row :gutter="20">
       <el-col :span="12">
@@ -51,6 +52,10 @@
             <el-button type="danger" link @click="deleteDict(row)"
               >删除</el-button
             >
+            <!-- 编辑 -->
+            <el-button type="primary" link @click="showEdit(row)"
+              >编辑</el-button
+            >
           </template>
         </c-table>
       </el-col>
@@ -59,6 +64,28 @@
       <div class="dialog-footer">
         <el-button type="warning" @click="closeDialog">关闭</el-button>
         <el-button type="primary" @click="submitForm">新增</el-button>
+      </div>
+    </template>
+  </el-dialog>
+  <!-- 字典项编辑弹窗 -->
+  <el-dialog title="编辑" v-model="show" width="400px">
+    <el-form
+      ref="refForm2"
+      :model="formData2"
+      :rules="rules2"
+      label-width="80px"
+    >
+      <el-form-item label="字典名称" prop="itemText">
+        <el-input v-model="formData2.itemText"></el-input>
+      </el-form-item>
+      <el-form-item label="字典值" prop="itemValue">
+        <el-input v-model="formData2.itemValue"></el-input>
+      </el-form-item>
+    </el-form>
+    <template #footer>
+      <div class="dialog-footer">
+        <el-button type="warning" @click="show = false">关闭</el-button>
+        <el-button type="primary" @click="editDictItem">保存</el-button>
       </div>
     </template>
   </el-dialog>
@@ -81,25 +108,23 @@ const formData = reactive({
   description: '',
   status: '1'
 });
+const formData2 = ref({});
 const emit = defineEmits(['submit', 'switchStatus']);
-const props = defineProps({
-  // 自定义新增方法
-  customAdd: {
-    type: Function,
-    default: () => {}
-  }
-});
-// 字典列表
 const dictList = ref([]);
-
 const title = ref('新增字典');
 const refForm = ref(null);
+const refForm2 = ref(null);
 const dialogVisible = ref(false);
+const show = ref(false);
 
 const rules = ref({
   itemText: [{ required: true, message: '请输入字典项名称', trigger: 'blur' }],
   itemValue: [{ required: true, message: '请输入字典值', trigger: 'blur' }],
   status: [{ required: true, message: '请选择字典状态', trigger: 'change' }]
+});
+const rules2 = ref({
+  itemText: [{ required: true, message: '请输入字典项名称', trigger: 'blur' }],
+  itemValue: [{ required: true, message: '请输入字典值', trigger: 'blur' }]
 });
 
 const openDialog = (id) => {
@@ -107,6 +132,11 @@ const openDialog = (id) => {
   if (!id) return;
   formData.dictId = id;
   getDictData(id);
+};
+
+const showEdit = (row) => {
+  show.value = true;
+  formData2.value = { ...row };
 };
 
 const closeDialog = () => {
@@ -132,6 +162,22 @@ const submitForm = () => {
   });
 };
 
+const editDictItem = () => {
+  refForm2.value.validate((valid) => {
+    if (valid) {
+      updateDictItem(formData2.value).then((res) => {
+        if (res.success) {
+          ElMessage.success(res.message || '操作成功');
+        } else {
+          ElMessage.error(res.message || '操作失败');
+        }
+        show.value = false;
+        getDictData(formData.dictId);
+      });
+    }
+  });
+};
+
 const switchStatus = (row) => {
   updateDictItem({ id: row.id, status: row.status }).then((res) => {
     if (res.success) {
@@ -147,7 +193,7 @@ const columns = [
   { label: '字典名称', prop: 'itemText' },
   { label: '字典值', prop: 'itemValue' },
   { label: '状态', prop: 'status', slotName: 'status' },
-  { label: '操作', prop: 'action', slotName: 'action' }
+  { label: '操作', prop: 'action', slotName: 'action', width: 150 }
 ];
 
 const deleteDict = (row) => {
