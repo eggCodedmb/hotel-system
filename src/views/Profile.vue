@@ -116,7 +116,7 @@
                 <p>重置密码</p>
               </div>
             </div>
-            <el-button type="text" @click="reset">重置密码</el-button>
+            <el-button type="warning" @click="reset">重置密码</el-button>
           </div>
 
           <el-divider />
@@ -129,7 +129,7 @@
                 <p>已绑定邮箱：example@domain.com</p>
               </div>
             </div>
-            <el-button type="text">更换邮箱</el-button>
+            <el-button type="warning">更换邮箱</el-button>
           </div> -->
         </el-tab-pane>
       </el-tabs>

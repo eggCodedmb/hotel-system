@@ -119,7 +119,6 @@ const handlePageChange = (pagination) => {
 
 // 搜索
 const handleSearch = () => {
-  currentPage.value = 1;
   loadData();
 };
 

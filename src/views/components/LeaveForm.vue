@@ -80,7 +80,7 @@
 import { ref, defineExpose, defineEmits } from 'vue';
 import { ElMessage } from 'element-plus';
 import useDict from '@/hooks/useDict';
-import { addLeave } from '@/api/Leave';
+import { addLeave, updateLeave } from '@/api/Leave';
 import { useUserStore } from '@/store/modules/userStore';
 
 const userStore = useUserStore();
@@ -102,6 +102,7 @@ form.value.leaveApplicant = userInfo?.name;
 form.value.leaveApplicantId = userInfo?.employeeId;
 const emit = defineEmits(['refresh']);
 
+const submitType = ref('add');
 const title = ref('请假申请');
 const refForm = ref(null);
 const dialogVisible = ref(false);
@@ -127,6 +128,7 @@ const openDialog = (row) => {
 
 const closeDialog = () => {
   dialogVisible.value = false;
+  submitType.value = 'add';
 };
 const handleApproverChange = (value) => {
   const approver = options.find((item) => item.itemValue === value);
@@ -136,21 +138,38 @@ const handleApproverChange = (value) => {
 const submitForm = () => {
   refForm.value.validate((valid) => {
     if (valid) {
+      if (submitType.value === 'add') {
+        onSubmit();
+      } else if (submitType.value === 'edit') {
+        editSubmit();
+      }
       emit('refresh');
-      onSubmit();
     } else {
       ElMessage.warning('请填写完整信息');
     }
   });
 };
+
 const onSubmit = async () => {
   const params = {
     ...form.value
   };
-
   const res = await addLeave(params);
   if (res.success) {
     ElMessage.success('申请已提交');
+    closeDialog();
+  } else {
+    ElMessage.error(res.message);
+  }
+};
+
+const editSubmit = async () => {
+  const params = {
+    ...form.value
+  };
+  const res = await updateLeave(params);
+  if (res.success) {
+    ElMessage.success('操作成功');
     closeDialog();
   } else {
     ElMessage.error(res.message);

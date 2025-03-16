@@ -23,7 +23,7 @@ const routes = [
         path: '/leave',
         name: 'Leave',
         component: () => import('@/views/Leave.vue'),
-        meta: { title: '请假审批', icon: 'Document', isAdmin: true, public: false }
+        meta: { title: '请假审批', icon: 'Stamp', isAdmin: true, public: false }
       },
       {
         path: '/room',
@@ -74,7 +74,7 @@ const routes = [
         path: '/notice',
         name: 'Notice',
         component: () => import('@/views/Notice.vue'),
-        meta: { title: '公告管理', icon: 'Document', hidden: false, public: false }
+        meta: { title: '公告管理', icon: 'Notebook', hidden: false, public: false }
       },
       {
         path: '/dict',

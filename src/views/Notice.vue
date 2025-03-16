@@ -43,7 +43,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue';
+import { ref, computed, onMounted, render } from 'vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import { Plus, Search } from '@element-plus/icons-vue';
 import dayjs from 'dayjs';
@@ -63,10 +63,22 @@ const refNotice = ref(null);
 const userStore = useUserStore();
 
 const columns = [
+  {
+    label: '序号',
+    type: 'index',
+    width: 120,
+    render: (row, index, column) => {
+      return currentPage.value * pageSize.value - pageSize.value + 1 + index;
+    }
+  },
   { label: '标题', prop: 'title' },
   { label: '内容', prop: 'content' },
   { label: '发布时间', prop: 'createTime' },
-  { label: '发布人', prop: 'createPerson' },
+  {
+    label: '发布人',
+    prop: 'createPerson',
+    render: (row) => row.createPerson || '--'
+  },
   {
     label: '操作',
     width: 300,
@@ -147,8 +159,8 @@ const noticeList = async () => {
   if (res.success) {
     pageList.value = res.result.records;
     total.value = res.result.total;
-    pageSize.value = res.result.pageSize;
-    currentPage.value = res.result.pageNumber;
+    pageSize.value = res.result.size;
+    currentPage.value = res.result.current;
   } else {
     ElMessage.error(res.message);
   }

@@ -48,15 +48,18 @@
 <script setup>
 import { ref, defineExpose, defineEmits, reactive } from 'vue';
 import { ElMessage } from 'element-plus';
-import dayjs from 'dayjs';
+import { useUserStore } from '@/store/modules/userStore';
 
+const userStore = useUserStore();
+const { name } = userStore.user;
 const formData = reactive({
   title: '',
   content: '',
-  createTime: ''
+  createTime: '',
+  createPerson: ''
 });
+formData.createPerson = name;
 const emit = defineEmits(['submit']);
-
 const title = ref('新增公告');
 const refForm = ref(null);
 const dialogVisible = ref(false);
@@ -70,9 +73,7 @@ const rules = ref({
     { required: true, message: '请输入公告内容', trigger: 'blur' },
     { min: 2, max: 500, message: '长度在 2 到 500 个字符', trigger: 'blur' }
   ],
-  createTime: [
-    { required: true, message: '请选择发布时间', trigger: 'change' }
-  ]
+  createTime: [{ required: true, message: '请选择发布时间', trigger: 'change' }]
 });
 
 const openDialog = (row) => {
