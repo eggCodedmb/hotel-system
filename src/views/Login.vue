@@ -99,9 +99,11 @@ const getUserInfo = async () => {
   const { success, result } = await getEmployeeDetail(res.result.employeeId);
   if (res.success || success) {
     const newUser = {
+      ...res.result,
       ...result,
-      ...res.result
-      // id: result.id
+      loginId: res.result.id,
+      employeeId: res.result.employeeId,
+      role: res.result.role
     };
     userStore.saveUser(newUser);
   } else {

@@ -166,9 +166,8 @@ const handleApprove = async (row, status) => {
   }
 };
 
-const handlePageChange = (currentPage, pageSize) => {
-  this.currentPage = currentPage;
-  this.pageSize = pageSize;
+const handlePageChange = (pagination) => {
+  loadData();
 };
 
 // 搜索

@@ -106,7 +106,7 @@
       </el-row>
     </el-main>
   </div>
-  <CheckinForm ref="checkinForm" />
+  <CheckinForm ref="checkinForm" @submit="onSubmit" />
 </template>
 
 <script setup>
@@ -116,6 +116,8 @@ import CheckinForm from './components/CheckinForm.vue';
 import { getNoticeList } from '@/api/notice';
 import useDict from '@/hooks/useDict';
 import { getRoomList } from '@/api/room';
+import { addCheckin } from '@/api/checkin';
+import { ElMessage } from 'element-plus';
 
 const getURL = computed(() => {
   return import.meta.env.VITE_APP_RESOURCE_URL + imageUrl.value;
@@ -199,6 +201,14 @@ const noticeList = async () => {
     announcements.value = res.result.records;
   } else {
     ElMessage.error(res.message);
+  }
+};
+const onSubmit = async (type, form) => {
+  const { id, ...parmas } = form;
+  const res = await addCheckin(parmas);
+  if (res.success) {
+    ElMessage.success('预订成功');
+    noticeList();
   }
 };
 

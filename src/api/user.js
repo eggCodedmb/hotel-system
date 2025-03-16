@@ -4,7 +4,7 @@ const service = 'employeeManagerment';
 
 // 增加员工
 export function addEmployee(params) {
-  return request.put(`/${service}/addEmployee`, params);
+  return request.put(`/${service}/addEmployee`, params, { params });
 }
 
 // 获取员工列表

@@ -247,9 +247,7 @@ export default {
           });
         });
     },
-    handlePageChange(currentPage, pageSize) {
-      this.currentPage = currentPage;
-      this.pageSize = pageSize;
+    handlePageChange(pagination) {;
       this.getTableData();
     },
     getTableData() {

@@ -37,6 +37,8 @@
               placeholder="请选择开始时间"
               :disabled="isView"
               style="width: 100%"
+              formatter="YYYY-MM-DD HH:mm:ss"
+              value-format="YYYY-MM-DD HH:mm:ss"
             />
           </el-form-item>
         </el-col>
@@ -48,6 +50,8 @@
               placeholder="请选择结束时间"
               :disabled="isView"
               style="width: 100%"
+              formatter="YYYY-MM-DD HH:mm:ss"
+              value-format="YYYY-MM-DD HH:mm:ss"
             />
           </el-form-item>
         </el-col>
@@ -142,7 +146,11 @@ const submitForm = () => {
   });
 };
 const onSubmit = async () => {
-  const res = await addLeave(form.value);
+  const params = {
+    ...form.value
+  };
+
+  const res = await addLeave(params);
   if (res.success) {
     ElMessage.success('申请已提交');
     closeDialog();

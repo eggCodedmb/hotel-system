@@ -52,7 +52,7 @@
       </div>
     </div>
   </el-header>
-  <userForm ref="userInfoFormRef" />
+  <userForm ref="userInfoFormRef" @refresh="refreshUser" />
 </template>
 
 <script setup>
@@ -62,7 +62,9 @@ import { useUserStore } from '@/store/modules/userStore';
 import { useMenuStore } from '@/store/modules/menuStore';
 import { useDark, useToggle } from '@vueuse/core';
 import userForm from '@/views/components/userForm.vue';
-
+import { getEmployeeDetail } from '@/api/user';
+// 弹框
+import { ElMessage } from 'element-plus';
 const userInfoFormRef = ref(null);
 const isShow = ref(false);
 const router = useRouter();
@@ -98,7 +100,13 @@ const handleLogout = () => {
   userStore.logout();
   router.push('/login');
 };
-
+const refreshUser = () => {
+  ElMessage.success('更新成功,请重新登录');
+  setTimeout(() => {
+    userStore.logout();
+  }, 1000);
+  // 重新登录
+};
 onMounted(() => {});
 
 nextTick(() => {

@@ -113,9 +113,7 @@ export default {
         })
         .catch(() => {});
     },
-    handlePageChange(currentPage, pageSize) {
-      this.currentPage = currentPage;
-      this.pageSize = pageSize;
+    handlePageChange(pagination) {
       this.getTableData();
     },
     async getTableData() {

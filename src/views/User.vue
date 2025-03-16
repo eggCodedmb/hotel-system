@@ -95,6 +95,11 @@ export default {
     const total = ref(10);
     const userForm = ref(null);
 
+    const pagination = ref({
+      currentPage: 1,
+      pageSize: 10
+    });
+
     // 搜索
     const search = () => {
       getTableData();
@@ -161,9 +166,9 @@ export default {
         });
     };
     // 处理分页
-    const handlePageChange = (currentPage, pageSize) => {
-      currentPage.value = currentPage;
-      pageSize.value = pageSize;
+    const handlePageChange = (pagination) => {
+      console.log(pagination);
+      pagination.value = Object.assign({}, pagination);
       getTableData();
     };
 

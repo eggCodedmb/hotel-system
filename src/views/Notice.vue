@@ -154,9 +154,7 @@ const noticeList = async () => {
   }
 };
 
-const handlePageChange = (currentPage, pageSize) => {
-  currentPage.value = currentPage;
-  pageSize.value = pageSize;
+const handlePageChange = (pagination) => {
   noticeList();
 };
 

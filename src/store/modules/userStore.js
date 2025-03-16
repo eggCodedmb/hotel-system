@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia';
 import { ref, computed } from 'vue';
 import { removeToken } from '@/utils/auth';
+import { getEmployeeDetail } from '@/api/user';
 
 export const useUserStore = defineStore(
   'user',
@@ -54,7 +55,7 @@ export const useUserStore = defineStore(
       saveRemember,
       removeRemember,
       logout,
-      updateIsRemember,
+      updateIsRemember
     };
   },
   {
