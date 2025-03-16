@@ -99,9 +99,7 @@ const form = ref({
 const userInfo = userStore.getUser;
 
 form.value.leaveApplicant = userInfo?.name;
-form.value.leaveApplicantId = userInfo?.id;
-console.log(form.value);
-
+form.value.leaveApplicantId = userInfo?.employeeId;
 const emit = defineEmits(['refresh']);
 
 const title = ref('请假申请');

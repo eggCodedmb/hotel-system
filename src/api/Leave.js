@@ -4,7 +4,7 @@ const service = 'leaveManager';
 
 // 添加请假记录
 export function addLeave(params) {
-  return request.post('/leaveApproval/addLeaveApproval', null, {params});
+  return request.post('/leaveApproval/addLeaveApproval', params);
 }
 
 // 获取请假记录列表
