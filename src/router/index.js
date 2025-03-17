@@ -27,17 +27,10 @@ const routes = [
       },
       {
         path: '/room',
-        // meta: { title: '客房管理', icon: 'House' },
         name: 'Room',
         component: () => import('@/views/Room.vue'),
         meta: { title: '客房列表', icon: 'House', public: false }
         // children: [
-        //   {
-        //     path: '/roomList',
-        //     name: 'RoomList',
-        //     component: () => import('@/views/Room.vue'),
-        //     meta: { title: '客房列表', icon: 'Document', public: false }
-        //   },
         //   {
         //     path: '/roomType',
         //     name: 'RoomType',
