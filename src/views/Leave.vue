@@ -28,14 +28,12 @@
       @page-change="handlePageChange"
     >
       <template #action="{ row }">
-        <!-- <el-button type="primary" size="small" @click="showDetail(row)"
-          >详情</el-button
-        > -->
         <el-button
           v-if="row.result !== '拒绝'"
           type="success"
           size="small"
           @click="handleApprove(row, 1)"
+          :disabled="row.result === '通过'"
         >
           通过
         </el-button>
@@ -44,6 +42,7 @@
           type="danger"
           size="small"
           @click="handleApprove(row, 2)"
+          :disabled="row.result === '拒绝'"
         >
           拒绝
         </el-button>
@@ -58,24 +57,25 @@ import { ElMessage, ElMessageBox } from 'element-plus';
 import CTable from '@/components/CTable.vue';
 import { getLeaveList, updateLeave } from '@/api/leave';
 import { dayjs } from 'element-plus';
+import { useUserStore } from '@/store/modules/userStore';
+
+const userStore = useUserStore();
 const columns = [
   {
     label: '序号',
     type: 'id',
-    width: 120,
+    width: 100,
     render: (row, index, column) => {
       return (currentPage.value - 1) * pageSize.value + index + 1;
     }
   },
   { label: '申请人', prop: 'leaveApplicant' },
-  { label: '请假理由', prop: 'comment' },
+  { label: '请假理由', prop: 'comment', width: 200 },
   { label: '结果', prop: 'result' },
-  {
-    label: '开始时间',
-    prop: 'startTime'
-  },
-  { label: '结束时间', prop: 'endTime' },
-  { label: '操作', prop: 'action', slotName: 'action', width: 300 }
+  { label: '开始时间', prop: 'startTime', width: 180 },
+  { label: '结束时间', prop: 'endTime', width: 180 },
+  { label: '审批人', prop: 'approver' },
+  { label: '操作', prop: 'action', slotName: 'action', width: 200 }
 ];
 
 // 搜索表单
@@ -108,7 +108,7 @@ const handleApprove = async (row, status) => {
     );
     const data = { ...row };
     data.result = status === 1 ? '通过' : '拒绝';
-    data.approvalTime = dayjs().format('YYYY-MM-DD HH:mm:ss');
+    // data.approvalTime = dayjs().format('YYYY-MM-DD HH:mm:ss');
     const res = await updateLeave(data);
     if (res.success) {
       loadData();
@@ -130,6 +130,8 @@ const handleSearch = () => {
 
 const loadData = async () => {
   const params = {
+    id: userStore.user.employeeId,
+    approverId: userStore.user.employeeId,
     pageNumber: currentPage.value,
     pageSize: pageSize.value,
     ...searchForm

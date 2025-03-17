@@ -8,7 +8,6 @@ export function addLeave(params) {
 }
 
 // 获取请假记录列表
-// 导出一个函数，用于获取请假列表
 export function getLeaveList(data) {
   return request.post('/leaveApproval/listLeaveApproval', data);
 }
@@ -23,8 +22,7 @@ export function deleteLeave(id) {
   return request.post('/leaveApproval/deleteLeaveApproval', { id });
 }
 
-// 审批
-export function approveLeave(id) { }
-
-// 拒绝
-export function rejectLeave(id) { }
+// 获取个人请假记录列表
+export function getPersonalLeaveList(data) {
+  return request.post('/leaveApproval/listPersonalLeaveApproval', data);
+}

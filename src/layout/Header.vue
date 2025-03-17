@@ -105,10 +105,8 @@ const refreshUser = () => {
   setTimeout(() => {
     userStore.logout();
   }, 1000);
-  // 重新登录
 };
 onMounted(() => {});
-
 nextTick(() => {
   setTimeout(() => {
     if (!userInfo.name) {

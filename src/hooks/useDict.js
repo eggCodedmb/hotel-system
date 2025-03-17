@@ -31,7 +31,7 @@ export default function useDict() {
     const getRoomListData = async () => {
         const params = {
             pageNumber: 1,
-            pageSize: 10,
+            pageSize: 999,
             status: '0',
         }
         const res = await getRoomList(params)
