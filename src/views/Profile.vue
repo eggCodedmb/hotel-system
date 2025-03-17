@@ -6,10 +6,9 @@
         <!-- 头像上传 -->
         <el-upload
           class="avatar-uploader"
-          action="#"
           :show-file-list="false"
           :auto-upload="false"
-          :on-change="handleAvatarChange"
+          disabled
         >
           <el-avatar :size="120" :src="getUrl">
             <img :src="getUrl" />
@@ -64,12 +63,11 @@
             :model="userInfo"
             label-width="100px"
             label-position="left"
-            :rules="formRules"
           >
             <el-row :gutter="40">
               <el-col :md="12" :sm="24">
                 <el-form-item label="姓名" prop="name">
-                  <el-input v-model="userInfo.name" />
+                  <el-input v-model="userInfo.name" disabled />
                 </el-form-item>
                 <el-form-item label="状态" prop="status">
                   <el-select
@@ -88,17 +86,22 @@
               </el-col>
               <el-col :md="12" :sm="24">
                 <el-form-item label="手机号" prop="phone">
-                  <el-input v-model="userInfo.phone" />
+                  <el-input v-model="userInfo.phone" disabled />
                 </el-form-item>
                 <el-form-item label="邮箱" prop="email">
-                  <el-input v-model="userInfo.email" />
+                  <el-input v-model="userInfo.email" disabled />
+                </el-form-item>
+              </el-col>
+              <el-col :md="12" :sm="24">
+                <el-form-item label="地址" prop="address">
+                  <el-input v-model="userInfo.address" disabled />
                 </el-form-item>
               </el-col>
             </el-row>
             <el-form-item>
-              <!-- <el-button type="primary" :icon="Edit" @click="handleSave">
-                保存更改
-              </el-button> -->
+              <el-button type="primary" :icon="Edit" @click="mySubmit">
+                我的请假记录
+              </el-button>
               <el-button type="primary" :icon="Edit" @click="onSubmit">
                 我要请假
               </el-button>
@@ -118,34 +121,25 @@
             </div>
             <el-button type="warning" @click="reset">重置密码</el-button>
           </div>
-
           <el-divider />
-
-          <!-- <div class="security-item">
-            <div class="security-info">
-              <el-icon class="security-icon"><Message /></el-icon>
-              <div>
-                <h4>安全邮箱</h4>
-                <p>已绑定邮箱：example@domain.com</p>
-              </div>
-            </div>
-            <el-button type="warning">更换邮箱</el-button>
-          </div> -->
         </el-tab-pane>
       </el-tabs>
     </el-card>
   </div>
   <LeaveForm ref="LeaveRef" />
+  <MyLeaveList ref="MyLeaveListRef" />
 </template>
 
 <script setup>
 import { ref, reactive, computed } from 'vue';
-import { CameraFilled, Edit, Lock, Message } from '@element-plus/icons-vue';
 import { useUserStore } from '@/store/modules/userStore';
 import useDict from '@/hooks/useDict';
 import LeaveForm from './components/LeaveForm.vue';
 import { resetPassword } from '@/api/user';
 import { ElMessage, ElMessageBox } from 'element-plus';
+import MyLeaveList from './components/MyLeaveList.vue';
+import { Edit, Lock } from '@element-plus/icons-vue';
+
 
 const getUrl = computed(() => {
   return import.meta.env.VITE_APP_RESOURCE_URL + userInfo.picture;
@@ -160,29 +154,8 @@ const userInfo = reactive({
 });
 
 const LeaveRef = ref(null);
+const MyLeaveListRef = ref(null);
 const statusOptions = getDict('USER_STATUS');
-
-// 表单验证规则
-const formRules = reactive({
-  name: [{ required: true, message: '请输入姓名', trigger: 'blur' }],
-  email: [
-    { required: true, message: '请输入邮箱地址', trigger: 'blur' },
-    { type: 'email', message: '请输入正确的邮箱格式', trigger: 'blur' }
-  ],
-  phone: [
-    { required: true, message: '请输入手机号', trigger: 'blur' },
-    { pattern: /^1[3-9]\d{9}$/, message: '请输入正确的手机号码' }
-  ]
-});
-
-// 头像上传处理
-const handleAvatarChange = (file) => {
-  const reader = new FileReader();
-  reader.onload = () => {
-    userInfo.avatar = reader.result;
-  };
-  reader.readAsDataURL(file.raw);
-};
 
 const reset = () => {
   ElMessageBox.confirm('确定要重置密码吗？', '提示', {
@@ -199,12 +172,9 @@ const reset = () => {
   });
 };
 
-// 保存表单
-const handleSave = () => {
-  formRef.value.validate((valid) => {
-    if (valid) {
-    }
-  });
+const mySubmit = () => {
+  const id = userStore.user.id;
+  MyLeaveListRef.value.openDialog(id);
 };
 
 const onSubmit = () => {

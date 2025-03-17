@@ -69,13 +69,7 @@ import { ref, reactive, onMounted, render } from 'vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import CTable from '@/components/CTable.vue';
 import UserForm from './components/UserForm.vue';
-import {
-  addEmployee,
-  updateEmployee,
-  getEmployeeList,
-  deleteEmployee,
-  getEmployeeDetail
-} from '@/api/user';
+import { getEmployeeList, deleteEmployee, getEmployeeDetail } from '@/api/user';
 import useDict from '@/hooks/useDict';
 
 export default {
@@ -94,6 +88,7 @@ export default {
     const pageSize = ref(10);
     const total = ref(10);
     const userForm = ref(null);
+    const loading = ref(false);
 
     // 搜索
     const search = () => {
@@ -171,22 +166,17 @@ export default {
         pageSize: pageSize.value,
         ...form.value
       };
-
-      // 删除空值
-      Object.keys(params).forEach((key) => {
-        if (!params[key]) {
-          delete params[key];
-        }
-      });
-
+      loading.value = true;
       const res = await getEmployeeList(params);
       if (res.success) {
         tableData.value = res.result.records;
         currentPage.value = res.result.current | 1;
         pageSize.value = res.result.size | 10;
         total.value = res.result.total;
+        loading.value = false;
       } else {
         ElMessage.error(res.message);
+        loading.value = false;
       }
     };
 

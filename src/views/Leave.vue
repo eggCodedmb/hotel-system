@@ -75,6 +75,7 @@ const columns = [
   { label: '开始时间', prop: 'startTime', width: 180 },
   { label: '结束时间', prop: 'endTime', width: 180 },
   { label: '审批人', prop: 'approver' },
+  { label: '审批时间', prop: 'approvalTime', width: 180 },
   { label: '操作', prop: 'action', slotName: 'action', width: 200 }
 ];
 
@@ -104,11 +105,11 @@ const handleApprove = async (row, status) => {
     await ElMessageBox.confirm(
       `确定要${status === 1 ? '通过' : '拒绝'}该申请吗？`,
       '操作确认',
-      { type: 'warning' }
+      { type: 'warning', confirmButtonText: '确定', cancelButtonText: '取消' }
     );
     const data = { ...row };
     data.result = status === 1 ? '通过' : '拒绝';
-    // data.approvalTime = dayjs().format('YYYY-MM-DD HH:mm:ss');
+    data.approvalTime = dayjs().format('YYYY-MM-DD HH:mm:ss');
     const res = await updateLeave(data);
     if (res.success) {
       loadData();
@@ -130,7 +131,6 @@ const handleSearch = () => {
 
 const loadData = async () => {
   const params = {
-    id: userStore.user.employeeId,
     approverId: userStore.user.employeeId,
     pageNumber: currentPage.value,
     pageSize: pageSize.value,
