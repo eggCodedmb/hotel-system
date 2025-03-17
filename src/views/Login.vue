@@ -90,7 +90,9 @@ const isRememberChange = (e) => {
   } else {
     userStore.removeRemember();
   }
-  userStore.updateIsRemember(e);
+
+  const isRemember = e || userStore.isRemember;
+  userStore.updateIsRemember(isRemember);
 };
 
 const getUserInfo = async () => {
@@ -122,6 +124,7 @@ const handleLogin = () => {
   loginFormRef.value.validate(async (valid) => {
     if (!valid) return;
     try {
+      isRememberChange();
       loading.value = true;
       const parmas = {
         loginName: loginForm.username,
