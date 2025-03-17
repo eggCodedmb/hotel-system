@@ -67,7 +67,6 @@ const router = useRouter();
 const userStore = useUserStore();
 
 const loginFormRef = ref();
-const rememberMe = ref(false);
 const loading = ref(false);
 
 const loginForm = reactive({
