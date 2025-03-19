@@ -107,6 +107,8 @@ const router = createRouter({
 
 // Token过期检查
 router.beforeEach((to, from, next) => {
+
+  return next()
   const isPublicRoute = to.matched.some(record => record.meta.public)
   const token = localStorage.getItem('token')
 

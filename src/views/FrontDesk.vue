@@ -29,32 +29,22 @@
 
       <!-- 房间筛选 -->
       <div class="filter-container">
-        <!-- <el-input
-          placeholder="搜索房型"
-          style="width: 300px"
-          clearable
-          v-model="searchKeyword"
-        
-          @keyup.enter="onSearch"
-        >
-          <template #append>
-            <el-button :icon="Search" />
-          </template>
-        </el-input> -->
-        <el-select
-          v-model="roomType"
-          placeholder="全部房型"
-          @change="onChange"
-          clearable
-          style="width: 20%"
-        >
-          <el-option
-            v-for="(item, key) in roomTypes"
-            :key="key"
-            :label="item.itemText"
-            :value="item.itemValue"
-          />
-        </el-select>
+        <el-form-item label="房型">
+          <el-select
+            v-model="roomType"
+            placeholder="全部房型"
+            @change="onChange"
+            clearable
+            style="width: 200px"
+          >
+            <el-option
+              v-for="(item, key) in roomTypes"
+              :key="key"
+              :label="item.itemText"
+              :value="item.itemValue"
+            />
+          </el-select>
+        </el-form-item>
       </div>
 
       <!-- 房间展示 -->
@@ -80,13 +70,8 @@
                 {{ getDictValue('ROOMTYPE', room.type) }}
               </h3>
               <div class="room-tags">
-                <el-tag
-                  v-for="(tag, index) in room.tags"
-                  :key="index"
-                  type="info"
-                  size="small"
-                >
-                  {{ tag }}
+                <el-tag type="info" size="small">
+                  {{ getDictValue('ROOMSTATUS', room.status) }}
                 </el-tag>
               </div>
               <div class="room-price">
@@ -159,8 +144,6 @@ const getRoomListData = async () => {
     ElMessage.error(res.message);
   }
 };
-
-// 获取房间类型字典
 
 // 房间数据
 const rooms = ref([]);

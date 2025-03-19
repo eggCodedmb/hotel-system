@@ -3,7 +3,7 @@
     :title="title"
     v-model="dialogVisible"
     :close-on-click-modal="false"
-    max-Width="800px"
+    max-width="800px"
   >
     <el-form
       ref="refForm"
@@ -35,7 +35,7 @@
           </el-form-item>
         </el-col>
 
-        <!-- 第二行：房型 + 房间号 -->
+        <!-- 第二行：房间状态 + 房间号 -->
         <el-col :xs="24" :md="12">
           <el-form-item label="房间状态" prop="roomStatus">
             <el-select
@@ -72,7 +72,7 @@
           </el-form-item>
         </el-col>
 
-        <!-- 第三行：入住人数 + 身份证号 -->
+        <!-- 第三行：状态 + 身份证号 -->
         <el-col :xs="24" :md="12">
           <el-form-item label="状态" prop="status">
             <el-select
@@ -103,10 +103,9 @@
           </el-form-item>
         </el-col>
 
-        <!-- 第四行：入住时间 -->
-        <el-col :span="12">
+        <!-- 第四行：入住时间 + 退房时间 -->
+        <el-col :xs="24" :md="12">
           <el-form-item label="入住时间" prop="beginTime">
-            <!-- 范围 -->
             <el-date-picker
               v-model="form.beginTime"
               type="datetime"
@@ -117,7 +116,7 @@
             />
           </el-form-item>
         </el-col>
-        <el-col :span="12">
+        <el-col :xs="24" :md="12">
           <el-form-item label="退房时间" prop="endTime">
             <el-date-picker
               v-model="form.endTime"
@@ -129,7 +128,9 @@
             />
           </el-form-item>
         </el-col>
-        <el-col :span="24">
+
+        <!-- 备注 -->
+        <el-col :xs="24">
           <el-form-item label="备注">
             <el-input
               v-model="form.remark"
@@ -143,6 +144,8 @@
         </el-col>
       </el-row>
     </el-form>
+
+    <!-- 底部按钮 -->
     <template #footer>
       <div class="dialog-footer">
         <el-button type="warning" @click="closeDialog">取消</el-button>
@@ -155,7 +158,7 @@
 </template>
 
 <script setup>
-import { ref, defineExpose, computed, defineEmits, onMounted } from 'vue';
+import { ref, defineExpose, defineEmits } from 'vue';
 import { ElMessage } from 'element-plus';
 import { useDictStore } from '@/store/modules/dictStore';
 import useDict from '@/hooks/useDict';
@@ -165,9 +168,7 @@ const { roomList, getRoomListData } = useDict();
 const form = ref({});
 const rules = ref({
   roomId: [{ required: true, message: '请选择房间号', trigger: 'change' }],
-  customerName: [
-    { required: true, message: '请输入客户姓名', trigger: 'blur' }
-  ],
+  customerName: [{ required: true, message: '请输入客户姓名', trigger: 'blur' }],
   phone: [
     { required: true, message: '请输入联系电话', trigger: 'blur' },
     {
@@ -179,16 +180,15 @@ const rules = ref({
   idcard: [{ required: true, message: '请输入身份证号', trigger: 'blur' }],
   beginTime: [{ required: true, message: '请选择入住时间', trigger: 'change' }],
   endTime: [{ required: true, message: '请选择退房时间', trigger: 'change' }],
-  status: [{ required: true, message: '请选择房间状态', trigger: 'change' }],
+  status: [{ required: true, message: '请选择状态', trigger: 'change' }],
   roomStatus: [{ required: true, message: '请选择房间状态', trigger: 'change' }]
 });
+
 const title = ref('客房预订');
 const dialogVisible = ref(false);
 const refForm = ref(null);
 const isView = ref(false);
-const isUser = ref(false);
 
-// const typeOptions = useDictStore().getDict('ROOMTYPE') || [];
 const statusOptions = useDictStore().getDict('ROOMSTATUS') || [];
 
 const emit = defineEmits(['submit']);
@@ -212,7 +212,7 @@ const closeDialog = () => {
 const submitForm = () => {
   refForm.value.validate((valid) => {
     if (valid) {
-      const type = title.value === '预定客房' ? 'add' : 'edit';
+      const type = title.value === '客房预订' ? 'add' : 'edit';
       emit('submit', type, form.value);
       closeDialog();
     } else {
@@ -224,15 +224,13 @@ const submitForm = () => {
 
 defineExpose({
   openDialog,
-  title
-});
-
-onMounted(() => {
-  // getRoomListData();
+  title,
+  isView
 });
 </script>
 
 <style scoped>
+/* 让输入框在移动端全宽 */
 .el-input-number :deep(.el-input__inner) {
   text-align: left;
 }
