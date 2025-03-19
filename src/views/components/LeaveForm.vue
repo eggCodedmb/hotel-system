@@ -70,7 +70,7 @@
     <template #footer>
       <div class="dialog-footer">
         <el-button type="warning" @click="closeDialog">关闭</el-button>
-        <el-button type="primary" @click="submitForm">保存</el-button>
+        <el-button type="primary" @click="submitForm">提交</el-button>
       </div>
     </template>
   </el-dialog>

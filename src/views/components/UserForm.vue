@@ -155,9 +155,6 @@
     <template #footer>
       <div class="dialog-footer">
         <template v-if="isEmployee">
-          <el-button type="warning" v-if="isEmployee" @click="closeDialog"
-            >关闭</el-button
-          >
           <el-button type="primary" @click="submitForm">保存</el-button>
         </template>
         <template v-else>
@@ -172,15 +169,10 @@
 </template>
 
 <script setup>
-import { ref, defineExpose, defineOptions, defineEmits, computed } from 'vue';
+import { ref, defineExpose, defineEmits, computed } from 'vue';
 import { Plus } from '@element-plus/icons-vue';
 import { ElMessage } from 'element-plus';
-import {
-  addEmployee,
-  updateEmployee,
-  getEmployeeList,
-  deleteEmployee
-} from '@/api/user';
+import { addEmployee, updateEmployee } from '@/api/user';
 import { uploadFile } from '@/api/upload';
 import useDict from '@/hooks/useDict';
 import { useUserStore } from '@/store/modules/userStore';
