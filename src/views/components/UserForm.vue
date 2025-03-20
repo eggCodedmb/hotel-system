@@ -191,7 +191,8 @@ const rules = ref({
     {
       min: 3,
       max: 15,
-      message: '用户名长度在 3 到 15 个字符',
+      message: '数字、字母、下划线组成。',
+      pattern: /^[a-zA-Z0-9_]+$/,
       trigger: 'blur'
     }
   ],
