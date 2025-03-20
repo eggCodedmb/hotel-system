@@ -144,12 +144,12 @@
         </el-col>
       </el-row>
     </el-form>
-
+    
     <!-- 底部按钮 -->
     <template #footer>
       <div class="dialog-footer">
         <el-button type="warning" @click="closeDialog">取消</el-button>
-        <el-button type="primary" v-if="!isView" @click="submitForm">{{
+        <el-button type="primary" :disabled="isView" @click="submitForm">{{
           title === '客房预订' ? '确认预订' : '预订'
         }}</el-button>
       </div>
@@ -168,7 +168,9 @@ const { roomList, getRoomListData } = useDict();
 const form = ref({});
 const rules = ref({
   roomId: [{ required: true, message: '请选择房间号', trigger: 'change' }],
-  customerName: [{ required: true, message: '请输入客户姓名', trigger: 'blur' }],
+  customerName: [
+    { required: true, message: '请输入客户姓名', trigger: 'blur' }
+  ],
   phone: [
     { required: true, message: '请输入联系电话', trigger: 'blur' },
     {
